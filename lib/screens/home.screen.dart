@@ -22,7 +22,6 @@ class HomeScreen extends StatelessWidget {
         handleRightBtn: (() {
           DebugLog.myLog("Right btn");
         }),
-        backgroundColor: AppColors.background,
         title: "All Notes",
       ),
       body: SafeArea(

@@ -17,7 +17,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.isBackBtn = true,
     this.isRightBtn = true,
     required this.title,
-    required this.backgroundColor,
+    this.backgroundColor = AppColors.background,
     required this.handleBackBtn,
     required this.handleRightBtn,
   });
