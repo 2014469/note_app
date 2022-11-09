@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
-import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'screens/edit_note.screen.dart';
 // import 'package:provider/provider.dart';
 
 void main() {
@@ -22,7 +23,7 @@ void main() {
               fontFamily: 'Lato',
             ),
             routes: Routes.routes,
-            home: const HomeScreen(),
+            home: const EditNoteScreen(),
             debugShowCheckedModeBanner: false,
           )),
       designSize: const Size(428, 926),

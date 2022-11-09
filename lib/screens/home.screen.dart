@@ -19,9 +19,7 @@ class HomeScreen extends StatelessWidget {
         handleBackBtn: (() {
           DebugLog.myLog("Backbtn");
         }),
-        handleRightBtn: (() {
-          DebugLog.myLog("Right btn");
-        }),
+        extraActions: const <Widget>[],
         title: "All Notes",
       ),
       body: SafeArea(
