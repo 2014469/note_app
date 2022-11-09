@@ -10,7 +10,7 @@ void main() {
       builder: ((context, child) => MaterialApp(
             title: AppString.instance.nameApp,
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: Colors.green,
               fontFamily: 'Lato',
             ),
             routes: Routes.routes,
