@@ -11,7 +11,9 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: TextButton(
-          style: ButtonStyle(textStyle: MaterialStateProperty.all(AppTextStyles.h2[TextWeights.bold])),
+            style: ButtonStyle(
+                textStyle: MaterialStateProperty.all(
+                    AppTextStyles.h2[TextWeights.bold])),
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(
                 Routes.home,
