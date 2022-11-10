@@ -2,29 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/services/auth/firebase_auth_methods.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
-import 'package:note_app/widgets/text_field/custom_text_field.dart';
+import 'package:note_app/utils/routes/routes.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+import '../widgets/text_field/custom_text_field.dart';
+
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+
+    super.dispose();
   }
 
-  void loginUser() async {
+  void signUpUser() async {
     DeviceUtils.hideKeyboard(context);
-    context.read<FirebaseAuthMethods>().loginWithEmail(
+    context.read<FirebaseAuthMethods>().signUpWithEmail(
           email: _emailController.text,
           password: _passwordController.text,
           context: context,
@@ -38,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            "Login",
+            "Sign Up",
             style: TextStyle(fontSize: 30),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.08),
@@ -59,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: loginUser,
+            onPressed: signUpUser,
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.blue),
               textStyle: MaterialStateProperty.all(
@@ -70,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             child: const Text(
-              "Login",
+              "Sign Up",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
@@ -79,10 +83,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<FirebaseAuthMethods>().signInAnonymously(context);
+              Navigator.of(context).pushNamed(Routes.login);
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red),
+              backgroundColor: MaterialStateProperty.all(Colors.blue),
               textStyle: MaterialStateProperty.all(
                 const TextStyle(color: Colors.white),
               ),
@@ -91,28 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             child: const Text(
-              "Anonymous Login",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-          SizedBox(
-            height: 16.h,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.read<FirebaseAuthMethods>().signInWithGoogle(context);
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.red),
-              textStyle: MaterialStateProperty.all(
-                const TextStyle(color: Colors.white),
-              ),
-              minimumSize: MaterialStateProperty.all(
-                Size(MediaQuery.of(context).size.width / 2.5, 50),
-              ),
-            ),
-            child: const Text(
-              "Login with google",
+              "Go to login",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
