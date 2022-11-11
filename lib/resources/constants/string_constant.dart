@@ -5,3 +5,5 @@ class AppString {
 // todo: local string
   final String nameApp = "Note App";
 }
+
+
