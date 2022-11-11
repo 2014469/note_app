@@ -20,6 +20,7 @@ class LoginScreen extends StatelessWidget {
               );
             },
             child: const Text("Go to Home page")),
+            
       ),
     );
   }

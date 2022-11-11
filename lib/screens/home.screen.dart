@@ -18,15 +18,15 @@ class HomeScreen extends StatelessWidget {
     TextEditingController test2 =TextEditingController();
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: CustomAppbar(
+      /* appBar: CustomAppbar(
         handleBackBtn: (() {
           DebugLog.myLog("Backbtn");
         }),
         handleRightBtn: (() {
           DebugLog.myLog("Right btn");
         }),
-        title: "All Notes",
-      ),
+        title: "All Notes", */
+      //),
       body: SafeArea(
           child: Column(
         children: [
@@ -46,6 +46,8 @@ class HomeScreen extends StatelessWidget {
               child: const Text(
                 "Go to login",
               )),
+              // image 
+              Image.asset('assets/images/Logo.png'),
           InputField(controller: test,),
           PasswordField(controller: test2,)
         ],
