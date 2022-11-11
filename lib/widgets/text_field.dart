@@ -57,7 +57,7 @@ class _PasswordFieldState extends State<PasswordField> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       child: Stack(children: [
         TextFormField(
-          validator: (value) => "This is error",
+          // validator: (value) => "This is error",
           obscureText: hiddenFlag,
           controller: widget.controller,
           decoration: InputDecoration(
