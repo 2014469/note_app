@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/resources/colors/colors.dart';
-import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/utils/routes/routes.dart';
-import 'package:note_app/widgets/buttons.dart';
+import 'package:note_app/widgets/text_field.dart';
 
 import '../utils/customLog/debug_log.dart';
 import '../widgets/app_bar.dart';
@@ -15,6 +14,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController test =TextEditingController();
+    TextEditingController test2 =TextEditingController();
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppbar(
@@ -45,52 +46,8 @@ class HomeScreen extends StatelessWidget {
               child: const Text(
                 "Go to login",
               )),
-          LargeButton(
-            isOutlined: false,
-            text: "Sign in with Google",
-            onPressed: () {
-              DebugLog.myLog("Large Button Pressed");
-            },
-          ),
-          LargeButton(
-            isOutlined: true,
-            text: "Sign in with Google",
-            onPressed: () {
-              DebugLog.myLog("Large Button Pressed");
-            },
-          ),
-          LargeButton(
-            isOutlined: false,
-            text: "Sign in with Google",
-            iconPath: AssetPaths.google,
-            onPressed: () {
-              DebugLog.myLog("Large Button Pressed");
-            },
-          ),
-          LargeButton(
-            isOutlined: true,
-            text: "Sign in with Google",
-            iconPath: AssetPaths.google,
-            onPressed: () {
-              DebugLog.myLog("Large Button Pressed");
-            },
-          ),
-          Row(
-            children: [
-              SmallButton(
-                isOutlined: true,
-                onPressed: () {
-                  DebugLog.myLog("Small button pressed");
-                },
-              ),
-              SmallButton(
-                isOutlined: false,
-                onPressed: () {
-                  DebugLog.myLog("Small button pressed");
-                },
-              ),
-            ],
-          )
+          InputField(controller: test,),
+          PasswordField(controller: test2,)
         ],
       )),
     );

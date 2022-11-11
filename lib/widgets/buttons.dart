@@ -5,7 +5,12 @@ import '../resources/colors/colors.dart';
 import '../resources/fonts/enum_text_styles.dart';
 import '../resources/fonts/text_styles.dart';
 
+// ignore: todo
+// TODO: Thực hiện Cho phép custom màu button
+
+
 // LargeButton: Là Button lớn, bao gồm các thuộc tính:
+//      |__ onPressed: Bắt buộc, hàm xử lý cho sự kiện Press
 //      |__ isOutlined: Bắt buộc, định nghĩa kiểu của Button
 //      |       |__ True: OutLined (Có viền, không có background)
 //      |       |__ False: Elevated (Không có viền, background màu primary)
@@ -60,7 +65,7 @@ class LargeButton extends StatelessWidget {
                       ],
                     ))
           : ElevatedButton(
-             onPressed: onPressed,
+              onPressed: onPressed,
               style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   minimumSize: Size.fromHeight(60.h),
@@ -93,6 +98,7 @@ class LargeButton extends StatelessWidget {
   }
 }
 
+// Chưa xong âu :v, cần truyền tham số
 class SmallButton extends StatelessWidget {
   final bool isOutlined;
   final Function()? onPressed;
@@ -100,13 +106,30 @@ class SmallButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double phoneWidth=MediaQuery.of(context).size.width;
     return Container(
-        margin: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(8.w),
+//        decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
         child: isOutlined
             ? OutlinedButton(
-                onPressed: onPressed, child: const Text("Small Button"))
+                onPressed: onPressed,
+                style: OutlinedButton.styleFrom(
+                    side: const BorderSide(width: 1, color: AppColors.primary),
+                    minimumSize: Size(190.w, 60.h),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)))),
+                child: Text(
+                  "Small Button",
+                  style: AppTextStyles.h5[TextWeights.semibold]
+                      ?.copyWith(color: AppColors.gray[100]),
+                ))
             : ElevatedButton(
-                onPressed: onPressed, child: const Text("Small Button")));
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    minimumSize: Size(190.w, 60.h),
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30)))),
+                child: Text("Small Button",style: AppTextStyles.h5[TextWeights.semibold]
+                      ?.copyWith(color: AppColors.gray[0]),)));
   }
 }
