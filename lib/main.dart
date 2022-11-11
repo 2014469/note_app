@@ -7,6 +7,7 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/login.screen.dart';
+import 'package:note_app/screens/send_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -70,7 +71,11 @@ class AuthWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
-      return const HomeScreen();
+      if (firebaseUser.emailVerified) {
+        return const HomeScreen();
+      } else {
+        return const SendEmail();
+      }
     }
     return const LoginScreen();
   }

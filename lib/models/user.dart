@@ -8,7 +8,6 @@ class MyUser {
   String? fullName;
   String? email;
   String? photoUrl;
-  String? password;
 
   MyUser({
     this.uID,
@@ -16,7 +15,6 @@ class MyUser {
     this.fullName,
     this.email,
     this.photoUrl,
-    this.password,
   }) : id = const Uuid().v1();
 
   // factory MyUser.fromFirebase(User user) => MyUser(
@@ -32,7 +30,6 @@ class MyUser {
       UserString.fullName: fullName,
       UserString.email: email,
       UserString.photoUrl: photoUrl,
-      UserString.password: password,
     };
   }
 }
