@@ -4,10 +4,10 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/utils/routes/routes.dart';
-import 'package:note_app/widgets/text_field.dart';
 
 import '../utils/customLog/debug_log.dart';
 import '../widgets/app_bar.dart';
+import '../widgets/text_field/text_field.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,9 +22,7 @@ class HomeScreen extends StatelessWidget {
         handleBackBtn: (() {
           DebugLog.myLog("Backbtn");
         }),
-        handleRightBtn: (() {
-          DebugLog.myLog("Right btn");
-        }),
+      
         title: "All Notes",
       ),
       body: SafeArea(

@@ -15,7 +15,6 @@ class _FolderScreenState extends State<FolderScreen> {
       appBar: CustomAppbar(
         title: "UniNote",
         handleBackBtn: () {},
-        handleRightBtn: () {},
         isBackBtn: false,
       ),
       
