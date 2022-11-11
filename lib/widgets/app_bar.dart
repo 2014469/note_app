@@ -9,17 +9,21 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final bool isBackBtn;
   final bool isRightBtn;
+  final bool isTitle;
+  final bool isBorderBottom;
+  final List<Widget>? extraActions;
   final VoidCallback handleBackBtn;
-  final VoidCallback handleRightBtn;
 
   const CustomAppbar({
     super.key,
     this.isBackBtn = true,
     this.isRightBtn = true,
-    required this.title,
+    this.isTitle = true,
+    this.isBorderBottom = true,
+    this.title = "",
     this.backgroundColor = AppColors.background,
+    this.extraActions,
     required this.handleBackBtn,
-    required this.handleRightBtn,
   });
 
   @override
@@ -33,13 +37,15 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.5,
       titleSpacing: 0,
       leadingWidth: 92.w,
-      bottom: PreferredSize(
-        preferredSize: Size.fromHeight(0.2.w),
-        child: Container(
-          color: Colors.black,
-          height: 0.2.w,
-        ),
-      ),
+      bottom: isBorderBottom
+          ? PreferredSize(
+              preferredSize: Size.fromHeight(0.2.w),
+              child: Container(
+                color: Colors.black,
+                height: 0.2.w,
+              ),
+            )
+          : null,
       leading: isBackBtn
           ? InkWell(
               onTap: handleBackBtn,
@@ -61,40 +67,18 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
           : null,
-      title: Padding(
-        padding: isBackBtn ? EdgeInsets.zero : EdgeInsets.all(16.w),
-        child: Text(
-          title,
-          style: AppTextStyles.h4[TextWeights.semibold]?.copyWith(
-            color: AppColors.gray[70],
-          ),
-        ),
-      ),
-      actions: isRightBtn
-          ? [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 8.w,
-                  horizontal: 0,
+      title: isTitle
+          ? Padding(
+              padding: isBackBtn ? EdgeInsets.zero : EdgeInsets.all(16.w),
+              child: Text(
+                title,
+                style: AppTextStyles.h4[TextWeights.semibold]?.copyWith(
+                  color: AppColors.gray[70],
                 ),
-                child: OutlinedButton(
-                  onPressed: handleRightBtn,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: AppColors.primary,
-                      width: 3.w,
-                    ),
-                    shape: const CircleBorder(),
-                  ),
-                  child: Icon(
-                    Icons.more_horiz,
-                    color: AppColors.primary,
-                    size: 32.w,
-                  ),
-                ),
-              )
-            ]
+              ),
+            )
           : null,
+      actions: isRightBtn ? (extraActions) : null,
     );
   }
 }

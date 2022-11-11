@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:note_app/resources/colors/colors.dart';
+import 'package:note_app/resources/fonts/text_styles.dart';
 
-import '../resources/colors/colors.dart';
-import '../resources/fonts/enum_text_styles.dart';
-import '../resources/fonts/text_styles.dart';
+import '../../resources/fonts/enum_text_styles.dart';
 
 // ignore: todo
 // TODO: Thực hiện Cho phép custom màu button
-
 
 // LargeButton: Là Button lớn, bao gồm các thuộc tính:
 //      |__ onPressed: Bắt buộc, hàm xử lý cho sự kiện Press
@@ -129,7 +128,10 @@ class SmallButton extends StatelessWidget {
                     minimumSize: Size(190.w, 60.h),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(30)))),
-                child: Text("Small Button",style: AppTextStyles.h5[TextWeights.semibold]
-                      ?.copyWith(color: AppColors.gray[0]),)));
+                child: Text(
+                  "Small Button",
+                  style: AppTextStyles.h5[TextWeights.semibold]
+                      ?.copyWith(color: AppColors.gray[0]),
+                )));
   }
 }
