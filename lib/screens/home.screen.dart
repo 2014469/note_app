@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/resources/colors/colors.dart';
-import 'package:note_app/services/auth/firebase_auth_methods.dart';
+import 'package:note_app/services/auth/auth_service.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/customLog/debug_log.dart';
@@ -12,9 +12,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<FirebaseAuthMethods>().user;
+    final user = context.read<AuthService>().currentUser;
     // todo: setter display name
-    user.updateDisplayName("long");
+    // user.updateDisplayName("long");
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppbar(
@@ -27,33 +27,33 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            if (!user.isAnonymous) Text("Email: ${user.email!}"),
-            SizedBox(
-              height: 16.h,
-            ),
-            if (!user.isAnonymous) Text("Username: ${user.displayName!}"),
-            SizedBox(
-              height: 16.h,
-            ),
-            if (!user.isAnonymous) Image.network(user.photoURL!),
-            SizedBox(
-              height: 16.h,
-            ),
-            if (!user.isAnonymous)
-              Text("Provider id: ${user.providerData[0].providerId}"),
-            SizedBox(
-              height: 16.h,
-            ),
-            Text("UID: ${user.uid}"),
-            const Center(
-              child: Text("Home screen! Logged in"),
-            ),
-            SizedBox(
-              height: 16.h,
-            ),
+            // if (!user.isAnonymous) Text("Email: ${user.email!}"),
+            // SizedBox(
+            //   height: 16.h,
+            // ),
+            // if (!user.isAnonymous) Text("Username: ${user.displayName}"),
+            // SizedBox(
+            //   height: 16.h,
+            // ),
+            // if (!user.isAnonymous) Image.network(user.photoURL ?? ""),
+            // SizedBox(
+            //   height: 16.h,
+            // ),
+            // if (!user.isAnonymous)
+            //   Text("Provider id: ${user.providerData[0].providerId}"),
+            // SizedBox(
+            //   height: 16.h,
+            // ),
+            // Text("UID: ${user.uid}"),
+            // const Center(
+            //   child: Text("Home screen! Logged in"),
+            // ),
+            // SizedBox(
+            //   height: 16.h,
+            // ),
             ElevatedButton(
               onPressed: () {
-                context.read<FirebaseAuthMethods>().signOut(context);
+                context.read<AuthService>().logOUt();
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.blue),
@@ -74,7 +74,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<FirebaseAuthMethods>().deleteAccount(context);
+                context.read<AuthService>().deleteAccount();
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.red),

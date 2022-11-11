@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/services/auth/firebase_auth_methods.dart';
+import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:provider/provider.dart';
@@ -15,11 +15,14 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _userNameController = TextEditingController();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
   void dispose() {
+    _userNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
 
@@ -28,11 +31,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void signUpUser() async {
     DeviceUtils.hideKeyboard(context);
-    context.read<FirebaseAuthMethods>().signUpWithEmail(
+    context
+        .read<AuthService>()
+        .signUpEmailPassword(
+          username: _userNameController.text,
           email: _emailController.text,
           password: _passwordController.text,
-          context: context,
-        );
+        )
+        .then((value) => (context.read<AuthService>().sendEmailVerification()));
   }
 
   @override
@@ -46,6 +52,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: TextStyle(fontSize: 30),
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.08),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: CustomTextField(
+              controller: _userNameController,
+              hintText: 'Enter your username',
+            ),
+          ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomTextField(

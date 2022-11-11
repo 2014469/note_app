@@ -7,7 +7,8 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/login.screen.dart';
-import 'package:note_app/services/auth/firebase_auth_methods.dart';
+import 'package:note_app/services/auth/auth_service.dart';
+import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -37,11 +38,11 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<FirebaseAuthMethods>(
-          create: (_) => FirebaseAuthMethods(FirebaseAuth.instance),
+        Provider<AuthService>(
+          create: (_) => AuthService(FirebaseAuthProvider()),
         ),
         StreamProvider(
-          create: ((context) => context.read<FirebaseAuthMethods>().authState),
+          create: ((context) => context.read<AuthService>().authState),
           initialData: null,
         ),
       ],

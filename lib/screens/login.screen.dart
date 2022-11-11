@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/services/auth/firebase_auth_methods.dart';
+import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
+import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/widgets/text_field/custom_text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -24,10 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginUser() async {
     DeviceUtils.hideKeyboard(context);
-    context.read<FirebaseAuthMethods>().loginWithEmail(
+    context.read<AuthService>().loginEmailPassword(
           email: _emailController.text,
           password: _passwordController.text,
-          context: context,
         );
   }
 
@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<FirebaseAuthMethods>().signInAnonymously(context);
+              Navigator.of(context).pushNamed(Routes.signup);
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.red),
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             child: const Text(
-              "Anonymous Login",
+              "Sign up page",
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<FirebaseAuthMethods>().signInWithGoogle(context);
+              context.read<AuthService>().loginWithGoogle();
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all(Colors.red),
