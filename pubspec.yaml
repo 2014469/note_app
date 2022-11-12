@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  form_validator: ^1.0.3
   flutter:
     sdk: flutter
 
@@ -72,6 +73,8 @@ flutter:
     - assets/images/ic_google.png
     - assets/images/ic_hide.png
     - assets/images/ic_show.png
+    - assets/images/Logo.png
+    - assets/images/arrow_left.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -5,4 +5,7 @@ class AssetPaths{
   static const String google='$prePath/ic_google.png';
   static const String eyeShow='$prePath/ic_show.png';
   static const String eyeHide='$prePath/ic_hide.png';
+  static const String logo='$prePath/Logo.png';
+  static const String arrowLeft='$prePath/arrow_left.png';
+
 }

@@ -61,4 +61,13 @@ class AuthService implements AuthProvider {
 
   @override
   bool get authIsVerifiedEmail => provider.authIsVerifiedEmail;
+//   @override
+//   Future<AuthUser> resetPassword({
+//     required String password,
+//     required String confirmpassword,
+//   }) =>
+//       provider.resetPassword(
+//         password: password,
+//         confirmpassword: confirmpassword,
+//       );
 }

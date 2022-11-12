@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:note_app/resources/colors/colors.dart';
+import 'package:note_app/resources/constants/asset_path.dart';
+import 'package:note_app/resources/fonts/enum_text_styles.dart';
+import 'package:note_app/resources/fonts/text_styles.dart';
+import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
 import 'package:note_app/utils/routes/routes.dart';
+import 'package:note_app/widgets/buttons/buttons.dart';
+import 'package:note_app/widgets/logo/images_logo.dart';
+import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
-
-import '../services/auth/auth_service.dart';
-import '../widgets/text_field/custom_text_field.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -16,14 +20,14 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _userNameController = TextEditingController();
-
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void dispose() {
     _userNameController.dispose();
-    _emailController.dispose();
+    _confirmPasswordController.dispose();
     _passwordController.dispose();
 
     super.dispose();
@@ -33,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     DeviceUtils.hideKeyboard(context);
     await context.read<AuthService>().signUpEmailPassword(
           username: _userNameController.text,
-          email: _emailController.text,
+          email: _confirmPasswordController.text,
           password: _passwordController.text,
         );
     // ignore: use_build_context_synchronously
@@ -46,76 +50,79 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Sign Up",
-            style: TextStyle(fontSize: 30),
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.08),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: _userNameController,
-              hintText: 'Enter your username',
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: _emailController,
-              hintText: 'Enter your email',
-            ),
-          ),
-          const SizedBox(height: 20),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            child: CustomTextField(
-              controller: _passwordController,
-              hintText: 'Enter your password',
-            ),
-          ),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            onPressed: signUpUser,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
-              textStyle: MaterialStateProperty.all(
-                const TextStyle(color: Colors.white),
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+          reverse: true,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 50),
+
+              // images logo
+              const ImageLogo(),
+
+              // text sign up
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 24, 0, 24),
+                child: Text(
+                  "Sign Up",
+                  style: TextStyle(fontSize: 30, color: AppColors.primary),
+                ),
               ),
-              minimumSize: MaterialStateProperty.all(
-                Size(MediaQuery.of(context).size.width / 2.5, 50),
+
+              // edit text
+              InputField(controller: _userNameController, hintText: "Email"),
+              PasswordField(
+                  controller: _passwordController, hintText: "Password"),
+              PasswordField(
+                  controller: _confirmPasswordController,
+                  hintText: 'Confirm Password'),
+              const SizedBox(height: 10),
+
+              // button Next
+              LargeButton(
+                isOutlined: false,
+                onPressed: signUpUser,
+                text: "Next",
               ),
-            ),
-            child: const Text(
-              "Sign Up",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-          SizedBox(
-            height: 16.h,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(Routes.login);
-            },
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(Colors.blue),
-              textStyle: MaterialStateProperty.all(
-                const TextStyle(color: Colors.white),
+
+              // text or
+              Container(
+                child: Center(
+                  child: Text(
+                    'Or',
+                    style: AppTextStyles.h5[TextWeights.semibold]
+                        ?.copyWith(color: AppColors.gray[50]),
+                  ),
+                ),
               ),
-              minimumSize: MaterialStateProperty.all(
-                Size(MediaQuery.of(context).size.width / 2.5, 50),
+
+              // button sign in with google
+              LargeButton(
+                  isOutlined: true,
+                  onPressed: () {},
+                  iconPath: AssetPaths.google,
+                  text: 'Sign up with Google'),
+
+              // link to Login
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(100, 20, 90, 0),
+                  child: Row(children: [
+                    Text('Had an account?',
+                        style: AppTextStyles.h6[TextWeights.regular]
+                            ?.copyWith(color: AppColors.gray[70])),
+                    Text('Login',
+                        style: AppTextStyles.h6[TextWeights.semibold]
+                            ?.copyWith(color: AppColors.primary))
+                  ]),
+                ),
               ),
-            ),
-            child: const Text(
-              "Go to login",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom)),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }
