@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note_app/firebase_options.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/screens/home.screen.dart';
@@ -20,9 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // todo: intial firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await AuthService.firebase().initialize();
 
 // todo: change color status bar
   SystemChrome.setSystemUIOverlayStyle(
