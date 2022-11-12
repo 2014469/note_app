@@ -17,7 +17,6 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // todo: intial firebase
   await AuthService.firebase().initialize();
 
 // todo: change color status bar
@@ -64,15 +63,20 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User?>();
-
-    if (firebaseUser != null) {
-      if (firebaseUser.emailVerified) {
-        return const HomeScreen();
-      } else {
-        return const SendEmail();
-      }
-    }
-    return const LoginScreen();
+    // final firebaseUser = context.watch<User?>();
+    return Consumer<User?>(
+      builder: (context, value, child) {
+        if (value != null) {
+          bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
+          if (isCheck) {
+            return const HomeScreen();
+          } else {
+            return const SendEmail();
+          }
+        } else {
+          return const LoginScreen();
+        }
+      },
+    );
   }
 }

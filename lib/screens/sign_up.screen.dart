@@ -31,14 +31,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void signUpUser() async {
     DeviceUtils.hideKeyboard(context);
-    context
-        .read<AuthService>()
-        .signUpEmailPassword(
+    await context.read<AuthService>().signUpEmailPassword(
           username: _userNameController.text,
           email: _emailController.text,
           password: _passwordController.text,
-        )
-        .then((value) => (context.read<AuthService>().sendEmailVerification()));
+        );
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.authWrapper,
+      (route) => false,
+    );
   }
 
   @override

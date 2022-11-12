@@ -80,8 +80,8 @@ class _PasswordFieldState extends State<PasswordField> {
           right: 16.w,
           top: 12.h,
           child: InkWell(
-            child:
-                Image.asset(hiddenFlag ? AssetPaths.eyeHide : AssetPaths.eyeShow),
+            child: Image.asset(
+                hiddenFlag ? AssetPaths.eyeHide : AssetPaths.eyeShow),
             onTap: () {
               setState(() {
                 hiddenFlag = !hiddenFlag;

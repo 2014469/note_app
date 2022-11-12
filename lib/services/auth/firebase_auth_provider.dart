@@ -6,14 +6,35 @@ import 'package:note_app/services/auth/auth_exceptions.dart';
 import 'package:note_app/services/auth/auth_provider.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:note_app/services/user/user_action.dart';
 import 'package:note_app/utils/customLog/debug_log.dart';
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
-  AuthUser? get currentUser {
+  Future<AuthUser?> get currentUser async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return AuthUser.fromFirebaseWithVerifiedEmail(user);
+      String uid = user.uid;
+      bool isUserExist = await UserAction().userExists(uid);
+      AuthUser authUser;
+      if (isUserExist) {
+        return await UserAction().fetchUser(uId: uid);
+      } else {
+        authUser = AuthUser.fromFirebaseWithInformation(user);
+        await UserAction().addUser(user: authUser);
+        authUser.printInfo();
+        return authUser;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  User? get getUser {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user;
     }
     return null;
   }
@@ -31,6 +52,8 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<void> deleteAccount() async {
     try {
+      await UserAction()
+          .deleteUser(uId: FirebaseAuth.instance.currentUser!.uid);
       await FirebaseAuth.instance.currentUser!.delete();
     } on FirebaseAuthException {
       throw UserNotLoggedInAuthException();
@@ -40,6 +63,8 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<void> logOUt() async {
     final user = FirebaseAuth.instance.currentUser;
+    DebugLog.myLog(user?.uid.toString() ?? "Null uid");
+    DebugLog.myLog(user?.email.toString() ?? "Null email");
     if (user != null) {
       await FirebaseAuth.instance.signOut();
     } else {
@@ -48,18 +73,19 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> loginEmailPassword({
+  Future<void> loginEmailPassword({
     required String email,
     required String password,
   }) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final user = currentUser;
+      final user = userCredential.user;
       if (user != null) {
-        return user;
+        return;
       } else {
         throw UserNotLoggedInAuthException();
       }
@@ -76,10 +102,10 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> loginWithGoogle() async {
+  Future<void> loginWithGoogle() async {
+    // AuthUser authUser;
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn(
-      ).signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth =
@@ -89,10 +115,20 @@ class FirebaseAuthProvider implements AuthProvider {
           idToken: googleAuth.idToken,
         );
         DebugLog.myLog("Dang nhap");
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        final user = currentUser;
+
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        final user = userCredential.user;
         if (user != null) {
-          return user;
+          // if (userCredential.additionalUserInfo!.isNewUser) {
+          //   // add the data to firebase
+          //   authUser = AuthUser.fromFirebaseWithInformation(user);
+          //   await UserAction().addUser(user: authUser);
+          //   authUser.printInfo();
+          return;
+          // } else {
+          //   // return UserAction().fetchUser(uId: user.uid);
+          // }
         } else {
           throw UserNotLoggedInAuthException();
         }
@@ -117,20 +153,22 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> signUpEmailPassword({
+  Future<void> signUpEmailPassword({
     required String username,
     required String email,
     required String password,
   }) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        // username : username,
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final user = currentUser;
+
+      final user = userCredential.user;
       if (user != null) {
-        return user;
+        user.updateDisplayName(username);
+        return;
       } else {
         throw UserNotLoggedInAuthException();
       }
@@ -147,5 +185,18 @@ class FirebaseAuthProvider implements AuthProvider {
     } catch (_) {
       throw GenericAuthException();
     }
+  }
+
+  @override
+  User reloadCurrentUser() {
+    User oldUser = FirebaseAuth.instance.currentUser!;
+    oldUser.reload();
+    User newUser = FirebaseAuth.instance.currentUser!;
+    return newUser;
+  }
+
+  @override
+  bool get authIsVerifiedEmail {
+    return FirebaseAuth.instance.currentUser?.emailVerified ?? false;
   }
 }

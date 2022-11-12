@@ -25,10 +25,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void loginUser() async {
     DeviceUtils.hideKeyboard(context);
-    context.read<AuthService>().loginEmailPassword(
+    await context.read<AuthService>().loginEmailPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.authWrapper,
+      (route) => false,
+    );
   }
 
   @override
