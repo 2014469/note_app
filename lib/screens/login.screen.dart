@@ -7,7 +7,6 @@ import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/widgets/buttons/buttons.dart';
-import 'package:note_app/widgets/logo/images_logo.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             const SizedBox(height: 50),
             // images logo
-            const ImageLogo(),
+            Image.asset(AssetPaths.logo),
 
             // text login
             const Padding(
@@ -75,28 +74,26 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 10),
 
             // remember me and forget password
-            Container(
-              child: Row(
-                children: [
-                  Checkbox(
-                    value: value,
-                    onChanged: (_) {
-                      setState(() {
-                        value = !value;
-                      });
-                    },
-                  ),
-                  Text('Remember me',
-                      style: (AppTextStyles.subtitile[TextWeights.semibold]
+            Row(
+              children: [
+                Checkbox(
+                  value: value,
+                  onChanged: (_) {
+                    setState(() {
+                      value = !value;
+                    });
+                  },
+                ),
+                Text('Remember me',
+                    style: (AppTextStyles.subtitile[TextWeights.semibold]
+                        ?.copyWith(color: AppColors.gray[70]))),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(101, 0, 0, 0),
+                  child: Text('Forget password',
+                      style: (AppTextStyles.subtitile[TextWeights.medium]
                           ?.copyWith(color: AppColors.gray[70]))),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(101, 0, 0, 0),
-                    child: Text('Forget password',
-                        style: (AppTextStyles.subtitile[TextWeights.medium]
-                            ?.copyWith(color: AppColors.gray[70]))),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
             const SizedBox(height: 10),
 
@@ -108,13 +105,11 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
 
             // text or
-            Container(
-              child: Center(
-                child: Text(
-                  'Or',
-                  style: AppTextStyles.h5[TextWeights.semibold]
-                      ?.copyWith(color: AppColors.gray[50]),
-                ),
+            Center(
+              child: Text(
+                'Or',
+                style: AppTextStyles.h5[TextWeights.semibold]
+                    ?.copyWith(color: AppColors.gray[50]),
               ),
             ),
 
