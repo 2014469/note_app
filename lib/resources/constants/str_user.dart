@@ -7,4 +7,5 @@ class UserString {
   static const email = 'email';
   static const photoUrl = 'photo_url';
   static const password = 'password';
+  //static const confirmpassword = 'confirmpassword';
 }

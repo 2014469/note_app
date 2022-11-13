@@ -5,8 +5,12 @@ import 'package:flutter/services.dart';
 import 'package:note_app/firebase_options.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
+import 'package:note_app/screens/checkmail.screen.dart';
 import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/login.screen.dart';
+import 'package:note_app/screens/reset_password.screen.dart';
+import 'package:note_app/screens/sign_up.screen.dart';
+import 'package:note_app/screens/welcome.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -72,6 +76,6 @@ class AuthWrapper extends StatelessWidget {
     if (firebaseUser != null) {
       return const HomeScreen();
     }
-    return const LoginScreen();
+    return const ResetPassword();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:note_app/models/auth_user.dart';
+import 'package:note_app/screens/reset_password.screen.dart';
 import 'package:note_app/services/auth/auth_exceptions.dart';
 import 'package:note_app/services/auth/auth_provider.dart';
 
@@ -143,4 +144,6 @@ class FirebaseAuthProvider implements AuthProvider {
       throw GenericAuthException();
     }
   }
+
+    
 }

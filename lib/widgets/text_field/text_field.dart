@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
-
+// ô nhập dữ liệu email  
 class InputField extends StatelessWidget {
   final TextEditingController controller;
   final String? errorText;
@@ -30,11 +30,12 @@ class InputField extends StatelessWidget {
             errorText: errorText,
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w)),
+           
       ),
     );
   }
 }
-
+// ô nhập password 
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
@@ -73,6 +74,13 @@ class _PasswordFieldState extends State<PasswordField> {
               errorText: widget.errorText,
               contentPadding:
                   EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w)),
+          //   validator: (value){
+          //   if (value !=null && value.length<7){
+          //     return 'enter min. 7 character';
+          //   }else{
+          //     return null;
+          //   }
+          //  }, 
         ),
         Positioned(
           height: 30.h,

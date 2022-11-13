@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:note_app/models/auth_user.dart';
+import 'package:note_app/screens/reset_password.screen.dart';
 import 'package:note_app/services/auth/auth_provider.dart';
 
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
@@ -52,4 +53,14 @@ class AuthService implements AuthProvider {
         email: email,
         password: password,
       );
+
+//   @override
+//   Future<AuthUser> resetPassword({
+//     required String password,
+//     required String confirmpassword,
+//   }) =>
+//       provider.resetPassword(   
+//         password: password,
+//         confirmpassword: confirmpassword,
+//       );
 }

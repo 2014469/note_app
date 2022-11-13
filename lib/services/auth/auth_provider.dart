@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:note_app/models/auth_user.dart';
+import 'package:note_app/screens/reset_password.screen.dart';
 
 abstract class AuthProvider {
   Future<void> initialize();
@@ -18,6 +19,10 @@ abstract class AuthProvider {
     required String password,
   });
 
+//  Future<AuthUser> resetPassword({   
+//     required String password,
+//     required String confirmpassword,
+//   });
   Future<AuthUser> loginWithGoogle();
   Future<void> logOUt();
   Future<void> sendEmailVerification();
