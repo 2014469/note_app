@@ -42,7 +42,7 @@ class LargeButton extends StatelessWidget {
                       double.infinity,
                       0,
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 6.h),
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(32.r),
@@ -85,7 +85,7 @@ class LargeButton extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: EdgeInsets.symmetric(
-                      vertical: 16.h,
+                      vertical: 20.h,
                     ),
                     minimumSize: const Size(double.infinity, 0),
                     shape: RoundedRectangleBorder(
