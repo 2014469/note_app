@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
-import 'package:note_app/screens/home.screen.dart';
-import 'package:note_app/screens/login.screen.dart';
-import 'package:note_app/screens/send_email.screen.dart';
+import 'package:note_app/resources/fonts/enum_text_styles.dart';
+import 'package:note_app/resources/fonts/text_styles.dart';
+import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -47,6 +46,26 @@ void main() async {
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                      borderSide:
+                          BorderSide(color: AppColors.gray[30]!, width: 0.5.w)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(32.r),
+                    ),
+                    borderSide: BorderSide(
+                      color: AppColors.yellowGold,
+                      width: 2.w,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
+                    color: AppColors.gray[40],
+                  ),
+                ),
               ),
               routes: Routes.routes,
               home: const AuthWrapper(),
@@ -63,20 +82,22 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final firebaseUser = context.watch<User?>();
-    return Consumer<User?>(
-      builder: (context, value, child) {
-        if (value != null) {
-          bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
-          if (isCheck) {
-            return const HomeScreen();
-          } else {
-            return const SendEmail();
-          }
-        } else {
-          return const LoginScreen();
-        }
-      },
-    );
+    return const VerifyEmailScreen();
+    // return const SignUpScreen();
+    // return const LoginScreen();
+    // return Consumer<User?>(
+    //   builder: (context, value, child) {
+    //     if (value != null) {
+    //       bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
+    //       if (isCheck) {
+    //         return const HomeScreen();
+    //       } else {
+    //         return const SendEmail();
+    //       }
+    //     } else {
+    //       return const LoginScreen();
+    //     }
+    //   },
+    // );
   }
 }
