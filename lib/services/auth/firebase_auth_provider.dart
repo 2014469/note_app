@@ -116,22 +116,10 @@ class FirebaseAuthProvider implements AuthProvider {
         );
         DebugLog.myLog("Dang nhap");
 
-        UserCredential userCredential =
+        // UserCredential userCredential =
             await FirebaseAuth.instance.signInWithCredential(credential);
-        final user = userCredential.user;
-        if (user != null) {
-          // if (userCredential.additionalUserInfo!.isNewUser) {
-          //   // add the data to firebase
-          //   authUser = AuthUser.fromFirebaseWithInformation(user);
-          //   await UserAction().addUser(user: authUser);
-          //   authUser.printInfo();
-          return;
-          // } else {
-          //   // return UserAction().fetchUser(uId: user.uid);
-          // }
-        } else {
-          throw UserNotLoggedInAuthException();
-        }
+        // final user = userCredential.user;
+
       } else {
         throw GoogleSignInAccountException();
       }

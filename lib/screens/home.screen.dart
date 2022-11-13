@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/services/auth/auth_service.dart';
+import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/customLog/debug_log.dart';
@@ -21,6 +21,9 @@ class HomeScreen extends StatelessWidget {
         var data = snapshot.data;
         if (data != null) {
           user = data;
+          Future.delayed(Duration.zero, () {
+            showSnackBarSuccess(context, "Login success");
+          });
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: CustomAppbar(
@@ -54,9 +57,7 @@ class HomeScreen extends StatelessWidget {
                   // ),
                   ElevatedButton(
                     onPressed: () {
-                      User? user = context.read<AuthService>().getUser;
-                      DebugLog.myLog(user?.uid.toString() ?? "null user");
-
+                      showSnackBarInfo(context, 'Logout account!');
                       context.read<AuthService>().logOUt();
                     },
                     style: ButtonStyle(
@@ -78,6 +79,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      showSnackBarInfo(context, 'Deleting account!');
                       context.read<AuthService>().deleteAccount();
                     },
                     style: ButtonStyle(

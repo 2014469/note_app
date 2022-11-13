@@ -72,22 +72,20 @@ class _WelcomePasswordState extends State<WelcomePassword> {
                   hintText: 'Retype Password'),
 
               // check box i agree the mentioned terms
-              Container(
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: value,
-                      onChanged: (_) {
-                        setState(() {
-                          value = !value;
-                        });
-                      },
-                    ),
-                    Text('I agree the mentioned terms',
-                        style: (AppTextStyles.subtitile[TextWeights.semibold]
-                            ?.copyWith(color: AppColors.gray[70]))),
-                  ],
-                ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: value,
+                    onChanged: (_) {
+                      setState(() {
+                        value = !value;
+                      });
+                    },
+                  ),
+                  Text('I agree the mentioned terms',
+                      style: (AppTextStyles.subtitile[TextWeights.semibold]
+                          ?.copyWith(color: AppColors.gray[70]))),
+                ],
               ),
               const SizedBox(height: 10),
 

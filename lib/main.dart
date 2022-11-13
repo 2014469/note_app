@@ -7,7 +7,7 @@ import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
-import 'package:note_app/screens/sign_in_up/send_email.screen.dart';
+import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -91,7 +91,7 @@ class AuthWrapper extends StatelessWidget {
           if (isCheck) {
             return const HomeScreen();
           } else {
-            return const SendEmail();
+            return const VerifyEmailScreen();
           }
         } else {
           return const LoginScreen();

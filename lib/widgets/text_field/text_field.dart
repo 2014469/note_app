@@ -7,13 +7,16 @@ class InputField extends StatelessWidget {
   final TextEditingController controller;
   final String? errorText;
   final String? hintText;
+  final String? helperText;
   final Function(String)? onChanged;
-  const InputField(
-      {super.key,
-      this.errorText,
-      this.onChanged,
-      this.hintText,
-      required this.controller});
+  const InputField({
+    super.key,
+    this.errorText,
+    this.onChanged,
+    this.hintText,
+    required this.controller,
+    this.helperText = " ",
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class InputField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hintText,
           errorText: errorText,
-          helperText: " ",
+          helperText: helperText,
           filled: true,
           fillColor: Colors.white,
           contentPadding: EdgeInsets.symmetric(
@@ -45,13 +48,16 @@ class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String? errorText;
   final String? hintText;
+  final String? helperText;
   final Function(String)? onChanged;
   const PasswordField(
       {super.key,
       this.errorText,
       this.onChanged,
       this.hintText,
-      required this.controller});
+    required this.controller,
+    this.helperText = " ",
+  });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -74,7 +80,7 @@ class _PasswordFieldState extends State<PasswordField> {
         decoration: InputDecoration(
           hintText: widget.hintText,
           errorText: widget.errorText,
-          helperText: " ",
+          helperText: widget.helperText,
           suffixIcon: IconButton(
               onPressed: () {
                 setState(() {

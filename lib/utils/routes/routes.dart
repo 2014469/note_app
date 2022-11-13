@@ -12,11 +12,18 @@ class Routes {
   static const String home = '/home';
   static const String signup = '/signup';
   static const String authWrapper = '/authwrapper';
+  static const String loading = '/loading';
 
   static final routes = <String, WidgetBuilder>{
     login: (BuildContext context) => const LoginScreen(),
     home: (BuildContext context) => const HomeScreen(),
     signup: (BuildContext context) => const SignUpScreen(),
     authWrapper: (BuildContext context) => const AuthWrapper(),
+    loading: (BuildContext context) => const Scaffold(
+          body: SafeArea(
+              child: Center(
+            child: Text("Loading"),
+          )),
+        ),
   };
 }

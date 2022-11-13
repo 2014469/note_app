@@ -4,9 +4,15 @@ import 'package:note_app/resources/constants/sign_in_up/str_sign_in.dart';
 import 'package:note_app/screens/sign_in_up/widgets/bottom_navigator.dart';
 import 'package:note_app/screens/sign_in_up/widgets/logo.dart';
 import 'package:note_app/screens/sign_in_up/widgets/titils_screen.dart';
+import 'package:note_app/services/auth/auth_exceptions.dart';
+import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/utils/devices/device_utils.dart';
+import 'package:note_app/utils/routes/routes.dart';
+import 'package:note_app/utils/show_snack_bar.dart';
+import 'package:note_app/utils/validate/utils_validation.dart';
 import 'package:note_app/widgets/buttons/buttons.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -17,10 +23,20 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _userNameController = TextEditingController();
+
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  var _textEmail = '';
+
+  final _textUser = '';
+  final _textEmail = '';
+  final _textPassword = '';
+  final _textPasswordConfirm = '';
+
+// ignore touch butoon, screen
+  bool _ignoreTouch = false;
+  bool _isDisabledSignupBtn = true;
 
   @override
   void dispose() {
@@ -32,36 +48,103 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void signUpUser() async {
-    // DeviceUtils.hideKeyboard(context);
-    // await context.read<AuthService>().signUpEmailPassword(
-    //       username: _userNameController.text,
-    //       email: _confirmPasswordController.text,
-    //       password: _passwordController.text,
-    //     );
-    // // ignore: use_build_context_synchronously
-    // Navigator.of(context).pushNamedAndRemoveUntil(
-    //   Routes.authWrapper,
-    //   (route) => false,
-    // );
+    DeviceUtils.hideKeyboard(context);
+    try {
+      setState(() {
+        _ignoreTouch = true;
+      });
+      await context.read<AuthService>().signUpEmailPassword(
+            username: _userNameController.text,
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+
+      await Future.delayed(
+        const Duration(seconds: 1),
+        () => {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.authWrapper,
+            (route) => false,
+          )
+        },
+      );
+    } on EmailAlreadyInUseAuthException {
+      setState(() {
+        _ignoreTouch = false;
+      });
+      showSnackBarError(context, "Email already use");
+    } on WeakPasswordAuthException {
+      setState(() {
+        _ignoreTouch = false;
+      });
+      showSnackBarError(context, "Weak password");
+    } on InvalidEmailAuthException {
+      setState(() {
+        _ignoreTouch = false;
+      });
+      showSnackBarError(
+        context,
+        'Invalid email',
+      );
+    } on GenericAuthException {
+      setState(() {
+        _ignoreTouch = false;
+      });
+      showSnackBarError(
+        context,
+        'Authentication error',
+      );
+    }
   }
+
   void naviageToSignInPage() {
     DeviceUtils.hideKeyboard(context);
     Navigator.of(context).pop();
   }
 
-  String? get _errorText {
-    // at any time, we can get the text from _controller.value.text
-    _textEmail = _userNameController.value.text;
-    // Note: you can do your own custom validation here
-    // Move this logic this outside the widget for more testable code
-    if (_textEmail.isEmpty) {
-      return 'Can\'t be empty';
+  String? get _errorTextEmail {
+    String? result = checkEmail(_emailController.text);
+
+    if (result == null) {
+      setState(() {
+        _isDisabledSignupBtn = false;
+      });
+    } else {
+      setState(() {
+        _isDisabledSignupBtn = true;
+      });
     }
-    if (_textEmail.length < 3) {
-      return 'Too short';
+    return result;
+  }
+
+  String? get _errorPasswordStrength {
+    String? result = checkPassword(_passwordController.value.text);
+    if (result == null) {
+      setState(() {
+        _isDisabledSignupBtn = false;
+      });
+    } else {
+      setState(() {
+        _isDisabledSignupBtn = true;
+      });
     }
-    // return null if the text is valid
-    return null;
+    return result;
+  }
+
+  String? get _errorPasswordConfirm {
+    String? result = checkPasswordConfirmMatch(
+        _passwordController.text, _confirmPasswordController.text);
+
+    if (result == null) {
+      setState(() {
+        _isDisabledSignupBtn = false;
+      });
+    } else {
+      setState(() {
+        _isDisabledSignupBtn = true;
+      });
+    }
+    return result;
   }
 
   @override
@@ -71,56 +154,69 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           reverse: true,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 20.h),
-              // images logo
-              const Logo(),
+          child: IgnorePointer(
+            ignoring: _ignoreTouch,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 20.h),
+                // images logo
+                const Logo(),
 
-              const TitleScreen(
-                title: SignInUpString.signUp,
-              ),
-              // text sign up
-              // edit text
+                const TitleScreen(
+                  title: SignInUpString.signUp,
+                ),
+                // text sign up
+                // edit text
 
-              InputField(
-                controller: _userNameController,
-                hintText: "Username",
-                errorText: _errorText,
-                onChanged: (text) => setState(() => _textEmail),
-              ),
-              InputField(
-                controller: _userNameController,
-                hintText: "Email",
-                errorText: _errorText,
-                onChanged: (text) => setState(() => _textEmail),
-              ),
-              PasswordField(
-                controller: _passwordController,
-                hintText: "Password",
-                errorText: _errorText,
-                onChanged: (text) => setState(() => _textEmail),
-              ),
-              PasswordField(
-                controller: _confirmPasswordController,
-                hintText: 'Confirm Password',
-                errorText: _errorText,
-                onChanged: (text) => setState(() => _textEmail),
-              ),
-              // button Next
-              LargeButton(
-                isOutlined: false,
-                onPressed: signUpUser,
-                text: "Next",
-              ),
-
-              BottomNavigator(
-                content: 'Had an account?',
-                nameScreenNavigator: SignInUpString.signin,
-                handleNavigator: naviageToSignInPage,
-              ),
-            ],
+                InputField(
+                  controller: _userNameController,
+                  hintText: "Username",
+                  errorText: null,
+                  onChanged: (text) => setState(() => _textUser),
+                ),
+                InputField(
+                  controller: _emailController,
+                  hintText: "Email",
+                  errorText: _errorTextEmail,
+                  onChanged: (text) => setState(() => _textEmail),
+                ),
+                PasswordField(
+                  controller: _passwordController,
+                  hintText: "Password",
+                  helperText: checkStrengthPassword(_passwordController.text),
+                  errorText: _errorPasswordStrength,
+                  onChanged: (text) => setState(() => _textPassword),
+                ),
+                PasswordField(
+                  controller: _confirmPasswordController,
+                  hintText: 'Confirm Password',
+                  errorText: _errorPasswordConfirm,
+                  onChanged: (text) => setState(() => _textPasswordConfirm),
+                ),
+                // button Next
+                AbsorbPointer(
+                  absorbing: _isDisabledSignupBtn,
+                  child: LargeButton(
+                    isOutlined: false,
+                    onPressed: signUpUser,
+                    text: "Next",
+                  ),
+                ),
+          
+                BottomNavigator(
+                  content: 'Had an account?',
+                  nameScreenNavigator: SignInUpString.signin,
+                  handleNavigator: naviageToSignInPage,
+                ),
+          
+                // todo:  padding keyboard autoscroll
+                Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                )
+              ],
+            ),
           ),
         ),
       ),
