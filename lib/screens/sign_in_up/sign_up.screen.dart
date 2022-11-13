@@ -4,6 +4,7 @@ import 'package:note_app/resources/constants/sign_in_up/str_sign_in.dart';
 import 'package:note_app/screens/sign_in_up/widgets/bottom_navigator.dart';
 import 'package:note_app/screens/sign_in_up/widgets/logo.dart';
 import 'package:note_app/screens/sign_in_up/widgets/titils_screen.dart';
+import 'package:note_app/utils/devices/device_utils.dart';
 import 'package:note_app/widgets/buttons/buttons.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 
@@ -42,6 +43,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     //   Routes.authWrapper,
     //   (route) => false,
     // );
+  }
+  void naviageToSignInPage() {
+    DeviceUtils.hideKeyboard(context);
+    Navigator.of(context).pop();
   }
 
   String? get _errorText {
@@ -113,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               BottomNavigator(
                 content: 'Had an account?',
                 nameScreenNavigator: SignInUpString.signin,
-                handleNavigator: () {},
+                handleNavigator: naviageToSignInPage,
               ),
             ],
           ),

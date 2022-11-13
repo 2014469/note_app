@@ -8,8 +8,13 @@ import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/sign_in_up/widgets/bottom_navigator.dart';
 import 'package:note_app/screens/sign_in_up/widgets/logo.dart';
 import 'package:note_app/screens/sign_in_up/widgets/titils_screen.dart';
+import 'package:note_app/services/auth/auth_service.dart';
+import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/widgets/buttons/buttons.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
+import 'package:provider/provider.dart';
+
+import '../../utils/devices/device_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,17 +39,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginUser() async {
-    // DeviceUtils.hideKeyboard(context);
-    // context.read<AuthService>().loginEmailPassword(
-    //       email: inputFieldController.text,
-    //       password: passwordFieldController.text,
-    //     );
+    DeviceUtils.hideKeyboard(context);
+    context.read<AuthService>().loginEmailPassword(
+          email: inputFieldController.text,
+          password: passwordFieldController.text,
+        );
 
-    // // ignore: use_build_context_synchronously
-    // Navigator.of(context).pushNamedAndRemoveUntil(
-    //   Routes.authWrapper,
-    //   (route) => false,
-    // );
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      Routes.authWrapper,
+      (route) => false,
+    );
+  }
+
+  void naviageToSignUpPage() {
+    DeviceUtils.hideKeyboard(context);
+    Navigator.of(context).pushNamed(
+      Routes.signup,
+    );
+  }
+
+  void handleContinueWithGoogle() {
+    DeviceUtils.hideKeyboard(context);
+    context.read<AuthService>().loginWithGoogle();
   }
 
   String? get _errorText {
@@ -162,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // button sign in with google
               LargeButton(
                 isOutlined: true,
-                onPressed: () {},
+                onPressed: handleContinueWithGoogle,
                 iconPath: AssetPaths.google,
                 text: SignInUpString.signInWithGoogle,
               ),
@@ -171,7 +188,7 @@ class _LoginScreenState extends State<LoginScreen> {
               BottomNavigator(
                 content: 'New to our app?',
                 nameScreenNavigator: SignInUpString.signUp,
-                handleNavigator: () {},
+                handleNavigator: naviageToSignUpPage,
               )
             ],
           ),
