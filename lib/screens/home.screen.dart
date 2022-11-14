@@ -1,20 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
+import 'package:note_app/models/folder_note.dart';
+import 'package:note_app/models/folders.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/services/auth/auth_service.dart';
+import 'package:note_app/services/cloud/folder/folder_storage_firebase.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/customLog/debug_log.dart';
 import '../widgets/app_bar.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  AuthUser user = AuthUser();
+  @override
+  void initState() {
+    super.initState();
+    Folders.folders = [];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Folders.folders = [];
+  }
+
+  void handleCreateNewFolder() async {
+    Folder newFolder = await FolderFirebaseStorage()
+        .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
+
+    newFolder.printInfo();
+  }
+
+  void handleGetAllFolders() async {
+    await FolderFirebaseStorage().allFolders(ownerUserId: user.uID!);
+    DebugLog.myLog("HELLO WORLD");
+    DebugLog.myLog(Folders.folders.length.toString());
+    for (var folder in Folders.folders) {
+      DebugLog.myLog("______________________________________________________");
+      folder.printInfo();
+      DebugLog.myLog("______________________________________________________");
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    AuthUser user = AuthUser();
     return FutureBuilder<AuthUser?>(
       future: context.read<AuthService>().currentUser,
       builder: (context, snapshot) {
@@ -93,6 +131,46 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: const Text(
                       "Delete account",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: 16.h,
+                  ),
+
+                  ElevatedButton(
+                    onPressed: handleCreateNewFolder,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.white),
+                      ),
+                      minimumSize: MaterialStateProperty.all(
+                        Size(MediaQuery.of(context).size.width / 2.5, 50),
+                      ),
+                    ),
+                    child: const Text(
+                      "Create new folder",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: handleGetAllFolders,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.yellow),
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.white),
+                      ),
+                      minimumSize: MaterialStateProperty.all(
+                        Size(MediaQuery.of(context).size.width / 2.5, 50),
+                      ),
+                    ),
+                    child: const Text(
+                      "Get all folder",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
