@@ -20,7 +20,11 @@ class _FolderScreenState extends State<FolderScreen> {
         title: "UniNote",
         isBackBtn: false,
       ),
-      body: SafeArea(child: Center(child: Center(child: ))),
+      body: SafeArea(
+        child: Center(
+          child: Container(),
+        ),
+      ),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 104.h, right: 44.w),
         child: FloatingActionButton(

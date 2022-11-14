@@ -10,6 +10,8 @@ import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/cloud/folder/folder_storage_firebase.dart';
 import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
+
+import 'package:note_app/screens/loading.screen.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/customLog/debug_log.dart';
@@ -115,12 +117,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 16.h,
                   ),
                   Text("UID: ${user.uID}"),
-                  // const Center(
-                  //   child: Text("Home screen! Logged in"),
-                  // ),
-                  // SizedBox(
-                  //   height: 16.h,
-                  // ),
                   ElevatedButton(
                     onPressed: () {
                       showSnackBarInfo(context, 'Logout account!');
@@ -246,15 +242,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         } else {
-          return const Scaffold(
-            body: SafeArea(
-                child: Center(
-              child: Text("Loading"),
-            )),
-          );
+          return const LoadingScreen();
         }
-        // todo: setter display name
-        // user.updateDisplayName("long");
       },
     );
   }

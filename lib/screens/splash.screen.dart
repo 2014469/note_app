@@ -16,41 +16,21 @@ class SplashScreen extends StatelessWidget {
       body: Column(
        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Padding(
-            // padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            
-           //),
-          //const SizedBox(height: 30),
-
           // images logo
-         Padding(
-           padding: const EdgeInsets.fromLTRB(100, 100, 100, 0),
-           child: const ImageLogo(),
+      const Padding(
+        padding: EdgeInsets.fromLTRB(100, 100, 100, 0),
+        child: ImageLogo(),
          ),
          // text notification
           Padding(
-            padding: const EdgeInsets.fromLTRB(52, 20, 49, 15),
-            child: Container(
-              child: Text(
-                'Note App',
-                textAlign: TextAlign.center,
-                style: AppTextStyles.h3[TextWeights.semibold]?.copyWith(color: AppColors.primary),
-              ),
-              ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 18),
-          //   child: Container(           
-          //       child: Text(
-          //       'we\'ve sent you an email, please click on the link to verify. If you don\'t see the email, check other places it might be, like your junk, spam, social,or other folders. ',
-          //       textAlign: TextAlign.center,
-          //       style: AppTextStyles.subtitile[TextWeights.semibold]?.copyWith(color: AppColors.gray[100]),
-          //       ),
-          //   ),
-          // ),
-              
-            
-          
+        padding: const EdgeInsets.fromLTRB(52, 20, 49, 15),
+        child: Text(
+          'Note App',
+          textAlign: TextAlign.center,
+          style: AppTextStyles.h3[TextWeights.semibold]
+              ?.copyWith(color: AppColors.primary),
+        ),
+      ),
         ]
         )
     );

@@ -15,7 +15,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:provider/provider.dart';
-
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
   await AuthService.firebase().initialize();
 
