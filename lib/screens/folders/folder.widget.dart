@@ -4,26 +4,23 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
+import 'package:note_app/models/folder_note.dart';
 
-class FolderGrid extends StatefulWidget {
-  final bool isLocked;
-  final String title;
-  final int numberOfNote;
+class FolderWidget extends StatefulWidget {
+  final Folder folder;
   final Function()? onTap;
   final Function()? onTapSetting;
-  const FolderGrid(
+  const FolderWidget(
       {super.key,
-      this.title = "Sample",
-      this.numberOfNote = 0,
-      required this.isLocked,
+      required this.folder,
       required this.onTap,
       required this.onTapSetting});
 
   @override
-  State<FolderGrid> createState() => _FolderGridState();
+  State<FolderWidget> createState() => _FolderWidgetState();
 }
 
-class _FolderGridState extends State<FolderGrid> {
+class _FolderWidgetState extends State<FolderWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -55,7 +52,7 @@ class _FolderGridState extends State<FolderGrid> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(widget.isLocked
+                  Image.asset(widget.folder.isLock
                       ? AssetPaths.folderLocked
                       : AssetPaths.folderUnlocked),
                   IconButton(
@@ -68,15 +65,17 @@ class _FolderGridState extends State<FolderGrid> {
                 ],
               ),
               Text(
-                widget.title,
+                widget.folder.name,
                 style: AppTextStyles.h6[TextWeights.semibold]
                     ?.copyWith(color: AppColors.gray[80]),
               ),
-              Text(
-                widget.numberOfNote<2?"${widget.numberOfNote} note":"${widget.numberOfNote} notes",
-                style: AppTextStyles.caption[TextWeights.regular]
-                    ?.copyWith(color: AppColors.gray[60]),
-              )
+              // Text(
+              //   widget.numberOfNote < 2
+              //       ? "${widget.numberOfNote} note"
+              //       : "${widget.numberOfNote} notes",
+              //   style: AppTextStyles.caption[TextWeights.regular]
+              //       ?.copyWith(color: AppColors.gray[60]),
+              // )
             ],
           ),
         )

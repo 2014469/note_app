@@ -6,16 +6,18 @@ import 'package:note_app/models/folders.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/colors/colors.dart';
+import 'package:note_app/resources/constants/asset_path.dart';
+import 'package:note_app/screens/folders/folder.widget.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/cloud/folder/folder_storage_firebase.dart';
 import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
 
 import 'package:note_app/screens/loading.screen.dart';
+import 'package:note_app/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/customLog/debug_log.dart';
-import '../widgets/app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,15 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void handleGetAllFolders() async {
-    await FolderFirebaseStorage().allFolders(ownerUserId: user.uID!);
-    DebugLog.myLog("HELLO WORLD");
-    DebugLog.myLog(Folders.folders.length.toString());
-    for (var folder in Folders.folders) {
-      DebugLog.myLog("______________________________________________________");
-      folder.printInfo();
-      DebugLog.myLog("______________________________________________________");
     }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,154 +86,47 @@ class _HomeScreenState extends State<HomeScreen> {
           Future.delayed(Duration.zero, () {
             showSnackBarSuccess(context, "Login success");
           });
-          return Scaffold(
+          return FutureBuilder(
+            future: FolderFirebaseStorage().allFolders(ownerUserId: user.uID!),
+            builder: (context, snapshot) {
+              return Scaffold(
             backgroundColor: AppColors.background,
             appBar: CustomAppbar(
-              handleBackBtn: (() {
-                DebugLog.myLog("Backbtn");
+                  isBackBtn: false,
+                  handleBackBtn: (() {
               }),
-              extraActions: const <Widget>[],
+                  extraActions: <Widget>[
+                    Image.network(user.photoUrl!),
+                  ],
               title: "All Notes",
             ),
             body: SafeArea(
-              child: Column(
-                children: [
-                  Text("Email: ${user.email}"),
-                  SizedBox(
-                    height: 16.h,
+                    child: Padding(
+                  padding: EdgeInsets.all(16.w),
+                  child: Center(
+                    child: GridView.builder(
+                        itemCount: Folders.folders.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2),
+                        itemBuilder: (context, index) {
+                          return FolderWidget(
+                            folder: Folders.folders[index],
+                            onTap: () {},
+                            onTapSetting: () {},
+                          );
+                        }),
                   ),
-                  Text("Username: ${user.displayName}"),
-                  SizedBox(
-                    height: 16.h,
+                )),
+                floatingActionButton: Padding(
+                  padding: EdgeInsets.only(bottom: 104.h, right: 44.w),
+                  child: FloatingActionButton(
+                    onPressed: () {},
+                    child: Image.asset(AssetPaths.addFolder),
                   ),
-                  // Image.network(user.photoUrl!),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  Text("UID: ${user.uID}"),
-                  ElevatedButton(
-                    onPressed: () {
-                      showSnackBarInfo(context, 'Logout account!');
-                      context.read<AuthService>().logOUt();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.blue),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Sign Out",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      showSnackBarInfo(context, 'Deleting account!');
-                      context.read<AuthService>().deleteAccount();
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.red),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Delete account",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-
-                  SizedBox(
-                    height: 16.h,
-                  ),
-
-                  ElevatedButton(
-                    onPressed: handleCreateNewFolder,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Create new folder",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: handleGetAllFolders,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.yellow),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Get all folder",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-
-                  ElevatedButton(
-                    onPressed: handleCreateNewNote,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Create new notes",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 16.h,
-                  ),
-                  ElevatedButton(
-                    onPressed: handleGetAllNotes,
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.yellow),
-                      textStyle: MaterialStateProperty.all(
-                        const TextStyle(color: Colors.white),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        Size(MediaQuery.of(context).size.width / 2.5, 50),
-                      ),
-                    ),
-                    child: const Text(
-                      "Get all notes",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         } else {
           return const LoadingScreen();
