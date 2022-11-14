@@ -14,4 +14,6 @@ class AssetPaths{
   static const String testLocked='$prePath/unlocked_folder.svg';
   static const String showMore='$prePath/more.png';
   static const String addFolder='$prePath/addFolder.png';
+  static const String iconNote = '$prePath/iconNote.png';
+  // static const String iconNote = '$prePath/iconNote.png';
 }

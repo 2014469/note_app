@@ -8,4 +8,8 @@ class Notes {
       note.printInfo();
     }
   }
+
+  void add(Note note) {
+    notes.add(note);
+  }
 }

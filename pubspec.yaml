@@ -90,6 +90,7 @@ flutter:
     - assets/images/locked_folder.svg
     - assets/images/unlocked_folder.svg
     - assets/images/error.png
+    - assets/images/iconNote.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

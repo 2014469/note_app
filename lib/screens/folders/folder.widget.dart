@@ -30,8 +30,8 @@ class _FolderWidgetState extends State<FolderWidget> {
           opacity: 0.1,
           child: Container(
             // margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
-            width: 190.w,
-            height: 180.h,
+            width: 130.w,
+            height: 150.h,
             // padding: EdgeInsets.symmetric(horizontal: 12.w,),
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -40,7 +40,7 @@ class _FolderWidgetState extends State<FolderWidget> {
           ),
         ),
         Positioned(
-          left: 30.w,
+          left: 20.w,
           right: 16.w,
           top: 32.07.h,
           bottom: 28.5.h,

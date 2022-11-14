@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:note_app/models/folders.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -42,6 +43,10 @@ void main() async {
           create: ((context) => context.read<AuthService>().authState),
           initialData: null,
         ),
+        Provider(
+          create: (context) => Folders(),
+        )
+        
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
