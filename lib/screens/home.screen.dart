@@ -3,9 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
 import 'package:note_app/models/folder_note.dart';
 import 'package:note_app/models/folders.dart';
+import 'package:note_app/models/note.dart';
+import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/cloud/folder/folder_storage_firebase.dart';
+import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     super.dispose();
     Folders.folders = [];
+    Notes.notes = [];
   }
 
   void handleCreateNewFolder() async {
@@ -38,6 +42,30 @@ class _HomeScreenState extends State<HomeScreen> {
         .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
 
     newFolder.printInfo();
+  }
+
+
+  void handleCreateNewNote() async {
+    Note newFolder = await NoteFirebaseStorage().createNewNote(
+        ownerUserId: user.uID!,
+        ownerFolderId: "e6e3e060-63ce-11ed-ab00-8fcb546f319b",
+        titleNote: "Hello world",
+        bodyNote: "");
+
+    newFolder.printInfo();
+  }
+
+  void handleGetAllNotes() async {
+    await NoteFirebaseStorage().allNotes(
+        ownerUserId: user.uID!,
+        folderOwnerId: "e6e3e060-63ce-11ed-ab00-8fcb546f319b");
+    DebugLog.myLog("HELLO WORLD");
+    DebugLog.myLog(Notes.notes.length.toString());
+    for (var note in Notes.notes) {
+      DebugLog.myLog("______________________________________________________");
+      note.printInfo();
+      DebugLog.myLog("______________________________________________________");
+    }
   }
 
   void handleGetAllFolders() async {
@@ -82,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 16.h,
                   ),
-                  Image.network(user.photoUrl!),
+                  // Image.network(user.photoUrl!),
                   SizedBox(
                     height: 16.h,
                   ),
@@ -171,6 +199,45 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: const Text(
                       "Get all folder",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+
+                  ElevatedButton(
+                    onPressed: handleCreateNewNote,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.green),
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.white),
+                      ),
+                      minimumSize: MaterialStateProperty.all(
+                        Size(MediaQuery.of(context).size.width / 2.5, 50),
+                      ),
+                    ),
+                    child: const Text(
+                      "Create new notes",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  ElevatedButton(
+                    onPressed: handleGetAllNotes,
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.yellow),
+                      textStyle: MaterialStateProperty.all(
+                        const TextStyle(color: Colors.white),
+                      ),
+                      minimumSize: MaterialStateProperty.all(
+                        Size(MediaQuery.of(context).size.width / 2.5, 50),
+                      ),
+                    ),
+                    child: const Text(
+                      "Get all notes",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
