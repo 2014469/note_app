@@ -6,7 +6,10 @@ import 'package:note_app/firebase_options.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/screens/checkmail.screen.dart';
+import 'package:note_app/screens/error.screen.dart';
 import 'package:note_app/screens/home.screen.dart';
+import 'package:note_app/screens/loading.screen.dart';
+import 'package:note_app/screens/splash.screen.dart';
 import 'package:note_app/screens/login.screen.dart';
 import 'package:note_app/screens/reset_password.screen.dart';
 import 'package:note_app/screens/sign_up.screen.dart';
@@ -19,52 +22,7 @@ import 'package:provider/provider.dart';
 
 // import 'package:provider/provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
 
-  // todo: intial firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-// todo: change color status bar
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: AppColors.background,
-      statusBarIconBrightness: Brightness.dark,
-    ),
-  );
-
-// todo: lock xoay man hinh
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(FirebaseAuthProvider()),
-        ),
-        StreamProvider(
-          create: ((context) => context.read<AuthService>().authState),
-          initialData: null,
-        ),
-      ],
-      child: ScreenUtilInit(
-        builder: ((context, child) => MaterialApp(
-              title: AppString.instance.nameApp,
-              theme: ThemeData(
-                fontFamily: 'Lato',
-              ),
-              routes: Routes.routes,
-              home: const AuthWrapper(),
-              debugShowCheckedModeBanner: false,
-            )),
-        designSize: const Size(428, 926),
-      ),
-    ),
-  );
-}
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
@@ -76,6 +34,6 @@ class AuthWrapper extends StatelessWidget {
     if (firebaseUser != null) {
       return const HomeScreen();
     }
-    return const ResetPassword();
+    return const LoadingScreen();
   }
 }

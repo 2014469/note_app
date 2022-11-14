@@ -64,9 +64,9 @@ class _LoginScreenState extends State<LoginScreen> {
             padding:  EdgeInsets.fromLTRB(0, 24, 0, 24),
             child: Text(
               "Login",
-              style: TextStyle(fontSize: 30, color: AppColors.primary),
-              
+              style: TextStyle(fontSize: 30, color: AppColors.primary),       
             ),
+            
           ),
           
           // edit text 

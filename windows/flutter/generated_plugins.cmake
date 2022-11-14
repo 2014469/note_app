@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  catcher
   pasteboard
   url_launcher_windows
 )

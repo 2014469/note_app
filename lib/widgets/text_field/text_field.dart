@@ -30,7 +30,14 @@ class InputField extends StatelessWidget {
             errorText: errorText,
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w)),
-           
+        //  validator: (value){
+        //   if (value == null || value.isEmpty)
+        //   return'error';
+        //   String pattern= r'\w+@\w+\.\w+';
+        //   if (RegExp(pattern).hasMatch(value))
+        //   return'in email address fomat';
+        //   return null;
+        //  },  
       ),
     );
   }

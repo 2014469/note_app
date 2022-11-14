@@ -7,5 +7,6 @@ class AssetPaths{
   static const String eyeHide='$prePath/ic_hide.png';
   static const String logo='$prePath/Logo.png';
   static const String arrowLeft='$prePath/arrow_left.png';
+  static const String error='$prePath/error.png';
 
 }
