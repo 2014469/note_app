@@ -9,3 +9,12 @@ class ImageLogo extends StatelessWidget {
     return Image.asset(AssetPaths.logo);
   }
 }
+
+class ImageError extends StatelessWidget {
+  const ImageError({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(AssetPaths.error);
+  }
+}
