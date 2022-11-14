@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  form_validator: ^1.0.3
   flutter:
     sdk: flutter
 
@@ -79,6 +80,8 @@ flutter:
     - assets/images/unlocked_folder_sample.png
     - assets/images/locked_folder.svg
     - assets/images/unlocked_folder.svg
+    - assets/images/Logo.png
+    - assets/images/arrow_left.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

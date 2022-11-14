@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note_app/firebase_options.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
+import 'package:note_app/resources/fonts/enum_text_styles.dart';
+import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/folders_page.dart';
-import 'package:note_app/screens/home.screen.dart';
-import 'package:note_app/screens/login.screen.dart';
+import 'package:note_app/screens/sign_in_up/login.screen.dart';
+import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -19,10 +19,7 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // todo: intial firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await AuthService.firebase().initialize();
 
 // todo: change color status bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -52,10 +49,30 @@ void main() async {
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
+                inputDecorationTheme: InputDecorationTheme(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                      borderSide:
+                          BorderSide(color: AppColors.gray[30]!, width: 0.5.w)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(32.r),
+                    ),
+                    borderSide: BorderSide(
+                      color: AppColors.yellowGold,
+                      width: 2.w,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
+                    color: AppColors.gray[40],
+                  ),
+                ),
               ),
               routes: Routes.routes,
-              // home: const AuthWrapper(),
-              home: const FolderScreen(),
+              home: const AuthWrapper(),
+              //home: const HomeScreen(),
               debugShowCheckedModeBanner: false,
             )),
         designSize: const Size(428, 926),
@@ -69,11 +86,19 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User?>();
-
-    if (firebaseUser != null) {
-      return const HomeScreen();
-    }
-    return const LoginScreen();
+    return Consumer<User?>(
+      builder: (context, value, child) {
+        if (value != null) {
+          bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
+          if (isCheck) {
+            return const FolderScreen();
+          } else {
+            return const VerifyEmailScreen();
+          }
+        } else {
+          return const LoginScreen();
+        }
+      },
+    );
   }
 }

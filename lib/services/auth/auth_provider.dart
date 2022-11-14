@@ -3,22 +3,26 @@ import 'package:note_app/models/auth_user.dart';
 
 abstract class AuthProvider {
   Future<void> initialize();
-  AuthUser? get currentUser;
+  Future<AuthUser?> get currentUser;
+  User? get getUser;
 
   Stream<User?> get authState;
+  bool get authIsVerifiedEmail;
 
-  Future<AuthUser> loginEmailPassword({
+  User reloadCurrentUser();
+
+  Future<void> loginEmailPassword({
     required String email,
     required String password,
   });
 
-  Future<AuthUser> signUpEmailPassword({
+  Future<void> signUpEmailPassword({
     required String username,
     required String email,
     required String password,
   });
 
-  Future<AuthUser> loginWithGoogle();
+  Future<void> loginWithGoogle();
   Future<void> logOUt();
   Future<void> sendEmailVerification();
   Future<void> deleteAccount();

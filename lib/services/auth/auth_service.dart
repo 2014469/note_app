@@ -17,7 +17,7 @@ class AuthService implements AuthProvider {
   Stream<User?> get authState => provider.authState;
 
   @override
-  AuthUser? get currentUser => provider.currentUser;
+  Future<AuthUser?> get currentUser => provider.currentUser;
 
   @override
   Future<void> deleteAccount() => provider.deleteAccount();
@@ -26,7 +26,7 @@ class AuthService implements AuthProvider {
   Future<void> logOUt() => provider.logOUt();
 
   @override
-  Future<AuthUser> loginEmailPassword({
+  Future<void> loginEmailPassword({
     required String email,
     required String password,
   }) =>
@@ -36,13 +36,13 @@ class AuthService implements AuthProvider {
       );
 
   @override
-  Future<AuthUser> loginWithGoogle() => provider.loginWithGoogle();
+  Future<void> loginWithGoogle() => provider.loginWithGoogle();
 
   @override
   Future<void> sendEmailVerification() => provider.sendEmailVerification();
 
   @override
-  Future<AuthUser> signUpEmailPassword({
+  Future<void> signUpEmailPassword({
     required String username,
     required String email,
     required String password,
@@ -52,4 +52,22 @@ class AuthService implements AuthProvider {
         email: email,
         password: password,
       );
+
+  @override
+  User reloadCurrentUser() => provider.reloadCurrentUser();
+
+  @override
+  User? get getUser => provider.getUser;
+
+  @override
+  bool get authIsVerifiedEmail => provider.authIsVerifiedEmail;
+//   @override
+//   Future<AuthUser> resetPassword({
+//     required String password,
+//     required String confirmpassword,
+//   }) =>
+//       provider.resetPassword(
+//         password: password,
+//         confirmpassword: confirmpassword,
+//       );
 }

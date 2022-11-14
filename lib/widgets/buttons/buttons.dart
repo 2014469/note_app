@@ -30,70 +30,93 @@ class LargeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(16.w),
-      child: isOutlined
-          ? OutlinedButton(
-              onPressed: onPressed,
-              style: OutlinedButton.styleFrom(
-                  minimumSize: Size.fromHeight(60.h),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32))),
-                  side: const BorderSide(width: 1, color: AppColors.primary)),
-              child: iconPath == ""
-                  ? Text(
-                      text,
-                      style: AppTextStyles.h5[TextWeights.semibold]?.copyWith(
-                        color: AppColors.gray[100],
+    return isOutlined
+        ? Container(
+            margin: EdgeInsets.symmetric(
+              horizontal: 16.w,
+            ),
+            child: OutlinedButton(
+                onPressed: onPressed,
+                style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(
+                      double.infinity,
+                      0,
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(32.r),
                       ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(iconPath),
-                        SizedBox(
-                          width: 16.w,
+                    ),
+                    side: const BorderSide(width: 1, color: AppColors.primary)),
+                child: iconPath == ""
+                    ? Text(
+                        text,
+                        style: AppTextStyles.h5[TextWeights.semibold]?.copyWith(
+                          color: AppColors.gray[80],
                         ),
-                        Text(
-                          text,
-                          style:
-                              AppTextStyles.h5[TextWeights.semibold]?.copyWith(
-                            color: AppColors.gray[100],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            iconPath,
+                            width: 48.w,
+                            height: 48.w,
                           ),
-                        ),
-                      ],
-                    ))
-          : ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: Size.fromHeight(60.h),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32)))),
-              child: iconPath == ""
-                  ? Text(
-                      text,
-                      style: AppTextStyles.h5[TextWeights.semibold]?.copyWith(
-                        color: AppColors.gray[0],
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(iconPath),
-                        SizedBox(
-                          width: 16.w,
-                        ),
-                        Text(
-                          text,
-                          style:
-                              AppTextStyles.h5[TextWeights.semibold]?.copyWith(
-                            color: AppColors.gray[0],
+                          SizedBox(
+                            width: 16.w,
                           ),
+                          Text(
+                            text,
+                            style: AppTextStyles.h5[TextWeights.semibold]
+                                ?.copyWith(
+                              color: AppColors.gray[80],
+                            ),
+                          ),
+                        ],
+                      )),
+          )
+        : Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            child: ElevatedButton(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 20.h,
+                    ),
+                    minimumSize: const Size(double.infinity, 0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.r)))),
+                child: iconPath == ""
+                    ? Text(
+                        text,
+                        style: AppTextStyles.h5[TextWeights.semibold]?.copyWith(
+                          color: AppColors.gray[0],
                         ),
-                      ],
-                    )),
-    );
+                      )
+                    : Wrap(
+                        children: [
+                          Image.asset(
+                            iconPath,
+                            width: 48.w,
+                            height: 48.h,
+                          ),
+                          SizedBox(
+                            width: 16.w,
+                          ),
+                          Text(
+                            text,
+                            style: AppTextStyles.h5[TextWeights.semibold]
+                                ?.copyWith(
+                              color: AppColors.gray[0],
+                            ),
+                          ),
+                        ],
+                      )),
+          );
   }
 }
 
@@ -101,37 +124,45 @@ class LargeButton extends StatelessWidget {
 class SmallButton extends StatelessWidget {
   final bool isOutlined;
   final Function()? onPressed;
-  const SmallButton({super.key, required this.isOutlined, this.onPressed});
+  final String textBtn;
+  const SmallButton({
+    super.key,
+    required this.isOutlined,
+    this.onPressed,
+    required this.textBtn,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(8.w),
+      padding: EdgeInsets.all(8.w),
 //        decoration: BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
-        child: isOutlined
-            ? OutlinedButton(
-                onPressed: onPressed,
-                style: OutlinedButton.styleFrom(
-                    side: const BorderSide(width: 1, color: AppColors.primary),
-                    minimumSize: Size(190.w, 60.h),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)))),
-                child: Text(
-                  "Small Button",
-                  style: AppTextStyles.h5[TextWeights.semibold]
-                      ?.copyWith(color: AppColors.gray[100]),
-                ))
-            : ElevatedButton(
-                onPressed: onPressed,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    minimumSize: Size(190.w, 60.h),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)))),
-                child: Text(
-                  "Small Button",
-                  style: AppTextStyles.h5[TextWeights.semibold]
-                      ?.copyWith(color: AppColors.gray[0]),
-                )));
+      child: isOutlined
+          ? OutlinedButton(
+              onPressed: onPressed,
+              style: OutlinedButton.styleFrom(
+                  side: const BorderSide(width: 1, color: AppColors.primary),
+                  minimumSize: Size(190.w, 60.h),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.r)))),
+              child: Text(
+                textBtn,
+                style: AppTextStyles.h5[TextWeights.semibold]
+                    ?.copyWith(color: AppColors.gray[100]),
+              ))
+          : ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  minimumSize: Size(190.w, 60.h),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32.r)))),
+              child: Text(
+                textBtn,
+                style: AppTextStyles.h5[TextWeights.semibold]
+                    ?.copyWith(color: AppColors.gray[0]),
+              ),
+            ),
+    );
   }
 }
