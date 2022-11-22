@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
-import 'package:note_app/resources/fonts/enum_text_styles.dart';
-import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/folders_page.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
 import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
@@ -49,26 +47,26 @@ void main() async {
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
-                inputDecorationTheme: InputDecorationTheme(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32.r)),
-                      borderSide:
-                          BorderSide(color: AppColors.gray[30]!, width: 0.5.w)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(32.r),
-                    ),
-                    borderSide: BorderSide(
-                      color: AppColors.yellowGold,
-                      width: 2.w,
-                    ),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
-                    color: AppColors.gray[40],
-                  ),
-                ),
+                // inputDecorationTheme: InputDecorationTheme(
+                //   border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                //       borderSide:
+                //           BorderSide(color: AppColors.gray[30]!, width: 0.5.w)),
+                //   focusedBorder: OutlineInputBorder(
+                //     borderRadius: BorderRadius.all(
+                //       Radius.circular(32.r),
+                //     ),
+                //     borderSide: BorderSide(
+                //       color: AppColors.yellowGold,
+                //       width: 2.w,
+                //     ),
+                //   ),
+                //   filled: true,
+                //   fillColor: Colors.white,
+                //   hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
+                //     color: AppColors.gray[40],
+                //   ),
+                // ),
               ),
               routes: Routes.routes,
               home: const AuthWrapper(),

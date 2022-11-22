@@ -11,4 +11,6 @@ class AssetPaths{
   static const String showMore='$prePath/more.png';
   static const String logo='$prePath/Logo.png';
   static const String addFolder='$prePath/addFolder.png';
+  static const String microphone='$prePath/ic_microphone.svg';
+  static const String search='$prePath/ic_search.svg';
 }

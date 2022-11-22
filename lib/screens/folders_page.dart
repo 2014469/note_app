@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
 import 'package:note_app/widgets/app_bar.dart';
-import 'package:note_app/widgets/folders/folders.dart';
+import 'package:note_app/widgets/folders/search_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../models/folder_note.dart';
@@ -21,6 +21,7 @@ class FolderScreen extends StatefulWidget {
 }
 
 class _FolderScreenState extends State<FolderScreen> {
+  TextEditingController controller = TextEditingController();
   AuthUser user = AuthUser();
   @override
   void initState() {
@@ -95,18 +96,16 @@ class _FolderScreenState extends State<FolderScreen> {
       ),
       body: SafeArea(
           child: Center(
-        child: GridView.builder(
-            itemCount: Folders.folders.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-            itemBuilder: (context, index) {
-              handleGetAllFolders();
-              return FolderGrid(isLocked: true, onTap: (){}, onTapSetting: (){}, title: Folders.folders[index].name,);
-            }),
+        child: Column(
+          children: [
+            SearchBar(controller:controller,)
+          ],
+        ),
       )),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 104.h, right: 44.w),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: handleCreateNewFolder,
           child: Image.asset(AssetPaths.addFolder),
         ),
       ),
