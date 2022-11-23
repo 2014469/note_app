@@ -8,12 +8,18 @@ import 'package:note_app/models/folder_note.dart';
 import 'package:uuid/uuid.dart';
 
 class FolderFirebaseStorage {
-  final folders =
-      FirebaseFirestore.instance.collection(FolderCloudConstant.collection);
 
-  Future<void> deleteFolder({required String folderId}) async {
+  static CollectionReference getCollectionFolder(String userOwnerId) {
+    return FirebaseFirestore.instance
+        .collection(UserString.userTBL)
+        .doc(userOwnerId)
+        .collection(FolderCloudConstant.collection);
+  }
+
+  Future<void> deleteFolder(
+      {required String ownerUserId, required String folderId}) async {
     try {
-      await folders.doc(folderId).delete();
+      await getCollectionFolder(ownerUserId).doc(folderId).delete();
     } catch (e) {
       throw CouldNotDeleteFolderException();
     }

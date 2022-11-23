@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
 import 'package:note_app/widgets/app_bar.dart';
-import 'package:note_app/widgets/folders/search_bar.dart';
 import 'package:provider/provider.dart';
-
 import '../models/folder_note.dart';
 import '../models/folders.dart';
 import '../resources/constants/asset_path.dart';
@@ -12,6 +10,7 @@ import '../services/auth/auth_service.dart';
 import '../services/cloud/folder/folder_storage_firebase.dart';
 import '../utils/customLog/debug_log.dart';
 import '../utils/show_snack_bar.dart';
+import '../widgets/search/search_bar.dart';
 
 class FolderScreen extends StatefulWidget {
   const FolderScreen({super.key});
