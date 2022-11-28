@@ -87,8 +87,6 @@ flutter:
     - assets/images/arrow_left.png
     - assets/images/locked_folder_sample.png
     - assets/images/unlocked_folder_sample.png
-    - assets/images/locked_folder.svg
-    - assets/images/unlocked_folder.svg
     - assets/images/error.png
     - assets/images/iconNote.png
   #   - images/a_dot_ham.jpeg

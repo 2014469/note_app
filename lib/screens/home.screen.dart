@@ -17,6 +17,7 @@ import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:note_app/screens/loading.screen.dart';
 import 'package:note_app/widgets/app_bar.dart';
 import 'package:note_app/widgets/avatar/avatar_appbar.dart';
+import 'package:note_app/widgets/search/search_bar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -169,25 +170,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 body: SafeArea(
                     child: Padding(
                   padding: EdgeInsets.all(16.w),
-                  child: Center(
-                    child: GridView.builder(
-                        itemCount: Folders.folders.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2),
-                        itemBuilder: (context, index) {
-                          Folder folder = Folders.folders[index];
-                          return FolderWidget(
-                            folder: folder,
-                            onTap: () => Navigator.of(context)
-                                .pushNamed(Routes.notes, arguments: {
-                              "userId": user.uID,
-                              "folderId": folder.folderId
-                            }),
-                            onTapSetting: () {},
-                          );
-                        }),
-                  ),
+                  child: Column(children: [
+                    SearchBar(controller: _textFieldController,),
+                    Expanded(
+                      child: GridView.builder(
+                          itemCount: Folders.folders.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
+                          itemBuilder: (context, index) {
+                            Folder folder = Folders.folders[index];
+                            return FolderWidget(
+                              folder: folder,
+                              onTap: () => Navigator.of(context)
+                                  .pushNamed(Routes.notes, arguments: {
+                                "userId": user.uID,
+                                "folderId": folder.folderId
+                              }),
+                              onTapSetting: () {},
+                            );
+                          }),
+                    ),
+                  ]),
                 )),
                 floatingActionButton: Padding(
                   padding: EdgeInsets.only(bottom: 104.h, right: 20.w),

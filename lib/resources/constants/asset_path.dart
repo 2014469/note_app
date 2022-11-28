@@ -10,8 +10,8 @@ class AssetPaths{
   static const String error='$prePath/error.png';
 
   static const String folderLocked='$prePath/locked_folder_sample.png';
-  static const String folderUnlocked='$prePath/unlocked_folder_sample.png';
-  static const String testLocked='$prePath/unlocked_folder.svg';
+  static const String folderUnlocked='$prePath/folder.svg';
+  // static const String testLocked='$prePath/unlocked_folder.svg';
   static const String showMore='$prePath/more.png';
 
   static const String addFolder='$prePath/addFolder.png';

@@ -11,12 +11,12 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          color: Color.fromRGBO(118, 118, 128, 0.12),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
+      decoration:  const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10))),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(
+            focusedBorder: InputBorder.none,
+            fillColor: const Color(0xff767680).withOpacity(0.12),
             hintText: "Search",
             hintStyle: AppTextStyles.body1[TextWeights.regular]
                 ?.copyWith(color: AppColors.gray[50]),
@@ -30,7 +30,7 @@ class SearchBar extends StatelessWidget {
                   EdgeInsets.symmetric(horizontal: 8.18.w, vertical: 11.81.h),
               child: InkWell(child: const Icon(Icons.mic), onTap: () {}),
             ),
-            border: InputBorder.none),
+            border: InputBorder.none,)
       ),
     );
   }
