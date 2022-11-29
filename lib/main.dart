@@ -49,6 +49,7 @@ void main() async {
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
+              debugShowCheckedModeBanner: false,
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
@@ -56,7 +57,7 @@ void main() async {
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32.r)),
                       borderSide:
-                          BorderSide(color: AppColors.gray[30]!, width: 0.5.w)),
+                          BorderSide(color: AppColors.gray[30]!, width: 0.5)),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(32.r),

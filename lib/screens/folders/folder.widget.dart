@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -29,20 +30,22 @@ class _FolderWidgetState extends State<FolderWidget> {
         Opacity(
           opacity: 0.1,
           child: Container(
-            // margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
-            width: 130.w,
-            height: 150.h,
-            // padding: EdgeInsets.symmetric(horizontal: 12.w,),
+            margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+            // width: 130.w,
+            // height: 150.h,
+            padding: EdgeInsets.symmetric(
+              horizontal: 12.w,
+            ),
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: AppColors.primary,
+              color: Color(0xff007AFF),
             ),
           ),
         ),
         Positioned(
-          left: 20.w,
-          right: 16.w,
-          top: 32.07.h,
+          left: 30.w,
+          right: 30.w,
+          top: 28.05.h,
           bottom: 28.5.h,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,9 +55,20 @@ class _FolderWidgetState extends State<FolderWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(widget.folder.isLock
-                      ? AssetPaths.folderLocked
-                      : AssetPaths.folderUnlocked),
+                  // Image.asset(widget.folder.isLock
+                  //     ? AssetPaths.folderLocked
+                  //     : AssetPaths.folderUnlocked),
+                  ColorFiltered(
+                      colorFilter: ColorFilter.mode(
+                         const Color(0xff007AFF).withOpacity(0.8), BlendMode.modulate),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          
+                        ),
+                        child: SvgPicture.asset(widget.folder.isLock
+                            ? AssetPaths.folderLocked
+                            : AssetPaths.folderUnlocked),
+                      )),
                   IconButton(
                       alignment: Alignment.topRight,
                       padding: const EdgeInsets.all(0),
