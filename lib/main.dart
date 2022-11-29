@@ -46,7 +46,6 @@ void main() async {
         Provider(
           create: (context) => Folders(),
         )
-        
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
