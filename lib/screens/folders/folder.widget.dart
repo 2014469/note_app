@@ -11,8 +11,10 @@ class FolderWidget extends StatefulWidget {
   final Folder folder;
   final Function()? onTap;
   final Function()? onTapSetting;
+  final Color color;
   const FolderWidget(
       {super.key,
+      this.color = AppColors.primary,
       required this.folder,
       required this.onTap,
       required this.onTapSetting});
@@ -36,9 +38,9 @@ class _FolderWidgetState extends State<FolderWidget> {
             padding: EdgeInsets.symmetric(
               horizontal: 12.w,
             ),
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: Color(0xff007AFF),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: widget.color,
             ),
           ),
         ),
@@ -60,15 +62,13 @@ class _FolderWidgetState extends State<FolderWidget> {
                   //     : AssetPaths.folderUnlocked),
                   ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                         const Color(0xff007AFF).withOpacity(0.8), BlendMode.modulate),
+                        widget.color.withOpacity(0.8), BlendMode.modulate),
                       child: Container(
                         decoration: const BoxDecoration(
                           
                         ),
-                        child: SvgPicture.asset(widget.folder.isLock
-                            ? AssetPaths.folderLocked
-                            : AssetPaths.folderUnlocked),
-                      )),
+                        child: SvgPicture.asset(AssetPaths.folderUnlocked),
+                      )), 
                   IconButton(
                       alignment: Alignment.topRight,
                       padding: const EdgeInsets.all(0),

@@ -77,7 +77,7 @@ class FolderFirebaseStorage {
       FolderCloudConstant.dateCreate: Timestamp.now(),
       FolderCloudConstant.isLock: false,
       FolderCloudConstant.passLock: null,
-      FolderCloudConstant.color: '#fff',
+      FolderCloudConstant.color: '#43D3C7',
     });
     final fetchedFolder = await FirebaseFirestore.instance
         .collection(UserString.userTBL)

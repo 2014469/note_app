@@ -143,6 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   handleBackBtn: (() {}),
                   extraActions: <Widget>[
                     PopupMenuButton<int>(
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                      color: AppColors.background,
                       icon: AvatarAppbarWidget(
                         urlPhoto: user.photoUrl!,
                       ),
@@ -182,12 +184,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             Folder folder = Folders.folders[index];
                             return FolderWidget(
                               folder: folder,
+                              color:HexColor.fromHex(folder.color!),
                               onTap: () => Navigator.of(context)
                                   .pushNamed(Routes.notes, arguments: {
                                 "userId": user.uID,
                                 "folderId": folder.folderId
                               }),
-                              onTapSetting: () {},
+                              onTapSetting: () {
+                                showModalBottomSheet(context: context, builder: (BuildContext context){
+                                  return SizedBox(
+                                    height: 334.h,
+                                    width: 224.w,
+                                    
+                                  );
+                                });
+                              },
                             );
                           }),
                     ),
