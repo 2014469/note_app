@@ -5,7 +5,8 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/models/folder_note.dart';
+
+import '../../models/folder.dart';
 
 class FolderWidget extends StatefulWidget {
   final Folder folder;
@@ -60,11 +61,10 @@ class _FolderWidgetState extends State<FolderWidget> {
                   //     : AssetPaths.folderUnlocked),
                   ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                         const Color(0xff007AFF).withOpacity(0.8), BlendMode.modulate),
+                          const Color(0xff007AFF).withOpacity(0.8),
+                          BlendMode.modulate),
                       child: Container(
-                        decoration: const BoxDecoration(
-                          
-                        ),
+                        decoration: const BoxDecoration(),
                         child: SvgPicture.asset(widget.folder.isLock
                             ? AssetPaths.folderLocked
                             : AssetPaths.folderUnlocked),

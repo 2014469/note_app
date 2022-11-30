@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User;
-import 'package:flutter/material.dart';
 import 'package:note_app/resources/constants/str_user.dart';
 import 'package:note_app/utils/customLog/debug_log.dart';
 import 'package:uuid/uuid.dart';
 
-class AuthUser extends ChangeNotifier {
+class AuthUser {
   String? id;
   String? uID;
   String? displayName;

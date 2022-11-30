@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:note_app/models/folders.dart';
 import 'package:note_app/resources/constants/str_folder_cloud.dart';
 import 'package:note_app/resources/constants/str_user.dart';
 import 'package:note_app/services/cloud/folder/folder_storage_exception.dart';
 
-import 'package:note_app/models/folder_note.dart';
 import 'package:uuid/uuid.dart';
 
-class FolderFirebaseStorage {
+import '../../../models/folder.dart';
 
+class FolderFirebaseStorage {
   static CollectionReference getCollectionFolder(String userOwnerId) {
     return FirebaseFirestore.instance
         .collection(UserString.userTBL)
@@ -44,22 +43,21 @@ class FolderFirebaseStorage {
         .collection(FolderCloudConstant.collection)
         .get();
     if (snapshot.docs.isEmpty) {
-      Folders.folders = [];
+      // Folders.folders = [];
     } else {
       getFromSnapShot(snapshot);
     }
   }
 
   getFromSnapShot(QuerySnapshot snapshot) {
-    Folders.folders = [];
-    if (Folders.folders.isEmpty) {
-      for (var element in snapshot.docs) {
-        Folders.folders
-            .add(Folder.fromJson(element.data() as Map<String, dynamic>));
-      }
-    } else {
-      return;
-    }
+    // if (Folders.folders.isEmpty) {
+    //   for (var element in snapshot.docs) {
+    //     Folders.folders
+    //         .add(Folder.fromJson(element.data() as Map<String, dynamic>));
+    //   }
+    // } else {
+    //   return;
+    // }
   }
 
   Future<Folder> createNewFolder(

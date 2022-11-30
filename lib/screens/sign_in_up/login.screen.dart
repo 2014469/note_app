@@ -17,6 +17,7 @@ import 'package:note_app/widgets/buttons/buttons.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/auth.provider.dart';
 import '../../utils/devices/device_utils.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,12 +31,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
 
+  late UserProvider userProvider;
+
   // values mặc định
   bool _isRememberme = false;
   bool _isDisabledLoginBtn = true;
   final _textEmail = '';
   final _textPassword = '';
   bool _ignoreTouch = false;
+
+  @override
+  void initState() {
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -85,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       showSnackBarError(context, "Authentication error");
     }
-
   }
 
   void naviageToSignUpPage() {
@@ -102,6 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
         _ignoreTouch = true;
       });
       await context.read<AuthService>().loginWithGoogle();
+
+      userProvider.setInfoUser();
+      userProvider.addUser(user: userProvider.getCurrentUser);
     } on GoogleSignInAccountException {
       setState(() {
         _ignoreTouch = false;

@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note_app/models/folders.dart';
+import 'package:note_app/providers/folder.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
 import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
@@ -15,10 +14,14 @@ import 'package:note_app/utils/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-// import 'package:provider/provider.dart';
+import 'providers/auth.provider.dart';
+import 'screens/home.screen.dart';
+
+// import 'package:provider/provider.dart'
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // await Firebase.initializeApp();
   await AuthService.firebase().initialize();
 
 // todo: change color status bar
@@ -43,9 +46,12 @@ void main() async {
           create: ((context) => context.read<AuthService>().authState),
           initialData: null,
         ),
-        Provider(
-          create: (context) => Folders(),
-        )
+        ChangeNotifierProvider<FolderProvider>(
+          create: (context) => FolderProvider(),
+        ),
+        ChangeNotifierProvider<UserProvider>(
+          create: (context) => UserProvider(),
+        ),
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
@@ -93,6 +99,7 @@ class AuthWrapper extends StatelessWidget {
         if (value != null) {
           bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
           if (isCheck) {
+            // return const Text("Home screen");
             return const HomeScreen();
           } else {
             return const VerifyEmailScreen();

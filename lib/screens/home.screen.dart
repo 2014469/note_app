@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/models/auth_user.dart';
-import 'package:note_app/models/folder_note.dart';
-import 'package:note_app/models/folders.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/colors/colors.dart';
@@ -14,11 +11,14 @@ import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
 
-import 'package:note_app/screens/loading.screen.dart';
 import 'package:note_app/widgets/app_bar.dart';
 import 'package:note_app/widgets/avatar/avatar_appbar.dart';
 import 'package:note_app/widgets/search/search_bar.dart';
 import 'package:provider/provider.dart';
+
+import '../models/folder.dart';
+import '../providers/auth.provider.dart';
+import '../providers/folder.provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,30 +28,39 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AuthUser user = AuthUser();
+  late UserProvider userProvider;
+  late FolderProvider folderProvider;
+
   @override
   void initState() {
+    folderProvider = Provider.of<FolderProvider>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(
+      context,
+      listen: false,
+    );
+
+    userProvider.fetchUser();
+    folderProvider.fetchAllFolders();
+    // userProvider.setInfoUser();
     super.initState();
-    Folders.folders = [];
   }
 
   @override
   void dispose() {
     super.dispose();
-    Folders.folders = [];
     Notes.notes = [];
   }
 
   void handleCreateNewFolder() async {
-    Folder newFolder = await FolderFirebaseStorage()
-        .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
+    // Folder newFolder = await FolderFirebaseStorage()
+    //     .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
 
-    newFolder.printInfo();
+    // newFolder.printInfo();
   }
 
   void handleCreateNewNote() async {
     Note newFolder = await NoteFirebaseStorage().createNewNote(
-        ownerUserId: user.uID!,
+        ownerUserId: userProvider.currentUser.uID!,
         ownerFolderId: "e6e3e060-63ce-11ed-ab00-8fcb546f319b",
         titleNote: "Hello world",
         bodyNote: "");
@@ -61,8 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void handleGetAllNotes(String idFolder) async {
     try {
-      await NoteFirebaseStorage()
-          .allNotes(ownerUserId: user.uID!, folderOwnerId: idFolder);
+      await NoteFirebaseStorage().allNotes(
+          ownerUserId: userProvider.currentUser.uID!, folderOwnerId: idFolder);
     } catch (e) {
       showSnackBarError(context, e.toString());
     }
@@ -104,7 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (item) {
       case 0:
         {
-          Navigator.of(context).pushNamed(Routes.infoUser, arguments: user);
+          // Navigator.of(context).pushNamed(Routes.infoUser,
+          //     arguments: userProvider.getCurrentUser);
           break;
         }
       case 1:
@@ -124,106 +134,89 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AuthUser?>(
-      future: context.read<AuthService>().currentUser,
-      builder: (context, snapshot) {
-        var data = snapshot.data;
-        if (data != null) {
-          user = data;
-          Future.delayed(Duration.zero, () {
-            // showSnackBarSuccess(context, "Login success");
-          });
-          return FutureBuilder(
-            future: FolderFirebaseStorage().allFolders(ownerUserId: user.uID!),
-            builder: (context, snapshot) {
-              return Scaffold(
-                backgroundColor: AppColors.background,
-                appBar: CustomAppbar(
-                  isBackBtn: false,
-                  handleBackBtn: (() {}),
-                  extraActions: <Widget>[
-                    PopupMenuButton<int>(
-                      icon: AvatarAppbarWidget(
-                        urlPhoto: user.photoUrl!,
-                      ),
-                      onSelected: (value) {
-                        onSelectPopUpMenu(context, value);
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(
-                          value: 0,
-                          child: Text("Your profile"),
-                        ),
-                        const PopupMenuItem(
-                          value: 1,
-                          child: Text("Logout"),
-                        ),
-                        const PopupMenuItem(
-                          value: 2,
-                          child: Text("Delete account"),
-                        ),
-                      ],
-                    ),
-                  ],
-                  title: "UniNotes",
-                ),
-                body: SafeArea(
-                    child: Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: Column(children: [
-                    SearchBar(controller: _textFieldController,),
-                    Expanded(
-                      child: GridView.builder(
-                          itemCount: Folders.folders.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemBuilder: (context, index) {
-                            Folder folder = Folders.folders[index];
-                            return FolderWidget(
-                              folder: folder,
-                              onTap: () => Navigator.of(context)
-                                  .pushNamed(Routes.notes, arguments: {
-                                "userId": user.uID,
-                                "folderId": folder.folderId
-                              }),
-                              onTapSetting: () {},
-                            );
-                          }),
-                    ),
-                  ]),
-                )),
-                floatingActionButton: Padding(
-                  padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      String? a = await _showTextInputDialog(context);
+    FolderProvider foldersValue = Provider.of<FolderProvider>(context);
 
-                      if (a != null) {
-                        Folder newFolder = await FolderFirebaseStorage()
-                            .createNewFolder(
-                                ownerUserId: user.uID!, nameFolder: a);
-
-                        Folders.folders.add(newFolder);
-                        setState(() {
-                          _textFieldController.text = "";
-                        });
-
-                        // Future.delayed(const Duration(seconds: 1), () {
-                        //   context.read<Folders>().addFolder(newFolder);
-                        // });
-                      }
-                    },
-                    child: Image.asset(AssetPaths.addFolder),
-                  ),
-                ),
-              );
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: CustomAppbar(
+        isBackBtn: false,
+        handleBackBtn: (() {}),
+        extraActions: <Widget>[
+          PopupMenuButton<int>(
+            icon: AvatarAppbarWidget(
+              urlPhoto: userProvider.currentUser.photoUrl!,
+            ),
+            onSelected: (value) {
+              onSelectPopUpMenu(context, value);
             },
-          );
-        } else {
-          return const LoadingScreen();
-        }
-      },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 0,
+                child: Text("Your profile"),
+              ),
+              const PopupMenuItem(
+                value: 1,
+                child: Text("Logout"),
+              ),
+              const PopupMenuItem(
+                value: 2,
+                child: Text("Delete account"),
+              ),
+            ],
+          ),
+        ],
+        title: "UniNotes",
+      ),
+      body: SafeArea(
+          child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(children: [
+          SearchBar(
+            controller: _textFieldController,
+          ),
+          Expanded(
+            child: GridView.builder(
+                itemCount: foldersValue.getFolders.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (context, index) {
+                  Folder folder = foldersValue.getFolders[index];
+                  return FolderWidget(
+                    folder: folder,
+                    onTap: () => Navigator.of(context).pushNamed(Routes.notes,
+                        arguments: {
+                          "userId": userProvider.currentUser.uID,
+                          "folderId": folder.folderId
+                        }),
+                    onTapSetting: () {},
+                  );
+                }),
+          ),
+        ]),
+      )),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
+        child: FloatingActionButton(
+          onPressed: () async {
+            String? a = await _showTextInputDialog(context);
+
+            if (a != null) {
+              Folder newFolder = await FolderFirebaseStorage().createNewFolder(
+                  ownerUserId: userProvider.currentUser.uID!, nameFolder: a);
+
+              // folder.add(newFolder);
+              setState(() {
+                _textFieldController.text = "";
+              });
+
+              // Future.delayed(const Duration(seconds: 1), () {
+              //   context.read<Folders>().addFolder(newFolder);
+              // });
+            }
+          },
+          child: Image.asset(AssetPaths.addFolder),
+        ),
+      ),
     );
   }
 }

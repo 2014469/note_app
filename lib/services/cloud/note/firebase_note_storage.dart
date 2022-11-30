@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:note_app/models/folders.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/constants/str_note_cloud.dart';
@@ -46,7 +45,7 @@ class NoteFirebaseStorage {
     QuerySnapshot snapshot =
         await getCollectionNote(ownerUserId, folderOwnerId).get();
     if (snapshot.docs.isEmpty) {
-      Folders.folders = [];
+      // Folders.folders = [];
     } else {
       getFromSnapShot(snapshot);
     }

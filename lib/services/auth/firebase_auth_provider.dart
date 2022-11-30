@@ -105,7 +105,11 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<void> loginWithGoogle() async {
     // AuthUser authUser;
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        scopes: ['email'],
+      );
+
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser != null) {
         final GoogleSignInAuthentication googleAuth =
@@ -116,10 +120,7 @@ class FirebaseAuthProvider implements AuthProvider {
         );
         DebugLog.myLog("Dang nhap");
 
-        // UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithCredential(credential);
-        // final user = userCredential.user;
-
+        await FirebaseAuth.instance.signInWithCredential(credential);
       } else {
         throw GoogleSignInAccountException();
       }
