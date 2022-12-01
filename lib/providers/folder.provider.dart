@@ -18,8 +18,8 @@ class FolderProvider with ChangeNotifier {
 
   late Folder folder;
 
-  void fetchAllFolders() async {
-    log("fetch review cart");
+  Future fetchAllFolders() async {
+    log("fetch folders");
     log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
 
     List<Folder> newFolders = [];
@@ -42,23 +42,31 @@ class FolderProvider with ChangeNotifier {
   }
 
   void addFolders({
-    required String ownerUserId,
     required String nameFolder,
   }) async {
     final idFolder = const Uuid().v1();
+
+    // FolderCloudConstant.ownerUserId: FirebaseAuth.instance.currentUser!.uid,
+    // FolderCloudConstant.folderId: idFolder,
+    // FolderCloudConstant.name: nameFolder,
+    // FolderCloudConstant.dateCreate: Timestamp.now(),
+    // FolderCloudConstant.isLock: false,
+    // FolderCloudConstant.passLock: null,
+    // FolderCloudConstant.color: '#fff',
+    folder = Folder(
+        folderId: idFolder,
+        ownerUserId: FirebaseAuth.instance.currentUser!.uid,
+        name: nameFolder,
+        isLock: false,
+        creationDate: Timestamp.now());
+    folder.printInfo();
     await FirebaseFirestore.instance
         .collection(UserString.userTBL)
-        .doc(ownerUserId)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection(FolderCloudConstant.collection)
         .doc(idFolder)
-        .set({
-      FolderCloudConstant.ownerUserId: ownerUserId,
-      FolderCloudConstant.folderId: idFolder,
-      FolderCloudConstant.name: nameFolder,
-      FolderCloudConstant.dateCreate: Timestamp.now(),
-      FolderCloudConstant.isLock: false,
-      FolderCloudConstant.passLock: null,
-      FolderCloudConstant.color: '#fff',
-    });
+        .set(folder.toDynamic());
+    folders.add(folder);
+    notifyListeners();
   }
 }

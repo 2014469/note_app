@@ -43,11 +43,13 @@ class _FolderWidgetState extends State<FolderWidget> {
             ),
           ),
         ),
-        Positioned(
-          left: 30.w,
-          right: 30.w,
-          top: 28.05.h,
-          bottom: 28.5.h,
+        Padding(
+          padding: EdgeInsets.only(
+            left: 24.w,
+            top: 32.h,
+            right: 12.w,
+            bottom: 32.h,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,8 +75,10 @@ class _FolderWidgetState extends State<FolderWidget> {
                       alignment: Alignment.topRight,
                       padding: const EdgeInsets.all(0),
                       onPressed: widget.onTapSetting,
-                      icon: Image.asset(
-                        AssetPaths.showMore,
+                      icon: Center(
+                        child: Image.asset(
+                          AssetPaths.showMore,
+                        ),
                       ))
                 ],
               ),

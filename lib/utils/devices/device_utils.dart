@@ -9,4 +9,10 @@ class DeviceUtils {
       FocusScope.of(context).unfocus();
     }
   }
+
+  static void openKeyboard(BuildContext context) {
+    if (!FocusScope.of(context).hasFocus) {
+      FocusScope.of(context).requestFocus();
+    }
+  }
 }

@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_app/providers/folder.provider.dart';
+import 'package:note_app/providers/note.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
-import 'package:note_app/screens/sign_in_up/verify_email.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
 import 'package:note_app/utils/routes/routes.dart';
@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 import 'providers/auth.provider.dart';
 import 'screens/home.screen.dart';
+import 'screens/sign_in_up/verify_email.screen.dart';
 
 // import 'package:provider/provider.dart'
 void main() async {
@@ -51,6 +52,9 @@ void main() async {
         ),
         ChangeNotifierProvider<UserProvider>(
           create: (context) => UserProvider(),
+        ),
+        ChangeNotifierProvider<NoteProvider>(
+          create: (context) => NoteProvider(),
         ),
       ],
       child: ScreenUtilInit(
@@ -109,5 +113,8 @@ class AuthWrapper extends StatelessWidget {
         }
       },
     );
+    // return const EditNoteScreen();
+
+    // return HomePage();
   }
 }

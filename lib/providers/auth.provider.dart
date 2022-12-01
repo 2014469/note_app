@@ -8,9 +8,11 @@ import 'package:note_app/models/auth_user.dart';
 import '../resources/constants/str_user.dart';
 
 class UserProvider extends ChangeNotifier {
-  late AuthUser currentUser;
+  AuthUser? currentUser;
 
-  AuthUser get getCurrentUser => currentUser;
+  AuthUser get getCurrentUser {
+    return currentUser ?? AuthUser.nullValue();
+  }
 
   void setInfoUser() {
     currentUser = AuthUser.fromFirebaseWithInformation(
@@ -32,9 +34,8 @@ class UserProvider extends ChangeNotifier {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
     log(snapshot.data().toString());
-    AuthUser result = AuthUser.fromSnapshot(snapshot);
-    result.printInfo();
-    currentUser = result;
+    currentUser = AuthUser.fromSnapshot(snapshot);
+    currentUser!.printInfo();
     notifyListeners();
   }
 

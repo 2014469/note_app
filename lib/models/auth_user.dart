@@ -21,6 +21,15 @@ class AuthUser {
     this.photoUrl,
   });
 
+  AuthUser.nullValue()
+      : id = "",
+        uID = "",
+        displayName = "User",
+        fullName = "",
+        email = "",
+        photoUrl =
+            "https://images.unsplash.com/photo-1645680827507-9f392edae51c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80";
+
   factory AuthUser.fromFirebaseWithInformation(User user) => AuthUser(
         id: const Uuid().v1(),
         uID: user.uid,

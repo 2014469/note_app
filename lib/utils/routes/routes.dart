@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:note_app/main.dart';
 import 'package:note_app/screens/home.screen.dart';
 import 'package:note_app/screens/info_user.screen.dart';
-import 'package:note_app/screens/notes/list_note.screen.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
 import 'package:note_app/screens/sign_in_up/sign_up.screen.dart';
+
+import '../../screens/notes/notes_list/notes.screen.dart';
 
 class Routes {
   Routes._();

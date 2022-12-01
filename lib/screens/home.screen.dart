@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/note.dart';
-import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/screens/folders/folder.widget.dart';
 import 'package:note_app/services/auth/auth_service.dart';
-import 'package:note_app/services/cloud/folder/folder_storage_firebase.dart';
 import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
@@ -34,34 +32,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
-    userProvider = Provider.of<UserProvider>(
-      context,
-      listen: false,
-    );
-
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.fetchUser();
     folderProvider.fetchAllFolders();
-    // userProvider.setInfoUser();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    Notes.notes = [];
   }
 
-  void handleCreateNewFolder() async {
-    // Folder newFolder = await FolderFirebaseStorage()
-    //     .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
-
-    // newFolder.printInfo();
+  void handleCreateNewFolder(String nameFolder) async {
+    folderProvider.addFolders(nameFolder: nameFolder);
   }
 
-  void handleCreateNewNote() async {
+  void handleCreateNewNote(String idFolder) async {
     Note newFolder = await NoteFirebaseStorage().createNewNote(
-        ownerUserId: userProvider.currentUser.uID!,
-        ownerFolderId: "e6e3e060-63ce-11ed-ab00-8fcb546f319b",
+        ownerUserId: userProvider.getCurrentUser.uID!,
+        ownerFolderId: idFolder,
         titleNote: "Hello world",
         bodyNote: "");
 
@@ -71,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void handleGetAllNotes(String idFolder) async {
     try {
       await NoteFirebaseStorage().allNotes(
-          ownerUserId: userProvider.currentUser.uID!, folderOwnerId: idFolder);
+          ownerUserId: userProvider.getCurrentUser.uID!,
+          folderOwnerId: idFolder);
     } catch (e) {
       showSnackBarError(context, e.toString());
     }
@@ -79,8 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.of(context).pushNamed(Routes.notes);
     });
   }
-
-  void handleGetAllFolders() async {}
 
   final _textFieldController = TextEditingController();
 
@@ -113,8 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     switch (item) {
       case 0:
         {
-          // Navigator.of(context).pushNamed(Routes.infoUser,
-          //     arguments: userProvider.getCurrentUser);
+          Navigator.of(context).pushNamed(Routes.infoUser);
           break;
         }
       case 1:
@@ -134,7 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    FolderProvider foldersValue = Provider.of<FolderProvider>(context);
+    UserProvider userProviderValue = Provider.of<UserProvider>(context);
+    FolderProvider folderProviderValue = Provider.of<FolderProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -144,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         extraActions: <Widget>[
           PopupMenuButton<int>(
             icon: AvatarAppbarWidget(
-              urlPhoto: userProvider.currentUser.photoUrl!,
+              urlPhoto: userProviderValue.getCurrentUser.photoUrl!,
             ),
             onSelected: (value) {
               onSelectPopUpMenu(context, value);
@@ -176,19 +164,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: GridView.builder(
-                itemCount: foldersValue.getFolders.length,
+                itemCount: folderProviderValue.getFolders.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
                 itemBuilder: (context, index) {
-                  Folder folder = foldersValue.getFolders[index];
+                  Folder folder = folderProviderValue.getFolders[index];
                   return FolderWidget(
                     folder: folder,
                     onTap: () => Navigator.of(context).pushNamed(Routes.notes,
                         arguments: {
-                          "userId": userProvider.currentUser.uID,
+                          "userId": userProviderValue.getCurrentUser.uID,
                           "folderId": folder.folderId
                         }),
-                    onTapSetting: () {},
+                    onTapSetting: () {
+                      handleCreateNewNote(folder.folderId);
+                    },
                   );
                 }),
           ),
@@ -201,10 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
             String? a = await _showTextInputDialog(context);
 
             if (a != null) {
-              Folder newFolder = await FolderFirebaseStorage().createNewFolder(
-                  ownerUserId: userProvider.currentUser.uID!, nameFolder: a);
-
-              // folder.add(newFolder);
+              handleCreateNewFolder(a);
               setState(() {
                 _textFieldController.text = "";
               });
