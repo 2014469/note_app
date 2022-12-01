@@ -176,16 +176,25 @@ class _HomeScreenState extends State<HomeScreen> {
   void pickColor(BuildContext context) => showDialog(
       context: context,
       builder: (context) => AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            titlePadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
             title: const Text("Pick your color"),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildColorPicker(),
-                TextButton(
+            actionsPadding: EdgeInsets.zero,
+            actions: [
+              Center(
+                child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("SELECT"))
-              ],
+                    child: const Text(
+                      "SELECT",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.primary,
+                      ),
+                    )),
+              ),
+            ],
+            content: SingleChildScrollView(
+              child: buildColorPicker(),
             ),
           ));
 
@@ -244,8 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => Navigator.of(context).pushNamed(Routes.notes,
                         arguments: {"folderId": folder.folderId}),
                     onTapSetting: () {
-                      // handleCreateNewNote(folder.folderId);
-
                       showModalBottomSheet(
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -256,86 +263,92 @@ class _HomeScreenState extends State<HomeScreen> {
                         context: context,
                         builder: (BuildContext context) {
                           return Padding(
-                            padding: EdgeInsets.all(17.h),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                TextField(
-                                  decoration: InputDecoration(
-                                      border: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: AppColors.gray[70]!,
-                                            width: 0.3),
-                                      ),
-                                      hintText: folder.name,
-                                      hintStyle: AppTextStyles
-                                          .h6[TextWeights.semibold]
-                                          ?.copyWith(
-                                              color: AppColors.gray[60])),
-                                ),
-                                ListTile(
-                                  leading: SvgPicture.asset(AssetPaths.key),
-                                  title: Text(
-                                    "Set Password",
-                                    style: AppTextStyles
-                                        .caption[TextWeights.medium]
-                                        ?.copyWith(color: AppColors.gray[70]),
+                            padding: EdgeInsets.all(16.h),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    decoration: InputDecoration(
+                                        border: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: AppColors.gray[70]!,
+                                              width: 0.3),
+                                        ),
+                                        hintText: folder.name,
+                                        hintStyle: AppTextStyles
+                                            .h6[TextWeights.semibold]
+                                            ?.copyWith(
+                                                color: AppColors.gray[60])),
                                   ),
-                                  onTap: () {
-                                    DebugLog.myLog("Set password");
-                                  },
-                                ),
-                                ListTile(
-                                  leading:
-                                      SvgPicture.asset(AssetPaths.setColor),
-                                  title: Text(
-                                    "Set Color",
-                                    style: AppTextStyles
-                                        .caption[TextWeights.medium]
-                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ListTile(
+                                    leading: SvgPicture.asset(
+                                      AssetPaths.key,
+                                    ),
+                                    title: Text(
+                                      "Set Password",
+                                      style: AppTextStyles
+                                          .caption[TextWeights.medium]
+                                          ?.copyWith(color: AppColors.gray[70]),
+                                    ),
+                                    onTap: () {
+                                      DebugLog.myLog("Set password");
+                                    },
                                   ),
-                                  onTap: () {
-                                    DebugLog.myLog("Set Color");
-                                  },
-                                ),
-                                ListTile(
-                                  leading: SvgPicture.asset(AssetPaths.select),
-                                  title: Text(
-                                    "Select",
-                                    style: AppTextStyles
-                                        .caption[TextWeights.medium]
-                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ListTile(
+                                    leading:
+                                        SvgPicture.asset(AssetPaths.setColor),
+                                    title: Text(
+                                      "Set Color",
+                                      style: AppTextStyles
+                                          .caption[TextWeights.medium]
+                                          ?.copyWith(color: AppColors.gray[70]),
+                                    ),
+                                    onTap: () {
+                                      DebugLog.myLog("Set Color");
+                                    },
                                   ),
-                                  onTap: () {
-                                    DebugLog.myLog("Select");
-                                  },
-                                ),
-                                ListTile(
-                                  leading:
-                                      SvgPicture.asset(AssetPaths.duplicate),
-                                  title: Text(
-                                    "Duplicate",
-                                    style: AppTextStyles
-                                        .caption[TextWeights.medium]
-                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ListTile(
+                                    leading:
+                                        SvgPicture.asset(AssetPaths.select),
+                                    title: Text(
+                                      "Select",
+                                      style: AppTextStyles
+                                          .caption[TextWeights.medium]
+                                          ?.copyWith(color: AppColors.gray[70]),
+                                    ),
+                                    onTap: () {
+                                      DebugLog.myLog("Select");
+                                    },
                                   ),
-                                  onTap: () {
-                                    DebugLog.myLog("Duplicate");
-                                  },
-                                ),
-                                ListTile(
-                                  leading: SvgPicture.asset(AssetPaths.delete),
-                                  title: Text(
-                                    "Delete",
-                                    style: AppTextStyles
-                                        .caption[TextWeights.medium]
-                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ListTile(
+                                    leading:
+                                        SvgPicture.asset(AssetPaths.duplicate),
+                                    title: Text(
+                                      "Duplicate",
+                                      style: AppTextStyles
+                                          .caption[TextWeights.medium]
+                                          ?.copyWith(color: AppColors.gray[70]),
+                                    ),
+                                    onTap: () {
+                                      DebugLog.myLog("Duplicate");
+                                    },
                                   ),
-                                  onTap: () {
-                                    DebugLog.myLog("Delete");
-                                  },
-                                ),
-                              ],
+                                  ListTile(
+                                    leading:
+                                        SvgPicture.asset(AssetPaths.delete),
+                                    title: Text(
+                                      "Delete",
+                                      style: AppTextStyles
+                                          .caption[TextWeights.medium]
+                                          ?.copyWith(color: AppColors.gray[70]),
+                                    ),
+                                    onTap: () {
+                                      DebugLog.myLog("Delete");
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
