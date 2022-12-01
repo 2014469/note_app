@@ -18,5 +18,10 @@ class AssetPaths{
   static const String microphone='$prePath/ic_microphone.svg';
   static const String search='$prePath/ic_search.svg';
   static const String iconNote = '$prePath/iconNote.png';
+  static const String key='$prePath/key.svg';
+  static const String setColor='$prePath/brush.svg';
+  static const String select='$prePath/task-square.svg';
+  static const String duplicate='$prePath/folder-add.svg';
+  static const String delete='$prePath/trash-more.svg';
   // static const String iconNote = '$prePath/iconNote.png';
 }

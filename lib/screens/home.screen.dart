@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
+import 'package:note_app/resources/fonts/enum_text_styles.dart';
+import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/folders/folder.widget.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
@@ -16,6 +20,7 @@ import 'package:provider/provider.dart';
 import '../models/folder.dart';
 import '../providers/auth.provider.dart';
 import '../providers/folder.provider.dart';
+import '../utils/customLog/debug_log.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late UserProvider userProvider;
   late FolderProvider folderProvider;
 
+  Color folderColor = AppColors.primary;
   @override
   void initState() {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
@@ -68,18 +74,69 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('New folder'),
-            content: TextField(
-              controller: _textFieldController,
-              decoration: const InputDecoration(hintText: "Name folder"),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            title: Text(
+              'New folder',
+              style: AppTextStyles.h4[TextWeights.semibold]
+                  ?.copyWith(color: AppColors.primary),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _textFieldController,
+                  decoration: InputDecoration(
+                      hintText: "Folder Name",
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.gray[40]!)),
+                      focusedBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColors.yellowGold)),
+                      hintStyle: AppTextStyles.subtitile[TextWeights.regular]
+                          ?.copyWith(color: AppColors.gray[80])),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary),
+                        onPressed: () {
+                          pickColor(context);
+                        },
+                        child: Text(
+                          "Choose Color",
+                          style: AppTextStyles.subtitile[TextWeights.medium]
+                              ?.copyWith(color: AppColors.gray[0]),
+                        )),
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                          color: folderColor, shape: BoxShape.circle),
+                    )
+                  ],
+                ),
+              ],
             ),
             actions: <Widget>[
-              ElevatedButton(
-                child: const Text("Cancel"),
+              TextButton(
+                child: Text(
+                  "Cancel",
+                  style: AppTextStyles.h6[TextWeights.semibold]
+                      ?.copyWith(color: AppColors.primary),
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
-              ElevatedButton(
-                child: const Text('OK'),
+              TextButton(
+                child: Text(
+                  'OK',
+                  style: AppTextStyles.h6[TextWeights.semibold]
+                      ?.copyWith(color: AppColors.primary),
+                ),
                 onPressed: () =>
                     Navigator.pop(context, _textFieldController.text),
               ),
@@ -109,6 +166,28 @@ class _HomeScreenState extends State<HomeScreen> {
         }
     }
   }
+
+  Widget buildColorPicker() => ColorPicker(
+      pickerColor: folderColor,
+      onColorChanged: (color) => setState(() {
+            folderColor = color;
+          }));
+
+  void pickColor(BuildContext context) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: const Text("Pick your color"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildColorPicker(),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("SELECT"))
+              ],
+            ),
+          ));
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +244,102 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () => Navigator.of(context).pushNamed(Routes.notes,
                         arguments: {"folderId": folder.folderId}),
                     onTapSetting: () {
-                      handleCreateNewNote(folder.folderId);
+                      // handleCreateNewNote(folder.folderId);
+
+                      showModalBottomSheet(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                        ),
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Padding(
+                            padding: EdgeInsets.all(17.h),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextField(
+                                  decoration: InputDecoration(
+                                      border: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: AppColors.gray[70]!,
+                                            width: 0.3),
+                                      ),
+                                      hintText: folder.name,
+                                      hintStyle: AppTextStyles
+                                          .h6[TextWeights.semibold]
+                                          ?.copyWith(
+                                              color: AppColors.gray[60])),
+                                ),
+                                ListTile(
+                                  leading: SvgPicture.asset(AssetPaths.key),
+                                  title: Text(
+                                    "Set Password",
+                                    style: AppTextStyles
+                                        .caption[TextWeights.medium]
+                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ),
+                                  onTap: () {
+                                    DebugLog.myLog("Set password");
+                                  },
+                                ),
+                                ListTile(
+                                  leading:
+                                      SvgPicture.asset(AssetPaths.setColor),
+                                  title: Text(
+                                    "Set Color",
+                                    style: AppTextStyles
+                                        .caption[TextWeights.medium]
+                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ),
+                                  onTap: () {
+                                    DebugLog.myLog("Set Color");
+                                  },
+                                ),
+                                ListTile(
+                                  leading: SvgPicture.asset(AssetPaths.select),
+                                  title: Text(
+                                    "Select",
+                                    style: AppTextStyles
+                                        .caption[TextWeights.medium]
+                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ),
+                                  onTap: () {
+                                    DebugLog.myLog("Select");
+                                  },
+                                ),
+                                ListTile(
+                                  leading:
+                                      SvgPicture.asset(AssetPaths.duplicate),
+                                  title: Text(
+                                    "Duplicate",
+                                    style: AppTextStyles
+                                        .caption[TextWeights.medium]
+                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ),
+                                  onTap: () {
+                                    DebugLog.myLog("Duplicate");
+                                  },
+                                ),
+                                ListTile(
+                                  leading: SvgPicture.asset(AssetPaths.delete),
+                                  title: Text(
+                                    "Delete",
+                                    style: AppTextStyles
+                                        .caption[TextWeights.medium]
+                                        ?.copyWith(color: AppColors.gray[70]),
+                                  ),
+                                  onTap: () {
+                                    DebugLog.myLog("Delete");
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
                     },
                   );
                 }),

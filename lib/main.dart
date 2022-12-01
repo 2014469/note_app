@@ -32,7 +32,6 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-
 // todo: lock xoay man hinh
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
