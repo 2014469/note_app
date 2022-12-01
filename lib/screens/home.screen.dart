@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Color folderColor = Color((Random().nextDouble() + 0xFFFFFF).toInt());
+  Color folderColor = AppColors.primary;
   AuthUser user = AuthUser();
   @override
   void initState() {
@@ -46,12 +44,12 @@ class _HomeScreenState extends State<HomeScreen> {
     Notes.notes = [];
   }
 
-  void handleCreateNewFolder() async {
-    Folder newFolder = await FolderFirebaseStorage()
-        .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
+  // void handleCreateNewFolder() async {
+  //   Folder newFolder = await FolderFirebaseStorage()
+  //       .createNewFolder(ownerUserId: user.uID!, nameFolder: "Hello world");
 
-    newFolder.printInfo();
-  }
+  //   newFolder.printInfo();
+  // }
 
   void handleCreateNewNote() async {
     Note newFolder = await NoteFirebaseStorage().createNewNote(
@@ -83,30 +81,46 @@ class _HomeScreenState extends State<HomeScreen> {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text('New folder'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: _textFieldController,
-                  decoration: const InputDecoration(hintText: "Name folder"),
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('New folder'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _textFieldController,
+                    decoration: const InputDecoration(hintText: "Name folder"),
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            pickColor(context);
+                          },
+                          child: const Text("Choose Color")),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                            color: folderColor, shape: BoxShape.circle),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: const Text("Cancel"),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                ElevatedButton(onPressed: ()=>pickColor(context), child: const Text("Choose Color")),
+                ElevatedButton(
+                  child: const Text('OK'),
+                  onPressed: () =>
+                      Navigator.pop(context, _textFieldController.text),
+                ),
               ],
-            ),
-            actions: <Widget>[
-              ElevatedButton(
-                child: const Text("Cancel"),
-                onPressed: () => Navigator.pop(context),
-              ),
-              ElevatedButton(
-                child: const Text('OK'),
-                onPressed: () =>
-                    Navigator.pop(context, _textFieldController.text),
-              ),
-            ],
-          );
+            );
+          });
         });
   }
 
@@ -244,12 +258,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
                   child: FloatingActionButton(
                     onPressed: () async {
+                      String colorString = folderColor.toString();
+                      String valueString =
+                          colorString.split('(0x')[1].split(')')[0];
                       String? a = await _showTextInputDialog(context);
 
                       if (a != null) {
                         Folder newFolder = await FolderFirebaseStorage()
                             .createNewFolder(
-                                ownerUserId: user.uID!, nameFolder: a);
+                                ownerUserId: user.uID!,
+                                nameFolder: a,
+                                colorString: valueString);
 
                         Folders.folders.add(newFolder);
                         setState(() {

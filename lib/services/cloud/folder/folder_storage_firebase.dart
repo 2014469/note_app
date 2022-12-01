@@ -63,7 +63,7 @@ class FolderFirebaseStorage {
   }
 
   Future<Folder> createNewFolder(
-      {required String ownerUserId, required String nameFolder}) async {
+      {required String ownerUserId, required String nameFolder, required String colorString}) async {
     final idFolder = const Uuid().v1();
     await FirebaseFirestore.instance
         .collection(UserString.userTBL)
@@ -77,7 +77,7 @@ class FolderFirebaseStorage {
       FolderCloudConstant.dateCreate: Timestamp.now(),
       FolderCloudConstant.isLock: false,
       FolderCloudConstant.passLock: null,
-      FolderCloudConstant.color: '#43D3C7',
+      FolderCloudConstant.color: colorString,
     });
     final fetchedFolder = await FirebaseFirestore.instance
         .collection(UserString.userTBL)
