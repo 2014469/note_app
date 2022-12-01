@@ -8,4 +8,5 @@ class NoteCloudConstant {
   static const String color = "colorTag";
   static const String title = "name";
   static const String body = "body";
+  static const String content = "content";
 }

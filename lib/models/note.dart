@@ -11,6 +11,7 @@ class Note {
   String? color;
   String title;
   String? body;
+  String? content;
 
   Note({
     required this.noteId,
@@ -21,6 +22,7 @@ class Note {
     required this.color,
     required this.title,
     this.body = "",
+    this.content = "",
   });
 
   factory Note.fromJson(Map<String, dynamic> reponseData) {
@@ -32,7 +34,8 @@ class Note {
         creationDate: reponseData[NoteCloudConstant.dateCreate],
         color: reponseData[NoteCloudConstant.color],
         title: reponseData[NoteCloudConstant.title],
-        body: reponseData[NoteCloudConstant.body]);
+        body: reponseData[NoteCloudConstant.body],
+        content: reponseData[NoteCloudConstant.content]);
   }
 
   factory Note.fromSnapshot(DocumentSnapshot snapshot) {
@@ -48,7 +51,8 @@ class Note {
       NoteCloudConstant.dateCreate: creationDate,
       NoteCloudConstant.color: color,
       NoteCloudConstant.title: title,
-      NoteCloudConstant.body: body
+      NoteCloudConstant.body: body,
+      NoteCloudConstant.content: content
     };
   }
 
@@ -62,5 +66,6 @@ class Note {
     DebugLog.myLog("isLock: $isLock");
     DebugLog.myLog("pass Lock $passLock");
     DebugLog.myLog("color: $color");
+    DebugLog.myLog("content $content");
   }
 }

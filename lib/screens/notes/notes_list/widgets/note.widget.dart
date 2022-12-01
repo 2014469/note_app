@@ -8,11 +8,17 @@ import 'package:note_app/resources/fonts/text_styles.dart';
 
 class NoteListTileWidget extends StatelessWidget {
   final Note note;
-  const NoteListTileWidget({super.key, required this.note});
+  final VoidCallback onTap;
+  const NoteListTileWidget({
+    super.key,
+    required this.note,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       contentPadding: EdgeInsets.symmetric(
         vertical: 8.h,
       ),

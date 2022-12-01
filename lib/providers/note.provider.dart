@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -29,10 +31,11 @@ class NoteProvider with ChangeNotifier {
         .collection(NoteCloudConstant.collection);
   }
 
-  void createNewNote(
+  Future<Note> createNewNote(
       {required String ownerFolderId,
       required String titleNote,
-      required String bodyNote}) async {
+      required String bodyNote,
+      required String content}) async {
     final idNote = const Uuid().v1();
 
     note = Note(
@@ -41,11 +44,13 @@ class NoteProvider with ChangeNotifier {
         ownerFolderId: ownerFolderId,
         creationDate: Timestamp.now(),
         color: "",
+        content: content,
         title: titleNote);
     await getCollectionNote(ownerFolderId).doc(idNote).set(note.toDynamic());
 
     notes.insert(0, note);
     notifyListeners();
+    return note;
   }
 
   Future<void> fetchAllNotes(String ownerFolder) async {
@@ -64,5 +69,18 @@ class NoteProvider with ChangeNotifier {
       }
     }
     notes = newNotes;
+  }
+
+  void uploadFileToStorage(
+      String ownerFolderId, String noteId, String json) async {
+    var storage = FirebaseStorage.instance;
+    final List<int> codeUnits = json.codeUnits;
+
+    log("Start upload");
+    final Uint8List unit8List = Uint8List.fromList(codeUnits);
+    var taskSnapshot = storage.ref("$ownerFolderId/$noteId").putString(json);
+
+    log("Upload in function");
+    log(taskSnapshot.snapshot.ref.getDownloadURL().toString());
   }
 }

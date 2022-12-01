@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../providers/note.provider.dart';
 import '../../../utils/routes/routes.dart';
+import '../type.dart';
 
 // Enum Actions  {pin, delete, move};
 
@@ -120,6 +121,14 @@ class _NotesScreenState extends State<NotesScreen> {
                         ]),
                         child: NoteListTileWidget(
                           note: note,
+                          onTap: () {
+                            Navigator.of(context)
+                                .pushNamed(Routes.editNote, arguments: {
+                              "type": NoteType.editNote,
+                              "folderId": folderId,
+                              "note": note,
+                            });
+                          },
                         )),
                   );
                 },
@@ -136,8 +145,10 @@ class _NotesScreenState extends State<NotesScreen> {
             padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
             child: FloatingActionButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(Routes.editNote,
-                    arguments: {"folderId": folderId});
+                Navigator.of(context).pushNamed(Routes.editNote, arguments: {
+                  "type": NoteType.newNote,
+                  "folderId": folderId
+                });
               },
               child: Image.asset(AssetPaths.addFolder),
             ),

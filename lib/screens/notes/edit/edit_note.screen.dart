@@ -5,21 +5,22 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_quill/extensions.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // ignore: depend_on_referenced_packages
-import 'package:path/path.dart';
+import 'package:path/path.dart' as Path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tuple/tuple.dart';
 
+import '../../../models/note.dart';
 import '../../../providers/note.provider.dart';
 import '../../../resources/colors/colors.dart';
 import '../../../utils/devices/device_utils.dart';
 import '../../../widgets/app_bar.dart';
+import '../type.dart';
 
 enum _SelectionType {
   none,
@@ -42,12 +43,26 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   bool isShowKeyboard = true;
   _SelectionType _selectionType = _SelectionType.none;
 
+  late final String folderId;
+  late final NoteType type;
+  Note? note;
+
   late NoteProvider noteProvider;
 
   @override
   void initState() {
     _controller = QuillController.basic();
-    _loadFromAssets();
+
+    // todo: lay gia tri truyen tu folder
+    Future.delayed(Duration.zero, () {
+      final argruments = (ModalRoute.of(context)!.settings.arguments ??
+          <String, dynamic>{}) as Map;
+      folderId = argruments["folderId"];
+      type = argruments["type"];
+      note = argruments["note"];
+      _loadFromAssets();
+    });
+
     super.initState();
   }
 
@@ -59,21 +74,40 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   Future<void> _loadFromAssets() async {
     try {
-      final result = await rootBundle.loadString(isDesktop()
-          ? 'assets/sample_data_nomedia.json'
-          : 'assets/sample_data.json');
-      final doc = Document.fromJson(jsonDecode(result));
-      setState(() {
-        _controller = QuillController(
-            document: doc, selection: const TextSelection.collapsed(offset: 0));
-      });
-    } catch (error) {
-      final doc = Document()..insert(0, '');
-      setState(() {
-        _controller = QuillController(
-            document: doc, selection: const TextSelection.collapsed(offset: 0));
-      });
-    }
+      // final result = await rootBundle.loadString(isDesktop()
+      //     ? 'assets/sample_data_nomedia.json'
+      //     : 'assets/sample_data.json');
+      // final doc = Document.fromJson(jsonDecode(result));
+      // setState(() {
+      //   _controller = QuillController(
+      //       document: doc, selection: const TextSelection.collapsed(offset: 0));
+      // });
+      switch (type) {
+        case NoteType.newNote:
+          {
+            final doc = Document()..insert(0, '');
+            setState(() {
+              _controller = QuillController(
+                  document: doc,
+                  selection: const TextSelection.collapsed(offset: 0));
+            });
+            break;
+          }
+        case NoteType.editNote:
+          {
+            //  : 'assets/sample_data.json');
+            final doc = Document.fromJson(jsonDecode(note!.content!));
+            // final doc = jsonDecode(note!.content!);
+            setState(() {
+              log(doc.toDelta().toString());
+              _controller = QuillController(
+                  document: doc,
+                  selection: const TextSelection.collapsed(offset: 0));
+            });
+            break;
+          }
+      }
+    } catch (error) {}
   }
 
   Widget quillToolbar(QuillController controller) {
@@ -98,11 +132,6 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // todo: lay gia tri truyen tu folder
-    final argruments = (ModalRoute.of(context)!.settings.arguments ??
-        <String, dynamic>{}) as Map;
-    final folderId = argruments["folderId"];
-
 //  todo: create provider
 
     noteProvider = Provider.of<NoteProvider>(context);
@@ -118,23 +147,50 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
       ),
       child: Scaffold(
         appBar: CustomAppbar(
-          handleBackBtn: () {
-            if (_controller.document.toPlainText().isNotEmpty) {
-              noteProvider.createNewNote(
-                ownerFolderId: folderId,
-                titleNote: _controller.document
-                    .toPlainText()
-                    .trim()
-                    .split("\n")[0]
-                    .toString(),
-                bodyNote: _controller.document
-                    .toPlainText()
-                    .trim()
-                    .split("\n")[1]
-                    .toString(),
-              );
+          handleBackBtn: () async {
+            switch (type) {
+              case NoteType.newNote:
+                {
+                  if (_controller.document.toPlainText().isNotEmpty) {
+                    var json =
+                        jsonEncode(_controller.document.toDelta().toJson());
+                    Note note = await noteProvider.createNewNote(
+                      ownerFolderId: folderId,
+                      titleNote: _controller.document
+                          .toPlainText()
+                          .trim()
+                          .split("\n")[0]
+                          .toString(),
+                      bodyNote: _controller.document
+                          .toPlainText()
+                          .trim()
+                          .split("\n")[1]
+                          .toString(),
+                      content: json,
+                    );
+
+                    note.printInfo();
+
+                    // final prefs = await SharedPreferences.getInstance();
+
+                    // await prefs.setString('jsonData', json);
+                    // log("upload");
+                    // noteProvider.uploadFileToStorage(folderId, note.noteId, json);
+                    log("Uploaded");
+                  }
+                  Future.delayed(const Duration(seconds: 0), () {
+                    Navigator.of(context).pop();
+                  });
+                  break;
+                }
+              case NoteType.editNote:
+                {
+                  log("eidt note");
+                  Future.delayed(const Duration(seconds: 0), () {
+                    Navigator.of(context).pop();
+                  });
+                }
             }
-            Navigator.of(context).pop();
 
             //   log(_controller.document
             //       .toPlainText()
@@ -279,7 +335,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Copies the picked file from temporary cache to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final copiedFile =
-        await file.copy('${appDocDir.path}/${basename(file.path)}');
+        await file.copy('${appDocDir.path}/${Path.basename(file.path)}');
     return copiedFile.path.toString();
   }
 
@@ -290,7 +346,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Copies the picked file from temporary cache to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final copiedFile =
-        await file.copy('${appDocDir.path}/${basename(file.path)}');
+        await file.copy('${appDocDir.path}/${Path.basename(file.path)}');
     return copiedFile.path.toString();
   }
 
@@ -371,7 +427,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Saves the image to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final file = await File(
-            '${appDocDir.path}/${basename('${DateTime.now().millisecondsSinceEpoch}.png')}')
+            '${appDocDir.path}/${Path.basename('${DateTime.now().millisecondsSinceEpoch}.png')}')
         .writeAsBytes(imageBytes, flush: true);
     return file.path.toString();
   }
