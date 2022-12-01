@@ -12,10 +12,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tuple/tuple.dart';
 
+import '../../../providers/note.provider.dart';
 import '../../../resources/colors/colors.dart';
+import '../../../utils/devices/device_utils.dart';
 import '../../../widgets/app_bar.dart';
 
 enum _SelectionType {
@@ -28,8 +31,7 @@ class EditNoteScreen extends StatefulWidget {
   const EditNoteScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _EditNoteScreenState createState() => _EditNoteScreenState();
+  State<EditNoteScreen> createState() => _EditNoteScreenState();
 }
 
 class _EditNoteScreenState extends State<EditNoteScreen> {
@@ -40,18 +42,19 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   bool isShowKeyboard = true;
   _SelectionType _selectionType = _SelectionType.none;
 
-  @override
-  void dispose() {
-    _selectAllTimer?.cancel();
-    super.dispose();
-  }
+  late NoteProvider noteProvider;
 
   @override
   void initState() {
     _controller = QuillController.basic();
-
     _loadFromAssets();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _selectAllTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadFromAssets() async {
@@ -95,6 +98,16 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // todo: lay gia tri truyen tu folder
+    final argruments = (ModalRoute.of(context)!.settings.arguments ??
+        <String, dynamic>{}) as Map;
+    final folderId = argruments["folderId"];
+
+//  todo: create provider
+
+    noteProvider = Provider.of<NoteProvider>(context);
+
+// todo: format tieu de
     _controller.formatText(0, title.length, Attribute.h1);
     _controller.formatText(0, title.length, Attribute.bold);
 
@@ -106,13 +119,28 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
       child: Scaffold(
         appBar: CustomAppbar(
           handleBackBtn: () {
-            log("Back btn");
+            if (_controller.document.toPlainText().isNotEmpty) {
+              noteProvider.createNewNote(
+                ownerFolderId: folderId,
+                titleNote: _controller.document
+                    .toPlainText()
+                    .trim()
+                    .split("\n")[0]
+                    .toString(),
+                bodyNote: _controller.document
+                    .toPlainText()
+                    .trim()
+                    .split("\n")[1]
+                    .toString(),
+              );
+            }
+            Navigator.of(context).pop();
 
-            log(_controller.document
-                .toPlainText()
-                .trim()
-                .split("\n")[0]
-                .toString());
+            //   log(_controller.document
+            //       .toPlainText()
+            //       .trim()
+            //       .split("\n")[0]
+            //       .toString());
           },
         ),
         body: _buildWelcomeEditor(context),
@@ -221,9 +249,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
             null),
         sizeSmall: TextStyle(fontSize: 9.sp),
       ),
-      // embedBuilders: [
-      //   ...FlutterQuillEmbeds.builders(),
-      // ],
+      embedBuilders: [
+        ...FlutterQuillEmbeds.builders(),
+      ],
     );
     return SafeArea(
       child: Container(
@@ -267,32 +295,34 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   }
 
   // ignore: unused_element
-  Future<MediaPickSetting?> _selectMediaPickSetting(BuildContext context) =>
-      showDialog<MediaPickSetting>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              textButtonDialog(
-                () {
-                  Navigator.pop(ctx, MediaPickSetting.Gallery);
-                },
-                Icons.collections,
-                "Gallery",
-              ),
-              textButtonDialog(
-                () {
-                  Navigator.pop(ctx, MediaPickSetting.Link);
-                },
-                Icons.link,
-                "Link",
-              ),
-            ],
-          ),
+  Future<MediaPickSetting?> _selectMediaPickSetting(BuildContext context) {
+    DeviceUtils.hideKeyboard(context);
+    return showDialog<MediaPickSetting>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            textButtonDialog(
+              () {
+                Navigator.pop(ctx, MediaPickSetting.Gallery);
+              },
+              Icons.collections,
+              "Gallery",
+            ),
+            textButtonDialog(
+              () {
+                Navigator.pop(ctx, MediaPickSetting.Link);
+              },
+              Icons.link,
+              "Link",
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Widget textButtonDialog(VoidCallback onPress, IconData icon, String title) {
     return TextButton.icon(
@@ -308,32 +338,34 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     );
   }
 
-  Future<MediaPickSetting?> _selectCameraPickSetting(BuildContext context) =>
-      showDialog<MediaPickSetting>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              textButtonDialog(
-                () {
-                  Navigator.pop(ctx, MediaPickSetting.Camera);
-                },
-                Icons.camera,
-                "Capture a photo",
-              ),
-              textButtonDialog(
-                () {
-                  Navigator.pop(ctx, MediaPickSetting.Video);
-                },
-                Icons.video_call,
-                "Capture a video",
-              ),
-            ],
-          ),
+  Future<MediaPickSetting?> _selectCameraPickSetting(BuildContext context) {
+    DeviceUtils.hideKeyboard(context);
+    return showDialog<MediaPickSetting>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            textButtonDialog(
+              () {
+                Navigator.pop(ctx, MediaPickSetting.Camera);
+              },
+              Icons.camera,
+              "Capture a photo",
+            ),
+            textButtonDialog(
+              () {
+                Navigator.pop(ctx, MediaPickSetting.Video);
+              },
+              Icons.video_call,
+              "Capture a video",
+            ),
+          ],
         ),
-      );
+      ),
+    );
+  }
 
   Future<String> _onImagePaste(Uint8List imageBytes) async {
     // Saves the image to applications directory

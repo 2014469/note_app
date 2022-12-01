@@ -66,7 +66,7 @@ class FolderProvider with ChangeNotifier {
         .collection(FolderCloudConstant.collection)
         .doc(idFolder)
         .set(folder.toDynamic());
-    folders.add(folder);
+    folders.insert(0, folder);
     notifyListeners();
   }
 }

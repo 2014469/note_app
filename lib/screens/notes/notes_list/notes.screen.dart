@@ -9,6 +9,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/note.provider.dart';
+import '../../../utils/routes/routes.dart';
 
 // Enum Actions  {pin, delete, move};
 
@@ -22,8 +23,6 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  final _textFieldController = TextEditingController();
-
   late NoteProvider noteProvider;
 
   @override
@@ -69,95 +68,82 @@ class _NotesScreenState extends State<NotesScreen> {
 
     final folderId = argruments["folderId"];
 
+    NoteProvider noteProviderValue = Provider.of<NoteProvider>(context);
+
     return FutureBuilder(
       future: noteProvider.fetchAllNotes(folderId),
-      builder: ((context, snapshot) => Scaffold(
-            appBar: CustomAppbar(
-              title: "All notes",
-              handleBackBtn: () => Navigator.of(context).pop(),
-            ),
-            body: SafeArea(
-              child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 16.h,
-                ),
-                child: ListView.separated(
-                  itemCount: noteProvider.getNotes.length,
-                  itemBuilder: (context, index) {
-                    Note note = noteProvider.getNotes[index];
+      builder: ((context, snapshot) {
+        return Scaffold(
+          appBar: CustomAppbar(
+            title: "All notes",
+            handleBackBtn: () => Navigator.of(context).pop(),
+          ),
+          body: SafeArea(
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
+              child: ListView.separated(
+                itemCount: noteProviderValue.getNotes.length,
+                itemBuilder: (context, index) {
+                  Note note = noteProviderValue.getNotes[index];
 
-                    return InkWell(
-                      onTap: () {},
-                      child: Slidable(
-                          startActionPane: ActionPane(
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (context) {},
-                                backgroundColor: AppColors.yellowGold,
-                                icon: Icons.share,
-                                label: "Pin",
-                              )
-                            ],
+                  return InkWell(
+                    onTap: () {},
+                    child: Slidable(
+                        startActionPane: ActionPane(
+                          motion: const StretchMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {},
+                              backgroundColor: AppColors.yellowGold,
+                              icon: Icons.share,
+                              label: "Pin",
+                            )
+                          ],
+                        ),
+                        endActionPane:
+                            ActionPane(motion: const BehindMotion(), children: [
+                          SlidableAction(
+                            onPressed: (context) {},
+                            backgroundColor: Colors.green,
+                            icon: Icons.folder,
+                            label: "Move",
                           ),
-                          endActionPane: ActionPane(
-                              motion: const BehindMotion(),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (context) {},
-                                  backgroundColor: Colors.green,
-                                  icon: Icons.folder,
-                                  label: "Move",
-                                ),
-                                SlidableAction(
-                                  onPressed: (context) {},
-                                  backgroundColor: Colors.red,
-                                  icon: Icons.delete,
-                                  label: "Delete",
-                                )
-                              ]),
-                          child: NoteListTileWidget(
-                            note: note,
-                          )),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    //<-- SEE HERE
-                    return Divider(
-                      thickness: 1.h,
-                    );
-                  },
-                ),
-              ),
-            ),
-            floatingActionButton: Padding(
-              padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
-              child: FloatingActionButton(
-                onPressed: () async {
-                  // String? a = await _showTextInputDialog(context);
-
-                  // if (a != null) {
-                  //   Note newNote = await NoteFirebaseStorage().createNewNote(
-                  //       ownerUserId: userId,
-                  //       ownerFolderId: folderId,
-                  //       titleNote: a,
-                  //       bodyNote: "Test note");
-
-                  //   Notes.notes.add(newNote);
-                  //   setState(() {
-                  //     _textFieldController.text = "";
-                  //   });
-
-                  //   // Future.delayed(const Duration(seconds: 1), () {
-                  //   //   context.read<Folders>().addFolder(newFolder);
-                  //   // });
-                  // }
+                          SlidableAction(
+                            onPressed: (context) {},
+                            backgroundColor: Colors.red,
+                            icon: Icons.delete,
+                            label: "Delete",
+                          )
+                        ]),
+                        child: NoteListTileWidget(
+                          note: note,
+                        )),
+                  );
                 },
-                child: Image.asset(AssetPaths.addFolder),
+                separatorBuilder: (context, index) {
+                  //<-- SEE HERE
+                  return Divider(
+                    thickness: 1.h,
+                  );
+                },
               ),
             ),
-          )),
+          ),
+          floatingActionButton: Padding(
+            padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.editNote,
+                    arguments: {"folderId": folderId});
+              },
+              child: Image.asset(AssetPaths.addFolder),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

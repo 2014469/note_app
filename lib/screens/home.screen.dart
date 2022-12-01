@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/models/note.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/screens/folders/folder.widget.dart';
@@ -47,15 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     folderProvider.addFolders(nameFolder: nameFolder);
   }
 
-  void handleCreateNewNote(String idFolder) async {
-    Note newFolder = await NoteFirebaseStorage().createNewNote(
-        ownerUserId: userProvider.getCurrentUser.uID!,
-        ownerFolderId: idFolder,
-        titleNote: "Hello world",
-        bodyNote: "");
-
-    newFolder.printInfo();
-  }
+  void handleCreateNewNote(String idFolder) async {}
 
   void handleGetAllNotes(String idFolder) async {
     try {
@@ -172,10 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return FolderWidget(
                     folder: folder,
                     onTap: () => Navigator.of(context).pushNamed(Routes.notes,
-                        arguments: {
-                          "userId": userProviderValue.getCurrentUser.uID,
-                          "folderId": folder.folderId
-                        }),
+                        arguments: {"folderId": folder.folderId}),
                     onTapSetting: () {
                       handleCreateNewNote(folder.folderId);
                     },

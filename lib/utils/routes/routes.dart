@@ -5,6 +5,7 @@ import 'package:note_app/screens/info_user.screen.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
 import 'package:note_app/screens/sign_in_up/sign_up.screen.dart';
 
+import '../../screens/notes/edit/edit_note.screen.dart';
 import '../../screens/notes/notes_list/notes.screen.dart';
 
 class Routes {
@@ -17,6 +18,7 @@ class Routes {
   static const String authWrapper = '/authwrapper';
   static const String notes = '/notes';
   static const String infoUser = '/infoUser';
+  static const String editNote = '/editNote';
 
   static final routes = <String, WidgetBuilder>{
     login: (BuildContext context) => const LoginScreen(),
@@ -25,5 +27,6 @@ class Routes {
     authWrapper: (BuildContext context) => const AuthWrapper(),
     notes: (BuildContext context) => const NotesScreen(),
     infoUser: (BuildContext context) => const InfoUserScreen(),
+    editNote: (BuildContext context) => const EditNoteScreen(),
   };
 }

@@ -30,21 +30,21 @@ class NoteProvider with ChangeNotifier {
   }
 
   void createNewNote(
-      {required String ownerUserId,
-      required String ownerFolderId,
+      {required String ownerFolderId,
       required String titleNote,
       required String bodyNote}) async {
     final idNote = const Uuid().v1();
 
     note = Note(
         noteId: idNote,
+        body: bodyNote,
         ownerFolderId: ownerFolderId,
         creationDate: Timestamp.now(),
         color: "",
         title: titleNote);
     await getCollectionNote(ownerFolderId).doc(idNote).set(note.toDynamic());
 
-    notes.add(note);
+    notes.insert(0, note);
     notifyListeners();
   }
 
@@ -64,6 +64,5 @@ class NoteProvider with ChangeNotifier {
       }
     }
     notes = newNotes;
-    notifyListeners();
   }
 }
