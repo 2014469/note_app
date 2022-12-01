@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/auth_user.dart';
 import 'package:note_app/models/folder_note.dart';
@@ -28,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Color folderColor = Color((Random().nextDouble() + 0xFFFFFF).toInt());
   AuthUser user = AuthUser();
   @override
   void initState() {
@@ -81,9 +85,15 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context) {
           return AlertDialog(
             title: const Text('New folder'),
-            content: TextField(
-              controller: _textFieldController,
-              decoration: const InputDecoration(hintText: "Name folder"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _textFieldController,
+                  decoration: const InputDecoration(hintText: "Name folder"),
+                ),
+                ElevatedButton(onPressed: ()=>pickColor(context), child: const Text("Choose Color")),
+              ],
             ),
             actions: <Widget>[
               ElevatedButton(
@@ -122,6 +132,28 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Widget buildColorPicker() => ColorPicker(
+      pickerColor: folderColor,
+      onColorChanged: (color) => setState(() {
+            folderColor = color;
+          }));
+
+  void pickColor(BuildContext context) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: const Text("Pick your color"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildColorPicker(),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("SELECT"))
+              ],
+            ),
+          ));
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<AuthUser?>(
@@ -143,7 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   handleBackBtn: (() {}),
                   extraActions: <Widget>[
                     PopupMenuButton<int>(
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
                       color: AppColors.background,
                       icon: AvatarAppbarWidget(
                         urlPhoto: user.photoUrl!,
@@ -173,7 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Padding(
                   padding: EdgeInsets.all(16.w),
                   child: Column(children: [
-                    SearchBar(controller: _textFieldController,),
+                    SearchBar(
+                      controller: _textFieldController,
+                    ),
                     Expanded(
                       child: GridView.builder(
                           itemCount: Folders.folders.length,
@@ -184,20 +219,21 @@ class _HomeScreenState extends State<HomeScreen> {
                             Folder folder = Folders.folders[index];
                             return FolderWidget(
                               folder: folder,
-                              color:HexColor.fromHex(folder.color!),
+                              color: HexColor.fromHex(folder.color!),
                               onTap: () => Navigator.of(context)
                                   .pushNamed(Routes.notes, arguments: {
                                 "userId": user.uID,
                                 "folderId": folder.folderId
                               }),
                               onTapSetting: () {
-                                showModalBottomSheet(context: context, builder: (BuildContext context){
-                                  return SizedBox(
-                                    height: 334.h,
-                                    width: 224.w,
-                                    
-                                  );
-                                });
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SizedBox(
+                                        height: 334.h,
+                                        width: 428.w,
+                                      );
+                                    });
                               },
                             );
                           }),
