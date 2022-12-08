@@ -113,7 +113,9 @@ class _NotesScreenState extends State<NotesScreen> {
                             label: "Move",
                           ),
                           SlidableAction(
-                            onPressed: (context) {},
+                            onPressed: (context) {
+                              noteProvider.deleteNote(folderId, note.noteId);
+                            },
                             backgroundColor: Colors.red,
                             icon: Icons.delete,
                             label: "Delete",

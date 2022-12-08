@@ -19,6 +19,7 @@ class FolderProvider with ChangeNotifier {
   late Folder folder;
 
   Future fetchAllFolders() async {
+    folders.clear();
     log("fetch folders");
     log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
 

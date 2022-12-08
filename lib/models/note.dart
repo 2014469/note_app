@@ -7,11 +7,23 @@ class Note {
   String ownerFolderId;
   bool isLock;
   String? passLock;
-  Timestamp creationDate;
+  Timestamp? creationDate;
   String? color;
   String title;
   String? body;
   String? content;
+
+  Note.fromId({
+    required this.noteId,
+    required this.ownerFolderId,
+    this.isLock = false,
+    this.passLock,
+    this.creationDate,
+    this.color,
+    this.title = "",
+    this.body = "",
+    this.content = "",
+  });
 
   Note({
     required this.noteId,

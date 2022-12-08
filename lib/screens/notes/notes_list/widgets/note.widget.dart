@@ -45,7 +45,7 @@ class NoteListTileWidget extends StatelessWidget {
       ),
       trailing: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
-          "${note.creationDate.toDate().day}- ${note.creationDate.toDate().month} - ${note.creationDate.toDate().year}",
+          "${note.creationDate!.toDate().day}- ${note.creationDate!.toDate().month} - ${note.creationDate!.toDate().year}",
           style: AppTextStyles.caption[TextWeights.bold]!
               .copyWith(color: AppColors.gray[60]),
         ),
