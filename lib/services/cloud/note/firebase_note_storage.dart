@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:note_app/models/note.dart';
-import 'package:note_app/models/notes.dart';
 import 'package:note_app/resources/constants/str_note_cloud.dart';
 import 'package:note_app/services/cloud/folder/folder_storage_exception.dart';
 
@@ -52,14 +51,14 @@ class NoteFirebaseStorage {
   }
 
   getFromSnapShot(QuerySnapshot snapshot) {
-    Notes.notes = [];
-    if (Notes.notes.isEmpty) {
-      for (var element in snapshot.docs) {
-        Notes.notes.add(Note.fromJson(element.data() as Map<String, dynamic>));
-      }
-    } else {
-      return;
-    }
+    // Notes.notes = [];
+    // if (Notes.notes.isEmpty) {
+    //   for (var element in snapshot.docs) {
+    //     Notes.notes.add(Note.fromJson(element.data() as Map<String, dynamic>));
+    //   }
+    // } else {
+    //   return;
+    // }
   }
 
   Future<Note> createNewNote(

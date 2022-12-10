@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/resources/colors/colors.dart';
-import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
+
+import '../../../../resources/constants/asset_path.dart';
 
 class NoteListTileWidget extends StatelessWidget {
   final Note note;
@@ -20,14 +21,21 @@ class NoteListTileWidget extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.symmetric(
-        vertical: 8.h,
+        vertical: 4.h,
+        horizontal: 16.w,
       ),
-      leading: ClipOval(
-        child: Material(
-          color: const Color(0xFFFAE8E3), // Button color
-          child: Container(
-            margin: EdgeInsets.all(16.w),
-            child: Image.asset(AssetPaths.iconNote),
+      leading: SizedBox(
+        width: 56.w,
+        height: 56.w,
+        child: ClipOval(
+          child: Material(
+            color: const Color(0xFFFAE8E3), // Button color
+            child: Container(
+              margin: EdgeInsets.all(16.w),
+              child: Image.asset(
+                AssetPaths.iconNote,
+              ),
+            ),
           ),
         ),
       ),

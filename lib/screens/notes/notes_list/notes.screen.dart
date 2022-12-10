@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/resources/colors/colors.dart';
@@ -15,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/note.provider.dart';
 import '../../../utils/routes/routes.dart';
 import '../type.dart';
+import 'widgets/focus_menu.widget.dart';
 
 // Enum Actions  {pin, delete, move};
 
@@ -86,7 +86,6 @@ class _NotesScreenState extends State<NotesScreen> {
           body: SafeArea(
             child: Container(
               margin: EdgeInsets.symmetric(
-                horizontal: 16.w,
                 vertical: 16.h,
               ),
               child: ListView.separated(
@@ -95,39 +94,7 @@ class _NotesScreenState extends State<NotesScreen> {
                 itemBuilder: (context, index) {
                   Note note = noteProviderValue.getNotes[index];
 
-                  return FocusedMenuHolder(
-                    blurBackgroundColor: Colors.black54,
-                    duration: const Duration(milliseconds: 100),
-                    menuItems: [
-                      FocusedMenuItem(
-                          title: const Text("Open"),
-                          trailingIcon: const Icon(Icons.open_in_new),
-                          onPressed: () {
-                            log("Open");
-                          }),
-                      FocusedMenuItem(
-                          title: const Text("Share"),
-                          trailingIcon: const Icon(Icons.share),
-                          onPressed: () {
-                            log("share");
-                          }),
-                      FocusedMenuItem(
-                          title: const Text("Favorite"),
-                          trailingIcon: const Icon(Icons.favorite_border),
-                          onPressed: () {}),
-                      FocusedMenuItem(
-                          title: const Text(
-                            "Delete",
-                            style: TextStyle(color: Colors.redAccent),
-                          ),
-                          trailingIcon: const Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                          onPressed: () {}),
-                    ],
-                    onPressed: () {},
-                    child: Slidable(
+                  return Slidable(
                       startActionPane: ActionPane(
                         motion: const StretchMotion(),
                         children: [
@@ -156,24 +123,76 @@ class _NotesScreenState extends State<NotesScreen> {
                           label: "Delete",
                         )
                       ]),
-                      child: NoteListTileWidget(
-                        note: note,
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(Routes.editNote, arguments: {
-                            "type": NoteType.editNote,
-                            "folderId": folderId,
-                            "note": note,
-                          });
-                        },
-                      ),
-                    ),
-                  );
+                      child: FocusedMenuHolder(
+                        blurBackgroundColor: Colors.black54,
+                        menuOffset: 10,
+                        blurSize: 5.0,
+                        duration: const Duration(milliseconds: 100),
+                        menuItems: [
+                          FocusedMenuItem(
+                              title: const Text("Pin"),
+                              trailingIcon: const Icon(Icons.push_pin_outlined),
+                              onPressed: () {
+                                log("Open");
+                              }),
+                          FocusedMenuItem(
+                              title: const Text("Lock"),
+                              trailingIcon: const Icon(Icons.lock),
+                              onPressed: () {
+                                log("share");
+                              }),
+                          FocusedMenuItem(
+                            title: const Text("Move"),
+                            trailingIcon:
+                                const Icon(Icons.drive_folder_upload_rounded),
+                            onPressed: () {},
+                          ),
+                          FocusedMenuItem(
+                            title: const Text("Select Notes"),
+                            trailingIcon: const Icon(Icons.check_circle),
+                            onPressed: () {},
+                          ),
+                          // FocusedMenuItem(
+                          //   title: const Text("Share"),
+                          //   trailingIcon: const Icon(Icons.share),
+                          //   onPressed: () {},
+                          // ),
+                          FocusedMenuItem(
+                            title: const Text(
+                              "Delete",
+                              style: TextStyle(color: Colors.redAccent),
+                            ),
+                            trailingIcon: const Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                            ),
+                            onPressed: () {
+                              log("Delete");
+                              noteProvider.deleteNote(folderId, note.noteId);
+                            },
+                          ),
+                        ],
+                        onPressed: () {},
+                        child: NoteListTileWidget(
+                          note: note,
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              Routes.editNote,
+                              arguments: {
+                                "type": NoteType.editNote,
+                                "folderId": folderId,
+                                "note": note,
+                              },
+                            );
+                          },
+                        ),
+                      ));
                 },
                 separatorBuilder: (context, index) {
-                  //<-- SEE HERE
                   return Divider(
+                    height: 1.h,
                     thickness: 1.h,
+                    indent: 88.w,
                   );
                 },
               ),
