@@ -70,4 +70,27 @@ class FolderProvider with ChangeNotifier {
     folders.insert(0, folder);
     notifyListeners();
   }
+
+  void updateFolder(
+    Folder folder,
+  ) {
+    FirebaseFirestore.instance
+        .collection(UserString.userTBL)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection(FolderCloudConstant.collection)
+        .doc(folder.folderId)
+        .update(
+          folder.toDynamic(),
+        );
+  }
+
+  deleteFolder(String idFolder) {
+    FirebaseFirestore.instance
+        .collection(UserString.userTBL)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection(FolderCloudConstant.collection)
+        .doc(idFolder)
+        .delete();
+    notifyListeners();
+  }
 }

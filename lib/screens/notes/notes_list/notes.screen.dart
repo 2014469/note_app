@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
@@ -86,52 +90,84 @@ class _NotesScreenState extends State<NotesScreen> {
                 vertical: 16.h,
               ),
               child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
                 itemCount: noteProviderValue.getNotes.length,
                 itemBuilder: (context, index) {
                   Note note = noteProviderValue.getNotes[index];
 
-                  return InkWell(
-                    onTap: () {},
+                  return FocusedMenuHolder(
+                    blurBackgroundColor: Colors.black54,
+                    duration: const Duration(milliseconds: 100),
+                    menuItems: [
+                      FocusedMenuItem(
+                          title: const Text("Open"),
+                          trailingIcon: const Icon(Icons.open_in_new),
+                          onPressed: () {
+                            log("Open");
+                          }),
+                      FocusedMenuItem(
+                          title: const Text("Share"),
+                          trailingIcon: const Icon(Icons.share),
+                          onPressed: () {
+                            log("share");
+                          }),
+                      FocusedMenuItem(
+                          title: const Text("Favorite"),
+                          trailingIcon: const Icon(Icons.favorite_border),
+                          onPressed: () {}),
+                      FocusedMenuItem(
+                          title: const Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                          trailingIcon: const Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                          onPressed: () {}),
+                    ],
+                    onPressed: () {},
                     child: Slidable(
-                        startActionPane: ActionPane(
-                          motion: const StretchMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) {},
-                              backgroundColor: AppColors.yellowGold,
-                              icon: Icons.share,
-                              label: "Pin",
-                            )
-                          ],
-                        ),
-                        endActionPane:
-                            ActionPane(motion: const BehindMotion(), children: [
+                      startActionPane: ActionPane(
+                        motion: const StretchMotion(),
+                        children: [
                           SlidableAction(
                             onPressed: (context) {},
-                            backgroundColor: Colors.green,
-                            icon: Icons.folder,
-                            label: "Move",
-                          ),
-                          SlidableAction(
-                            onPressed: (context) {
-                              noteProvider.deleteNote(folderId, note.noteId);
-                            },
-                            backgroundColor: Colors.red,
-                            icon: Icons.delete,
-                            label: "Delete",
+                            backgroundColor: AppColors.yellowGold,
+                            icon: Icons.share,
+                            label: "Pin",
                           )
-                        ]),
-                        child: NoteListTileWidget(
-                          note: note,
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(Routes.editNote, arguments: {
-                              "type": NoteType.editNote,
-                              "folderId": folderId,
-                              "note": note,
-                            });
+                        ],
+                      ),
+                      endActionPane:
+                          ActionPane(motion: const BehindMotion(), children: [
+                        SlidableAction(
+                          onPressed: (context) {},
+                          backgroundColor: Colors.green,
+                          icon: Icons.folder,
+                          label: "Move",
+                        ),
+                        SlidableAction(
+                          onPressed: (context) {
+                            noteProvider.deleteNote(folderId, note.noteId);
                           },
-                        )),
+                          backgroundColor: Colors.red,
+                          icon: Icons.delete,
+                          label: "Delete",
+                        )
+                      ]),
+                      child: NoteListTileWidget(
+                        note: note,
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(Routes.editNote, arguments: {
+                            "type": NoteType.editNote,
+                            "folderId": folderId,
+                            "note": note,
+                          });
+                        },
+                      ),
+                    ),
                   );
                 },
                 separatorBuilder: (context, index) {

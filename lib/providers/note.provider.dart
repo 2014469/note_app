@@ -95,4 +95,11 @@ class NoteProvider with ChangeNotifier {
       },
     );
   }
+
+
+  void updateNote(String ownerFolderId, Note note) async {
+    await getCollectionNote(ownerFolderId).doc(note.noteId).set(
+          note.toDynamic(),
+        );
+  }
 }
