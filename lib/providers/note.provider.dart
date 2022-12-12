@@ -13,6 +13,11 @@ import '../resources/constants/str_user.dart';
 class NoteProvider with ChangeNotifier {
   late Note note;
   List<Note> notes = [];
+  List<Note> pinNotes = [];
+  List<Note> unPinNotes = [];
+
+  List<Note> get getPinNotes => pinNotes;
+  List<Note> get getUnPinNotes => unPinNotes;
 
   List<Note> get getNotes {
     return notes;
@@ -68,7 +73,13 @@ class NoteProvider with ChangeNotifier {
       newNotes = [];
     } else {
       for (var element in snapshot.docs) {
-        newNotes.add(Note.fromJson(element.data() as Map<String, dynamic>));
+        Note noteTmp = Note.fromJson(element.data() as Map<String, dynamic>);
+        if (noteTmp.isPin) {
+          pinNotes.add(noteTmp);
+        } else {
+          unPinNotes.add(noteTmp);
+        }
+        newNotes.add(noteTmp);
       }
     }
     notes = newNotes;
@@ -95,7 +106,6 @@ class NoteProvider with ChangeNotifier {
       },
     );
   }
-
 
   void updateNote(String ownerFolderId, Note note) async {
     await getCollectionNote(ownerFolderId).doc(note.noteId).set(

@@ -12,6 +12,7 @@ class Note {
   String title;
   String? body;
   String? content;
+  bool isPin;
 
   Note.fromId({
     required this.noteId,
@@ -23,6 +24,7 @@ class Note {
     this.title = "",
     this.body = "",
     this.content = "",
+    this.isPin = false,
   });
 
   Note({
@@ -35,19 +37,29 @@ class Note {
     required this.title,
     this.body = "",
     this.content = "",
+    this.isPin = false,
   });
+
+  @override
+  bool operator ==(covariant Object other) =>
+      identical(this, other) || other is Note && other.noteId == noteId;
+
+  @override
+  int get hashCode => noteId.hashCode;
 
   factory Note.fromJson(Map<String, dynamic> reponseData) {
     return Note(
-        noteId: reponseData[NoteCloudConstant.noteId],
-        ownerFolderId: reponseData[NoteCloudConstant.ownerFolderId],
-        isLock: reponseData[NoteCloudConstant.isLock],
-        passLock: reponseData[NoteCloudConstant.passLock],
-        creationDate: reponseData[NoteCloudConstant.dateCreate],
-        color: reponseData[NoteCloudConstant.color],
-        title: reponseData[NoteCloudConstant.title],
-        body: reponseData[NoteCloudConstant.body],
-        content: reponseData[NoteCloudConstant.content]);
+      noteId: reponseData[NoteCloudConstant.noteId],
+      ownerFolderId: reponseData[NoteCloudConstant.ownerFolderId],
+      isLock: reponseData[NoteCloudConstant.isLock],
+      passLock: reponseData[NoteCloudConstant.passLock],
+      creationDate: reponseData[NoteCloudConstant.dateCreate],
+      color: reponseData[NoteCloudConstant.color],
+      title: reponseData[NoteCloudConstant.title],
+      body: reponseData[NoteCloudConstant.body],
+      content: reponseData[NoteCloudConstant.content],
+      isPin: reponseData[NoteCloudConstant.isPin],
+    );
   }
 
   factory Note.fromSnapshot(DocumentSnapshot snapshot) {
@@ -64,7 +76,8 @@ class Note {
       NoteCloudConstant.color: color,
       NoteCloudConstant.title: title,
       NoteCloudConstant.body: body,
-      NoteCloudConstant.content: content
+      NoteCloudConstant.content: content,
+      NoteCloudConstant.isPin: isPin,
     };
   }
 
@@ -79,5 +92,6 @@ class Note {
     DebugLog.myLog("pass Lock $passLock");
     DebugLog.myLog("color: $color");
     DebugLog.myLog("content $content");
+    DebugLog.myLog("isPin $isPin");
   }
 }

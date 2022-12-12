@@ -6,6 +6,10 @@ class AppColors {
   static const primary = Color(0xFFF88379);
   static const yellowGold = Color(0xFFF8C278);
   static const background = Color(0xFFF5F5F5);
+  static const brightRed = Color(0xfff5d3d0);
+  static const brightGreen = Color(0xffC6EBDB);
+  static const green = Color(0xff0AC174);
+  static const red = Color(0xffF20000);
 
   static const Map<int, Color> gray = <int, Color>{
     0: Color(0xFFFFFFFF),
@@ -22,6 +26,7 @@ class AppColors {
     100: Color(0xFF000000)
   };
 }
+
 extension HexColor on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
   static Color fromHex(String hexString) {

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/widgets/app_bar.dart';
 import 'package:note_app/widgets/avatar/avatar_appbar.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.provider.dart';
+import '../widgets/bar/app_bar.dart';
 
 class InfoUserScreen extends StatelessWidget {
   const InfoUserScreen({super.key});

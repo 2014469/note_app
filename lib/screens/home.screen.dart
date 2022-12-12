@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,15 +14,14 @@ import 'package:note_app/services/cloud/note/firebase_note_storage.dart';
 import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/utils/show_snack_bar.dart';
 
-import 'package:note_app/widgets/app_bar.dart';
-import 'package:note_app/widgets/avatar/avatar_appbar.dart';
-import 'package:note_app/widgets/search/search_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../models/folder.dart';
 import '../providers/auth.provider.dart';
 import '../providers/folder.provider.dart';
 import '../utils/customLog/debug_log.dart';
+import '../widgets/bar/app_bar.dart';
+import '../widgets/drawer/drawer_side.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -205,159 +206,178 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      drawer: const DrawerSide(),
       appBar: CustomAppbar(
         isBackBtn: false,
         handleBackBtn: (() {}),
         extraActions: <Widget>[
-          PopupMenuButton<int>(
-            icon: AvatarAppbarWidget(
-              urlPhoto: userProviderValue.getCurrentUser.photoUrl!,
-            ),
-            onSelected: (value) {
-              onSelectPopUpMenu(context, value);
+          // PopupMenuButton<int>(
+          //   icon: AvatarAppbarWidget(
+          //     urlPhoto: userProviderValue.getCurrentUser.photoUrl!,
+          //   ),
+          //   onSelected: (value) {
+          //     onSelectPopUpMenu(context, value);
+          //   },
+          //   itemBuilder: (context) => [
+          //     const PopupMenuItem(
+          //       value: 0,
+          //       child: Text("Your profile"),
+          //     ),
+          //     const PopupMenuItem(
+          //       value: 1,
+          //       child: Text("Logout"),
+          //     ),
+          //     const PopupMenuItem(
+          //       value: 2,
+          //       child: Text("Delete account"),
+          //     ),
+          //   ],
+          // ),
+          // todo: search
+
+          InkWell(
+            onTap: () {
+              log("chua xu ly");
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 0,
-                child: Text("Your profile"),
-              ),
-              const PopupMenuItem(
-                value: 1,
-                child: Text("Logout"),
-              ),
-              const PopupMenuItem(
-                value: 2,
-                child: Text("Delete account"),
-              ),
-            ],
+            child: const Icon(
+              Icons.search,
+            ),
           ),
+          SizedBox(
+            width: 16.w,
+          ),
+
+//todo:  sort
+          InkWell(
+            onTap: () {
+              log("chua xu ly");
+
+              context.read<AuthService>().logOUt();
+            },
+            child: Image.asset(
+              AssetPaths.sortIcon,
+              width: 28.w,
+              height: 28.w,
+            ),
+          ),
+          SizedBox(
+            width: 16.w,
+          )
         ],
         title: "UniNotes",
       ),
       body: SafeArea(
           child: Padding(
         padding: EdgeInsets.all(16.w),
-        child: Column(children: [
-          SearchBar(
-            controller: _textFieldController,
-          ),
-          Expanded(
-            child: GridView.builder(
-                itemCount: folderProviderValue.getFolders.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemBuilder: (context, index) {
-                  Folder folder = folderProviderValue.getFolders[index];
-                  return FolderWidget(
-                    folder: folder,
-                    onTap: () => Navigator.of(context).pushNamed(Routes.notes,
-                        arguments: {"folderId": folder.folderId}),
-                    onTapSetting: () {
-                      showModalBottomSheet(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
+        child: GridView.builder(
+            itemCount: folderProviderValue.getFolders.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            itemBuilder: (context, index) {
+              Folder folder = folderProviderValue.getFolders[index];
+              return FolderWidget(
+                folder: folder,
+                onTap: () => Navigator.of(context).pushNamed(Routes.notes,
+                    arguments: {"folderId": folder.folderId}),
+                onTapSetting: () {
+                  showModalBottomSheet(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30),
+                        topRight: Radius.circular(30),
+                      ),
+                    ),
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Padding(
+                        padding: EdgeInsets.all(16.h),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                decoration: InputDecoration(
+                                    border: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.gray[70]!,
+                                          width: 0.3),
+                                    ),
+                                    hintText: folder.name,
+                                    hintStyle: AppTextStyles
+                                        .h6[TextWeights.semibold]
+                                        ?.copyWith(color: AppColors.gray[60])),
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(
+                                  AssetPaths.key,
+                                ),
+                                title: Text(
+                                  "Set Password",
+                                  style: AppTextStyles
+                                      .caption[TextWeights.medium]
+                                      ?.copyWith(color: AppColors.gray[70]),
+                                ),
+                                onTap: () {
+                                  DebugLog.myLog("Set password");
+                                },
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(AssetPaths.setColor),
+                                title: Text(
+                                  "Set Color",
+                                  style: AppTextStyles
+                                      .caption[TextWeights.medium]
+                                      ?.copyWith(color: AppColors.gray[70]),
+                                ),
+                                onTap: () {
+                                  DebugLog.myLog("Set Color");
+                                },
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(AssetPaths.select),
+                                title: Text(
+                                  "Select",
+                                  style: AppTextStyles
+                                      .caption[TextWeights.medium]
+                                      ?.copyWith(color: AppColors.gray[70]),
+                                ),
+                                onTap: () {
+                                  DebugLog.myLog("Select");
+                                },
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(AssetPaths.duplicate),
+                                title: Text(
+                                  "Duplicate",
+                                  style: AppTextStyles
+                                      .caption[TextWeights.medium]
+                                      ?.copyWith(color: AppColors.gray[70]),
+                                ),
+                                onTap: () {
+                                  DebugLog.myLog("Duplicate");
+                                },
+                              ),
+                              ListTile(
+                                leading: SvgPicture.asset(AssetPaths.delete),
+                                title: Text(
+                                  "Delete",
+                                  style: AppTextStyles
+                                      .caption[TextWeights.medium]
+                                      ?.copyWith(color: AppColors.gray[70]),
+                                ),
+                                onTap: () {
+                                  DebugLog.myLog("Delete");
+                                },
+                              ),
+                            ],
                           ),
                         ),
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Padding(
-                            padding: EdgeInsets.all(16.h),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  TextField(
-                                    decoration: InputDecoration(
-                                        border: UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColors.gray[70]!,
-                                              width: 0.3),
-                                        ),
-                                        hintText: folder.name,
-                                        hintStyle: AppTextStyles
-                                            .h6[TextWeights.semibold]
-                                            ?.copyWith(
-                                                color: AppColors.gray[60])),
-                                  ),
-                                  ListTile(
-                                    leading: SvgPicture.asset(
-                                      AssetPaths.key,
-                                    ),
-                                    title: Text(
-                                      "Set Password",
-                                      style: AppTextStyles
-                                          .caption[TextWeights.medium]
-                                          ?.copyWith(color: AppColors.gray[70]),
-                                    ),
-                                    onTap: () {
-                                      DebugLog.myLog("Set password");
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading:
-                                        SvgPicture.asset(AssetPaths.setColor),
-                                    title: Text(
-                                      "Set Color",
-                                      style: AppTextStyles
-                                          .caption[TextWeights.medium]
-                                          ?.copyWith(color: AppColors.gray[70]),
-                                    ),
-                                    onTap: () {
-                                      DebugLog.myLog("Set Color");
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading:
-                                        SvgPicture.asset(AssetPaths.select),
-                                    title: Text(
-                                      "Select",
-                                      style: AppTextStyles
-                                          .caption[TextWeights.medium]
-                                          ?.copyWith(color: AppColors.gray[70]),
-                                    ),
-                                    onTap: () {
-                                      DebugLog.myLog("Select");
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading:
-                                        SvgPicture.asset(AssetPaths.duplicate),
-                                    title: Text(
-                                      "Duplicate",
-                                      style: AppTextStyles
-                                          .caption[TextWeights.medium]
-                                          ?.copyWith(color: AppColors.gray[70]),
-                                    ),
-                                    onTap: () {
-                                      DebugLog.myLog("Duplicate");
-                                    },
-                                  ),
-                                  ListTile(
-                                    leading:
-                                        SvgPicture.asset(AssetPaths.delete),
-                                    title: Text(
-                                      "Delete",
-                                      style: AppTextStyles
-                                          .caption[TextWeights.medium]
-                                          ?.copyWith(color: AppColors.gray[70]),
-                                    ),
-                                    onTap: () {
-                                      DebugLog.myLog("Delete");
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
                       );
                     },
                   );
-                }),
-          ),
-        ]),
+                },
+              );
+            }),
       )),
       floatingActionButton: Padding(
         padding: EdgeInsets.only(bottom: 104.h, right: 20.w),

@@ -12,6 +12,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool isTitle;
   final bool isBorderBottom;
   final List<Widget>? extraActions;
+  final Widget? leadingButton;
   final VoidCallback handleBackBtn;
 
   const CustomAppbar({
@@ -23,6 +24,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.title = "",
     this.backgroundColor = AppColors.background,
     this.extraActions,
+    this.leadingButton,
     required this.handleBackBtn,
   });
 
@@ -33,10 +35,14 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: backgroundColor,
-      centerTitle: isBackBtn,
+      centerTitle: true,
+      iconTheme: IconThemeData(
+        color: AppColors.primary,
+        size: 28.w,
+      ),
       elevation: 0.5,
       titleSpacing: 0,
-      leadingWidth: 92.w,
+      leadingWidth: isBackBtn ? 92.w : double.infinity,
       bottom: isBorderBottom
           ? PreferredSize(
               preferredSize: Size.fromHeight(0.2.w),
@@ -48,7 +54,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       leading: isBackBtn
           ? InkWell(
-              onTap: handleBackBtn,
+              onTap: isBackBtn ? handleBackBtn : () {},
               child: Padding(
                 padding: EdgeInsets.only(left: 8.w, right: 0),
                 child: Row(children: [
@@ -66,7 +72,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 ]),
               ),
             )
-          : null,
+          : leadingButton,
       title: isTitle
           ? Padding(
               padding: isBackBtn ? EdgeInsets.zero : EdgeInsets.all(16.w),

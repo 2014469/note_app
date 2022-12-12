@@ -23,7 +23,7 @@ import '../../../models/note.dart';
 import '../../../providers/note.provider.dart';
 import '../../../resources/colors/colors.dart';
 import '../../../utils/devices/device_utils.dart';
-import '../../../widgets/app_bar.dart';
+import '../../../widgets/bar/app_bar.dart';
 import '../type.dart';
 
 enum _SelectionType {

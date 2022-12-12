@@ -249,28 +249,32 @@ class FocusedMenuDetails extends StatelessWidget {
             ),
           ),
           Positioned(
-              top: childOffset.dy,
-              left: childOffset.dx,
-              child: AbsorbPointer(
-                  absorbing: true,
-                  child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black54,
-                            blurRadius:
-                                4.0, // has the effect of softening the shadow
-                            offset: Offset(
-                              2.0, // horizontal, move right 10
-                              5, // vertical, move down 10
-                            ),
-                          )
-                        ],
+            top: childOffset.dy,
+            left: childOffset.dx,
+            child: AbsorbPointer(
+              absorbing: true,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8.r),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black54,
+                      blurRadius: 4.0, // has the effect of softening the shadow
+                      offset: Offset(
+                        2.0, // horizontal, move right 10
+                        5, // vertical, move down 10
                       ),
-                      width: childSize!.width,
-                      height: childSize!.height,
-                      child: child))),
+                    )
+                  ],
+                ),
+                width: childSize!.width - 16.w,
+                height: childSize!.height,
+                child: child,
+              ),
+            ),
+          ),
         ],
       ),
     );

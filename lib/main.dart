@@ -58,7 +58,7 @@ void main() async {
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
-              debugShowCheckedModeBanner: false,
+              // debugShowCheckedModeBanner: false,
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
