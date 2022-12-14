@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AvatarAppbarWidget extends StatelessWidget {
   final String urlPhoto;
@@ -7,7 +8,7 @@ class AvatarAppbarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: 30.0,
+      radius: 60.r,
       backgroundImage: NetworkImage(urlPhoto),
       backgroundColor: Colors.transparent,
     );

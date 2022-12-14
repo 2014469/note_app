@@ -210,6 +210,11 @@ class _HomeScreenState extends State<HomeScreen> {
         handleBackBtn: (() {}),
         extraActions: <Widget>[
           PopupMenuButton<int>(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(30),
+              ),
+            ),
             icon: AvatarAppbarWidget(
               urlPhoto: userProviderValue.getCurrentUser.photoUrl!,
             ),

@@ -107,7 +107,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
             break;
           }
       }
-    } catch (error) {}
+    } catch (error) {
+      debugPrint(error.toString());
+    }
   }
 
   Widget quillToolbar(QuillController controller) {
