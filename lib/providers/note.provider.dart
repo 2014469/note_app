@@ -23,6 +23,10 @@ class NoteProvider with ChangeNotifier {
     return notes;
   }
 
+  int get getLengthPins => pinNotes.length;
+  int get getLengthUnPins => unPinNotes.length;
+  int get getLengthAllNotes => notes.length;
+
   CollectionReference getCollectionNote(
     String ownerFolderId,
   ) {
@@ -67,22 +71,29 @@ class NoteProvider with ChangeNotifier {
 
     List<Note> newNotes = [];
 
+    List<Note> newPinNotes = [];
+    List<Note> newUnPinNotes = [];
+
     QuerySnapshot snapshot = await getCollectionNote(ownerFolder).get();
 
     if (snapshot.docs.isEmpty) {
       newNotes = [];
+      newPinNotes = [];
+      newUnPinNotes = [];
     } else {
       for (var element in snapshot.docs) {
         Note noteTmp = Note.fromJson(element.data() as Map<String, dynamic>);
         if (noteTmp.isPin) {
-          pinNotes.add(noteTmp);
+          newPinNotes.add(noteTmp);
         } else {
-          unPinNotes.add(noteTmp);
+          newUnPinNotes.add(noteTmp);
         }
         newNotes.add(noteTmp);
       }
     }
     notes = newNotes;
+    pinNotes = newPinNotes;
+    unPinNotes = newUnPinNotes;
     sortByDate();
   }
 
@@ -111,5 +122,6 @@ class NoteProvider with ChangeNotifier {
     await getCollectionNote(ownerFolderId).doc(note.noteId).set(
           note.toDynamic(),
         );
+    notifyListeners();
   }
 }

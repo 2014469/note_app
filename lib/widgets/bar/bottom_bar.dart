@@ -5,14 +5,25 @@ import '../../resources/colors/colors.dart';
 import '../../resources/fonts/enum_text_styles.dart';
 import '../../resources/fonts/text_styles.dart';
 
-class BottomBarCustom extends StatefulWidget {
-  const BottomBarCustom({super.key});
+class BottomBarCustom extends StatelessWidget {
+  String title;
+  String? textLeft;
+  String? textRight;
+  bool isLeft;
+  bool isRight;
+  VoidCallback? actionLeft;
+  VoidCallback? actionRight;
+  BottomBarCustom({
+    super.key,
+    required this.title,
+    this.textLeft,
+    this.isLeft = true,
+    this.isRight = true,
+    this.textRight,
+    this.actionLeft,
+    this.actionRight,
+  });
 
-  @override
-  State<BottomBarCustom> createState() => _BottomBarCustomState();
-}
-
-class _BottomBarCustomState extends State<BottomBarCustom> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,21 +42,25 @@ class _BottomBarCustomState extends State<BottomBarCustom> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton(
-              onPressed: () {},
-              child: Text("Move",
-                  style: AppTextStyles.h6[TextWeights.semibold]!
-                      .copyWith(color: AppColors.primary)),
-            ),
-            Text("2000000 notes",
+            isLeft
+                ? TextButton(
+                    onPressed: actionLeft!,
+                    child: Text(textLeft!,
+                        style: AppTextStyles.h6[TextWeights.semibold]!
+                            .copyWith(color: AppColors.primary)),
+                  )
+                : Container(),
+            Text(title,
                 style: AppTextStyles.body2[TextWeights.regular]!
                     .copyWith(color: AppColors.gray[50])),
-            TextButton(
-              onPressed: () {},
-              child: Text("Add note",
-                  style: AppTextStyles.h6[TextWeights.semibold]!
-                      .copyWith(color: AppColors.primary)),
-            ),
+            isRight
+                ? TextButton(
+                    onPressed: actionRight!,
+                    child: Text(textRight!,
+                        style: AppTextStyles.h6[TextWeights.semibold]!
+                            .copyWith(color: AppColors.primary)),
+                  )
+                : Container(),
           ],
         ),
       ),

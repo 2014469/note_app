@@ -42,7 +42,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
       elevation: 0.5,
       titleSpacing: 0,
-      leadingWidth: isBackBtn ? 92.w : double.infinity,
+      leadingWidth: isBackBtn ? 92.w : 64.w,
       bottom: isBorderBottom
           ? PreferredSize(
               preferredSize: Size.fromHeight(0.2.w),

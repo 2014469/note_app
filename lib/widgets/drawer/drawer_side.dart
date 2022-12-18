@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/auth.provider.dart';
+import '../../resources/colors/colors.dart';
+import '../../resources/fonts/enum_text_styles.dart';
+import '../../resources/fonts/text_styles.dart';
 
 class DrawerSide extends StatelessWidget {
   const DrawerSide({super.key});
@@ -23,6 +29,7 @@ class DrawerSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProviderValue = Provider.of<UserProvider>(context);
     return Drawer(
       child: SafeArea(
         child: Container(
@@ -32,14 +39,15 @@ class DrawerSide extends StatelessWidget {
               DrawerHeader(
                 child: Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       backgroundColor: Colors.white54,
                       radius: 43,
                       child: CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(
-                            'https://s3.envato.com/files/328957910/vegi_thumb.png'),
-                        backgroundColor: Colors.yellow,
+                        backgroundImage: NetworkImage(userProviderValue
+                            .getCurrentUser.photoUrl!
+                            .toString()),
+                        backgroundColor: AppColors.primary,
                       ),
                     ),
                     const SizedBox(
@@ -48,7 +56,12 @@ class DrawerSide extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Welcome Guest'),
+                        Text(
+                          true
+                              ? userProviderValue.getCurrentUser.displayName!
+                              : 'Welcome Guest',
+                          style: AppTextStyles.h5[TextWeights.semibold],
+                        ),
                         const SizedBox(
                           height: 7,
                         ),
@@ -67,10 +80,11 @@ class DrawerSide extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Login'.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                              ),
+                              false
+                                  ? 'Login'.toUpperCase()
+                                  : 'Sign out'.toUpperCase(),
+                              style: AppTextStyles.body1[TextWeights.medium]!
+                                  .copyWith(color: AppColors.gray[80]),
                             ),
                           ),
                         )
@@ -79,10 +93,8 @@ class DrawerSide extends StatelessWidget {
                   ],
                 ),
               ),
-              listTile(icon: Icons.home_outlined, title: "Home"),
-              listTile(icon: Icons.shopping_cart_outlined, title: "Notes"),
-              listTile(
-                  icon: Icons.shopping_cart_outlined, title: "Your profile"),
+              listTile(icon: Icons.person, title: "Your profile"),
+              listTile(icon: Icons.settings, title: "Settings"),
             ],
           ),
         ),

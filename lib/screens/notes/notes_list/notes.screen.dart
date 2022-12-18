@@ -21,8 +21,6 @@ import '../../../widgets/bar/app_bar.dart';
 import '../../../widgets/bar/bottom_bar.dart';
 import '../type.dart';
 
-// Enum Actions  {pin, delete, move};
-
 class NotesScreen extends StatefulWidget {
   const NotesScreen({
     super.key,
@@ -36,10 +34,14 @@ class _NotesScreenState extends State<NotesScreen> {
   late NoteProvider noteProvider;
   String? folderId;
   bool isExpanded = true;
+  late Future<void>? _getItems;
+  bool isMultiSelectionEnabled = false;
+  bool isReload = true;
 
   @override
   void initState() {
     noteProvider = Provider.of<NoteProvider>(context, listen: false);
+
     super.initState();
   }
 
@@ -73,160 +75,239 @@ class _NotesScreenState extends State<NotesScreen> {
   //       });
   // }
 
-  bool isMultiSelectionEnabled = true;
-
-  HashSet<Note> selectedItem = HashSet();
+  HashSet<Note> selectedItemsSet = HashSet();
   void doMultiSelection(Note note) {
     if (isMultiSelectionEnabled) {
-      if (selectedItem.contains(note)) {
-        selectedItem.remove(note);
+      if (selectedItemsSet.contains(note)) {
+        selectedItemsSet.remove(note);
       } else {
-        selectedItem.add(note);
+        selectedItemsSet.add(note);
       }
-      setState(() {});
+      setState(() {
+        isReload = false;
+      });
     } else {
       //Other logic
     }
   }
 
-  List<Widget> _getChildren() {
-    NoteProvider noteProviderValue = Provider.of<NoteProvider>(context);
-    return List<Widget>.generate(noteProviderValue.getNotes.length, (index) {
-      bool isDivider = true;
-      Note note = noteProvider.getNotes[index];
-      if (index == noteProvider.getNotes.length - 1) {
-        isDivider = false;
+  void doAllSelection() {
+    setState(() {
+      for (var note in noteProvider.getNotes) {
+        selectedItemsSet.add(note);
       }
-      return isMultiSelectionEnabled
-          ? Padding(
-              padding: EdgeInsets.only(left: 16.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Visibility(
-                    child: Icon(
-                      selectedItem.contains(note)
-                          ? Icons.check_circle
-                          : Icons.radio_button_unchecked,
-                      size: 30.w,
-                    ),
+      isReload = false;
+    });
+  }
+
+  void clearAllSelection() {
+    setState(() {
+      selectedItemsSet.clear();
+      isReload = false;
+    });
+  }
+
+  void deleteNotesSelection() {
+    for (var noteSelected in selectedItemsSet) {
+      noteProvider.deleteNote(folderId!, noteSelected.noteId);
+    }
+
+    setState(() {
+      selectedItemsSet.clear();
+      isMultiSelectionEnabled = false;
+      isReload = true;
+    });
+  }
+
+  bool isSelectionAll() =>
+      selectedItemsSet.length != noteProvider.getNotes.length;
+
+  Widget noteChild(Note note, bool isDivider) {
+    return isMultiSelectionEnabled
+        ? Padding(
+            padding: EdgeInsets.only(left: 16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Visibility(
+                  child: Icon(
+                    selectedItemsSet.contains(note)
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    size: 30.w,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width - 50.w,
-                    child: NoteListTileWidget(
-                      isDivider: isDivider,
-                      note: note,
-                      onTap: () {
-                        doMultiSelection(note);
-                        // Navigator.of(context).pushNamed(
-                        //   Routes.editNote,
-                        //   arguments: {
-                        //     "type": NoteType.editNote,
-                        //     "folderId": folderId,
-                        //     "note": note,
-                        //   },
-                        // );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : Slidable(
-              startActionPane: ActionPane(
-                motion: const StretchMotion(),
-                children: [
-                  SlidableAction(
-                    onPressed: (context) {},
-                    backgroundColor: AppColors.yellowGold,
-                    icon: Icons.share,
-                    label: "Pin",
-                  )
-                ],
-              ),
-              endActionPane:
-                  ActionPane(motion: const BehindMotion(), children: [
-                SlidableAction(
-                  onPressed: (context) {},
-                  backgroundColor: Colors.green,
-                  icon: Icons.folder,
-                  label: "Move",
                 ),
-                SlidableAction(
-                  onPressed: (context) {
-                    noteProvider.deleteNote(folderId!, note.noteId);
-                  },
-                  backgroundColor: Colors.red,
-                  icon: Icons.delete,
-                  label: "Delete",
-                )
-              ]),
-              child: FocusedMenuHolder(
-                blurBackgroundColor: Colors.black54,
-                menuOffset: 10,
-                blurSize: 5.0,
-                duration: const Duration(milliseconds: 100),
-                menuItems: [
-                  FocusedMenuItem(
-                      title: const Text("Pin"),
-                      trailingIcon: const Icon(Icons.push_pin_outlined),
-                      onPressed: () {
-                        log("Open");
-                      }),
-                  FocusedMenuItem(
-                      title: const Text("Lock"),
-                      trailingIcon: const Icon(Icons.lock),
-                      onPressed: () {
-                        log("share");
-                      }),
-                  FocusedMenuItem(
-                    title: const Text("Move"),
-                    trailingIcon: const Icon(Icons.drive_folder_upload_rounded),
-                    onPressed: () {},
-                  ),
-                  FocusedMenuItem(
-                    title: const Text("Select Notes"),
-                    trailingIcon: const Icon(Icons.check_circle),
-                    onPressed: () {},
-                  ),
-                  // FocusedMenuItem(
-                  //   title: const Text("Share"),
-                  //   trailingIcon: const Icon(Icons.share),
-                  //   onPressed: () {},
-                  // ),
-                  FocusedMenuItem(
-                    title: const Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.redAccent),
-                    ),
-                    trailingIcon: const Icon(
-                      Icons.delete,
-                      color: Colors.redAccent,
-                    ),
-                    onPressed: () {
-                      log("Delete");
-                      noteProvider.deleteNote(folderId!, note.noteId);
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 50.w,
+                  child: NoteListTileWidget(
+                    isDivider: isDivider,
+                    note: note,
+                    onTap: () {
+                      doMultiSelection(note);
+                      // Navigator.of(context).pushNamed(
+                      //   Routes.editNote,
+                      //   arguments: {
+                      //     "type": NoteType.editNote,
+                      //     "folderId": folderId,
+                      //     "note": note,
+                      //   },
+                      // );
                     },
                   ),
-                ],
-                onPressed: () {},
-                child: NoteListTileWidget(
-                  isDivider: isDivider,
-                  note: note,
-                  onTap: () {
-                    Navigator.of(context).pushNamed(
-                      Routes.editNote,
-                      arguments: {
-                        "type": NoteType.editNote,
-                        "folderId": folderId,
-                        "note": note,
-                      },
-                    );
+                ),
+              ],
+            ),
+          )
+        : Slidable(
+            startActionPane: ActionPane(
+              motion: const StretchMotion(),
+              children: [
+                SlidableAction(
+                  onPressed: (context) {},
+                  backgroundColor: AppColors.yellowGold,
+                  icon: Icons.share,
+                  label: "Pin",
+                )
+              ],
+            ),
+            endActionPane: ActionPane(motion: const BehindMotion(), children: [
+              SlidableAction(
+                onPressed: (context) {},
+                backgroundColor: Colors.green,
+                icon: Icons.folder,
+                label: "Move",
+              ),
+              SlidableAction(
+                onPressed: (context) {
+                  noteProvider.deleteNote(folderId!, note.noteId);
+                },
+                backgroundColor: Colors.red,
+                icon: Icons.delete,
+                label: "Delete",
+              )
+            ]),
+            child: FocusedMenuHolder(
+              blurBackgroundColor: Colors.black54,
+              menuOffset: 10,
+              blurSize: 5.0,
+              duration: const Duration(milliseconds: 100),
+              menuItems: [
+                FocusedMenuItem(
+                    title: note.isPin ? const Text("Unpin") : const Text("Pin"),
+                    trailingIcon: note.isPin
+                        ? const Icon(Icons.usb_off_rounded)
+                        : const Icon(Icons.push_pin_outlined),
+                    onPressed: () {
+                      setState(() {
+                        note.isPin = !note.isPin;
+                        noteProvider.updateNote(folderId!, note);
+                        isReload = true;
+                      });
+                    }),
+                FocusedMenuItem(
+                    title: const Text("Lock"),
+                    trailingIcon: const Icon(Icons.lock),
+                    onPressed: () {
+                      log("share");
+                    }),
+                FocusedMenuItem(
+                  title: const Text("Move"),
+                  trailingIcon: const Icon(Icons.drive_folder_upload_rounded),
+                  onPressed: () {},
+                ),
+                FocusedMenuItem(
+                  title: const Text("Select Notes"),
+                  trailingIcon: const Icon(Icons.check_circle),
+                  onPressed: () {
+                    setState(() {
+                      isMultiSelectionEnabled = true;
+                      isReload = false;
+                    });
                   },
                 ),
+                // FocusedMenuItem(
+                //   title: const Text("Share"),
+                //   trailingIcon: const Icon(Icons.share),
+                //   onPressed: () {},
+                // ),
+                FocusedMenuItem(
+                  title: const Text(
+                    "Delete",
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  trailingIcon: const Icon(
+                    Icons.delete,
+                    color: Colors.redAccent,
+                  ),
+                  onPressed: () {
+                    log("Delete");
+                    noteProvider.deleteNote(folderId!, note.noteId);
+                  },
+                ),
+              ],
+              onPressed: () {},
+              child: NoteListTileWidget(
+                isDivider: isDivider,
+                note: note,
+                onTap: () {
+                  Navigator.of(context).pushNamed(
+                    Routes.editNote,
+                    arguments: {
+                      "type": NoteType.editNote,
+                      "folderId": folderId,
+                      "note": note,
+                    },
+                  );
+                },
               ),
-            );
-    });
+            ),
+          );
+  }
+
+  List<Widget> _getChildren(PinType type) {
+    NoteProvider noteProviderValue = Provider.of<NoteProvider>(context);
+    List<Widget> results = [];
+    switch (type) {
+      case PinType.all:
+        {
+          results =
+              List<Widget>.generate(noteProviderValue.getNotes.length, (index) {
+            bool isDivider = true;
+            Note note = noteProvider.getNotes[index];
+            if (index == noteProvider.getNotes.length - 1) {
+              isDivider = false;
+            }
+            return noteChild(note, isDivider);
+          });
+          break;
+        }
+      case PinType.pin:
+        {
+          results = List<Widget>.generate(noteProvider.getLengthPins, (index) {
+            bool isDivider = true;
+            Note note = noteProvider.getPinNotes[index];
+            if (index == noteProvider.getLengthPins - 1) {
+              isDivider = false;
+            }
+            return noteChild(note, isDivider);
+          });
+          break;
+        }
+      case PinType.unpin:
+        {
+          results =
+              List<Widget>.generate(noteProvider.getLengthUnPins, (index) {
+            bool isDivider = true;
+            Note note = noteProvider.getUnPinNotes[index];
+            if (index == noteProvider.getLengthUnPins - 1) {
+              isDivider = false;
+            }
+            return noteChild(note, isDivider);
+          });
+          break;
+        }
+    }
+    return results;
   }
 
   Widget iconExpansionTile() => isExpanded
@@ -242,11 +323,32 @@ class _NotesScreenState extends State<NotesScreen> {
       folderId = argruments["folderId"];
     }
 
+    _getItems = isReload ? noteProvider.fetchAllNotes(folderId!) : null;
+
     return FutureBuilder(
-      future: noteProvider.fetchAllNotes(folderId!),
+      future: _getItems,
       builder: ((context, snapshot) {
         return Scaffold(
-          bottomNavigationBar: const BottomBarCustom(),
+          bottomNavigationBar: BottomBarCustom(
+            title: isMultiSelectionEnabled
+                ? "${selectedItemsSet.length} notes selected"
+                : "${noteProvider.getNotes.length} notes",
+            isLeft: isMultiSelectionEnabled,
+            actionLeft: isMultiSelectionEnabled ? () {} : null,
+            textLeft: isMultiSelectionEnabled ? "Move" : null,
+            textRight: isMultiSelectionEnabled ? "Delete" : "Add",
+            actionRight: isMultiSelectionEnabled
+                ? () {
+                    deleteNotesSelection();
+                  }
+                : () {
+                    Navigator.of(context).pushNamed(Routes.editNote,
+                        arguments: {
+                          "type": NoteType.newNote,
+                          "folderId": folderId
+                        });
+                  },
+          ),
           appBar: CustomAppbar(
             title: "All notes",
             handleBackBtn: () => Navigator.of(context).pop(),
@@ -255,7 +357,9 @@ class _NotesScreenState extends State<NotesScreen> {
             leadingButton: Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  isSelectionAll() ? doAllSelection() : clearAllSelection();
+                },
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
                   backgroundColor: AppColors.brightRed,
@@ -265,9 +369,12 @@ class _NotesScreenState extends State<NotesScreen> {
                   ),
                 ),
                 child: Text(
-                  'Select All',
-                  style: AppTextStyles.subtitile[TextWeights.semibold]!
-                      .copyWith(color: AppColors.red),
+                  isSelectionAll() ? 'Select All' : 'Deselect All',
+                  style: isSelectionAll()
+                      ? AppTextStyles.subtitile[TextWeights.semibold]!
+                          .copyWith(color: AppColors.red)
+                      : AppTextStyles.body2[TextWeights.bold]!
+                          .copyWith(color: AppColors.red),
                 ),
               ),
             ),
@@ -282,7 +389,13 @@ class _NotesScreenState extends State<NotesScreen> {
                       padding:
                           EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            isMultiSelectionEnabled = false;
+                            clearAllSelection();
+                            isReload = false;
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
                           backgroundColor: AppColors.brightGreen,
@@ -333,68 +446,53 @@ class _NotesScreenState extends State<NotesScreen> {
                 vertical: 16.h,
               ),
               child: ListView(
-                children: [
-                  ExpansionTileCustom(
-                    initiallyExpanded: true,
-                    iconColor: AppColors.gray[80],
-                    collapsedIconColor: AppColors.gray[80],
-                    collapsedTextColor: AppColors.gray[80],
-                    textColor: AppColors.gray[80],
-                    title: Text(
-                      "Pin",
-                      style: AppTextStyles.h5[TextWeights.extrabold],
-                    ),
-                    onExpansionChanged: ((value) {}),
-                    children: _getChildren(),
-                  ),
-                  SizedBox(
-                    height: 36.h,
-                  ),
-                  ExpansionTileCustom(
-                    initiallyExpanded: true,
-                    iconColor: AppColors.gray[80],
-                    collapsedIconColor: AppColors.gray[80],
-                    collapsedTextColor: AppColors.gray[80],
-                    textColor: AppColors.gray[80],
-                    title: Text(
-                      "Pin",
-                      style: AppTextStyles.h5[TextWeights.extrabold],
-                    ),
-                    onExpansionChanged: ((value) {}),
-                    // children: [
-                    //   // ListView.separated(
-                    //   //   physics: const BouncingScrollPhysics(),
-                    //   //   itemCount: noteProviderValue.getNotes.length,
-                    //   //   itemBuilder: (context, index) {
-                    //   //     return;
-                    //   //   },
-                    //   //   separatorBuilder: (context, index) {
-                    //   //     return Divider(
-                    //   //       height: 1.h,
-                    //   //       thickness: 1.h,
-                    //   //       indent: 88.w,
-                    //   //     );
-                    //   //   },
-                    //   // )
-                    // ],
-                    children: _getChildren(),
-                  )
-                ],
-              ),
+                  children: noteProvider.getLengthPins > 0
+                      ? [
+                          ExpansionTileCustom(
+                            initiallyExpanded: true,
+                            iconColor: AppColors.gray[80],
+                            collapsedIconColor: AppColors.gray[80],
+                            collapsedTextColor: AppColors.gray[80],
+                            textColor: AppColors.gray[80],
+                            title: Text(
+                              "Pin",
+                              style: AppTextStyles.h5[TextWeights.extrabold],
+                            ),
+                            onExpansionChanged: ((value) {}),
+                            children: _getChildren(PinType.pin),
+                          ),
+                          SizedBox(
+                            height: 36.h,
+                          ),
+                          ExpansionTileCustom(
+                            initiallyExpanded: true,
+                            iconColor: AppColors.gray[80],
+                            collapsedIconColor: AppColors.gray[80],
+                            collapsedTextColor: AppColors.gray[80],
+                            textColor: AppColors.gray[80],
+                            title: Text(
+                              "Notes",
+                              style: AppTextStyles.h5[TextWeights.extrabold],
+                            ),
+                            onExpansionChanged: ((value) {}),
+                            children: _getChildren(PinType.unpin),
+                          )
+                        ]
+                      : _getChildren(PinType.all)),
             ),
           ),
-          floatingActionButton: Padding(
-            padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(Routes.editNote, arguments: {
-                  "type": NoteType.newNote,
-                  "folderId": folderId
-                });
-              },
-              child: Image.asset(AssetPaths.addFolder),
-            ),
-          ),
+          // floatingActionButton: Padding(
+          //   padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       Navigator.of(context).pushNamed(Routes.editNote, arguments: {
+          //         "type": NoteType.newNote,
+          //         "folderId": folderId
+          //       });
+          //     },
+          //     child: Image.asset(AssetPaths.addFolder),
+          //   ),
+          // ),
         );
       }),
     );
