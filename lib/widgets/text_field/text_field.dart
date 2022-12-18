@@ -4,6 +4,7 @@ import 'package:note_app/resources/colors/colors.dart';
 
 // ô nhập dữ liệu email
 class InputField extends StatelessWidget {
+  final String? defaultText;
   final TextEditingController controller;
   final String? errorText;
   final String? hintText;
@@ -11,6 +12,7 @@ class InputField extends StatelessWidget {
   final Function(String)? onChanged;
   const InputField({
     super.key,
+    this.defaultText,
     this.errorText,
     this.onChanged,
     this.hintText,
@@ -29,6 +31,7 @@ class InputField extends StatelessWidget {
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
+          labelText: defaultText,
           hintText: hintText,
           errorText: errorText,
           helperText: helperText,
@@ -50,11 +53,11 @@ class PasswordField extends StatefulWidget {
   final String? hintText;
   final String? helperText;
   final Function(String)? onChanged;
-  const PasswordField(
-      {super.key,
-      this.errorText,
-      this.onChanged,
-      this.hintText,
+  const PasswordField({
+    super.key,
+    this.errorText,
+    this.onChanged,
+    this.hintText,
     required this.controller,
     this.helperText = " ",
   });

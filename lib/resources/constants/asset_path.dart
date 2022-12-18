@@ -24,5 +24,6 @@ class AssetPaths {
   static const String duplicate = '$prePath/folder-add.svg';
   static const String delete = '$prePath/trash-more.svg';
   static const String sortIcon = '$prePath/sort.png';
+  static const String upload = '$prePath/upload.svg';
   // static const String iconNote = '$prePath/iconNote.png';
 }
