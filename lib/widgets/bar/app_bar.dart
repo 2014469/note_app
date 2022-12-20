@@ -11,6 +11,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool isRightBtn;
   final bool isTitle;
   final bool isBorderBottom;
+  final bool isSelectionMode;
   final List<Widget>? extraActions;
   final Widget? leadingButton;
   final VoidCallback handleBackBtn;
@@ -25,6 +26,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor = AppColors.background,
     this.extraActions,
     this.leadingButton,
+    this.isSelectionMode = false,
     required this.handleBackBtn,
   });
 
@@ -33,6 +35,15 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    double leadingWidth;
+    if (isBackBtn && !isSelectionMode) {
+      leadingWidth = 92.w;
+    } else if (isSelectionMode) {
+      leadingWidth = double.infinity;
+    } else {
+      leadingWidth = 64.w;
+    }
+
     return AppBar(
       backgroundColor: backgroundColor,
       centerTitle: true,
@@ -42,7 +53,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
       elevation: 0.5,
       titleSpacing: 0,
-      leadingWidth: isBackBtn ? 92.w : 64.w,
+      leadingWidth: leadingWidth,
       bottom: isBorderBottom
           ? PreferredSize(
               preferredSize: Size.fromHeight(0.2.w),

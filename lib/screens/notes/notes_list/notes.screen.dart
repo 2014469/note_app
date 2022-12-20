@@ -119,6 +119,24 @@ class _NotesScreenState extends State<NotesScreen> {
     });
   }
 
+  void pinNote(Note note) {
+    setState(() {
+      note.isPin = !note.isPin;
+      noteProvider.updateNote(folderId!, note);
+      isReload = true;
+    });
+  }
+
+  void deleteNote(Note note) {
+    noteProvider.deleteNote(folderId!, note.noteId);
+
+    setState(() {
+      selectedItemsSet.clear();
+      isMultiSelectionEnabled = false;
+      isReload = true;
+    });
+  }
+
   bool isSelectionAll() =>
       selectedItemsSet.length != noteProvider.getNotes.length;
 
@@ -163,10 +181,14 @@ class _NotesScreenState extends State<NotesScreen> {
               motion: const StretchMotion(),
               children: [
                 SlidableAction(
-                  onPressed: (context) {},
+                  onPressed: (context) {
+                    pinNote(note);
+                  },
                   backgroundColor: AppColors.yellowGold,
-                  icon: Icons.share,
-                  label: "Pin",
+                  icon: note.isPin
+                      ? Icons.usb_off_rounded
+                      : Icons.push_pin_outlined,
+                  label: note.isPin ? "Unpin" : "Pin",
                 )
               ],
             ),
@@ -179,7 +201,7 @@ class _NotesScreenState extends State<NotesScreen> {
               ),
               SlidableAction(
                 onPressed: (context) {
-                  noteProvider.deleteNote(folderId!, note.noteId);
+                  deleteNote(note);
                 },
                 backgroundColor: Colors.red,
                 icon: Icons.delete,
@@ -198,11 +220,7 @@ class _NotesScreenState extends State<NotesScreen> {
                         ? const Icon(Icons.usb_off_rounded)
                         : const Icon(Icons.push_pin_outlined),
                     onPressed: () {
-                      setState(() {
-                        note.isPin = !note.isPin;
-                        noteProvider.updateNote(folderId!, note);
-                        isReload = true;
-                      });
+                      pinNote(note);
                     }),
                 FocusedMenuItem(
                     title: const Text("Lock"),
@@ -240,8 +258,7 @@ class _NotesScreenState extends State<NotesScreen> {
                     color: Colors.redAccent,
                   ),
                   onPressed: () {
-                    log("Delete");
-                    noteProvider.deleteNote(folderId!, note.noteId);
+                    deleteNote(note);
                   },
                 ),
               ],
@@ -353,6 +370,7 @@ class _NotesScreenState extends State<NotesScreen> {
             title: "All notes",
             handleBackBtn: () => Navigator.of(context).pop(),
             isBackBtn: !isMultiSelectionEnabled,
+            isSelectionMode: isMultiSelectionEnabled,
             isTitle: !isMultiSelectionEnabled,
             leadingButton: Padding(
               padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
