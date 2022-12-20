@@ -7,6 +7,7 @@ import 'package:note_app/resources/fonts/text_styles.dart';
 
 class ColorButton extends StatelessWidget {
   final bool isLarge;
+  final bool isRounded;
   final String text;
   final bool isOpacity;
   final Color color;
@@ -15,6 +16,7 @@ class ColorButton extends StatelessWidget {
       {super.key,
       this.isLarge = true,
       this.isOpacity = true,
+      this.isRounded = true,
       required this.text,
       required this.color,
       required this.onpressed});
@@ -30,8 +32,9 @@ class ColorButton extends StatelessWidget {
             minimumSize:
                 isLarge ? const Size(double.infinity, 0) : Size(190.w, 0),
             padding: EdgeInsets.symmetric(vertical: isLarge ? 8.h : 12.h),
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20))),
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(isRounded ? 20 : 10))),
             backgroundColor: isOpacity ? color.withOpacity(0.2) : color),
         child: Text(
           text,
