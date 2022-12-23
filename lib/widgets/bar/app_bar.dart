@@ -12,10 +12,11 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool isTitle;
   final bool isBorderBottom;
   final bool isSelectionMode;
+  final bool isH5Title;
+  final bool isH6Title;
   final List<Widget>? extraActions;
   final Widget? leadingButton;
   final VoidCallback handleBackBtn;
-
   const CustomAppbar({
     super.key,
     this.isBackBtn = true,
@@ -27,6 +28,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.extraActions,
     this.leadingButton,
     this.isSelectionMode = false,
+    this.isH5Title = false,
+    this.isH6Title = false,
     required this.handleBackBtn,
   });
 
@@ -89,9 +92,17 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               padding: isBackBtn ? EdgeInsets.zero : EdgeInsets.all(16.w),
               child: Text(
                 title,
-                style: AppTextStyles.h4[TextWeights.semibold]?.copyWith(
-                  color: AppColors.gray[70],
-                ),
+                style: isH5Title
+                    ? AppTextStyles.h5[TextWeights.semibold]?.copyWith(
+                        color: AppColors.gray[70],
+                      )
+                    : isH6Title
+                        ? AppTextStyles.h6[TextWeights.semibold]?.copyWith(
+                            color: AppColors.gray[70],
+                          )
+                        : AppTextStyles.h4[TextWeights.semibold]?.copyWith(
+                            color: AppColors.gray[70],
+                          ),
               ),
             )
           : null,

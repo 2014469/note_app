@@ -7,6 +7,7 @@ import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/user_info/buttons.dart';
+import 'package:note_app/utils/routes/routes.dart';
 import 'package:note_app/widgets/avatar/avatar_appbar.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
@@ -117,7 +118,6 @@ class InfoUserScreen extends StatelessWidget {
                 controller: usernameController,
                 hintText: userProvider.getCurrentUser.displayName!,
               ),
-
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                 child: Text(
@@ -130,20 +130,12 @@ class InfoUserScreen extends StatelessWidget {
                 controller: emailController,
                 hintText: userProvider.getCurrentUser.email!,
               ),
-              // Text(userProvider.getCurrentUser.displayName!,
-              //     style: AppTextStyles.h4[TextWeights.semibold]),
-              // Text(userProvider.getCurrentUser.email!,
-              //     style: AppTextStyles.h6[TextWeights.semibold]),
-              // Text(userProvider.getCurrentUser.uID!,
-              //     style: AppTextStyles.h6[TextWeights.semibold]),
-              // SizedBox(
-              //   height: 100.h,
-              // ),
               ColorButton(
                 text: 'Change my password',
                 color: const Color(0xff8278F8),
                 isOpacity: false,
-                onpressed: () {},
+                onpressed: () =>
+                    Navigator.of(context).pushNamed(Routes.changePassword),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -153,9 +145,8 @@ class InfoUserScreen extends StatelessWidget {
                     color: const Color(0xffF44B3D),
                     isOpacity: true,
                     isLarge: false,
-                    onpressed: () {
-                      debugPrint("Pressed");
-                    },
+                    onpressed: () =>
+                        Navigator.of(context).pushNamed(Routes.deleteAccount),
                   ),
                   ColorButton(
                     text: "Save",
