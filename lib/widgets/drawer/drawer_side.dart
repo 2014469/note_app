@@ -5,6 +5,7 @@ import '../../providers/auth.provider.dart';
 import '../../resources/colors/colors.dart';
 import '../../resources/fonts/enum_text_styles.dart';
 import '../../resources/fonts/text_styles.dart';
+import '../../services/auth/auth_service.dart';
 
 class DrawerSide extends StatelessWidget {
   const DrawerSide({super.key});
@@ -68,7 +69,11 @@ class DrawerSide extends StatelessWidget {
                         SizedBox(
                           height: 25,
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              false
+                                  ? () {}
+                                  : context.read<AuthService>().logOUt();
+                            },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(

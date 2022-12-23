@@ -251,8 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
           InkWell(
             onTap: () {
               log("chua xu ly");
-
-              context.read<AuthService>().logOUt();
             },
             child: Image.asset(
               AssetPaths.sortIcon,
