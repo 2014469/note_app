@@ -17,6 +17,7 @@ class ChangePasswordScreen extends StatelessWidget {
     TextEditingController newPassword = TextEditingController();
     TextEditingController retypePassword = TextEditingController();
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: CustomAppbar(
           title: "Change your password",
           isH6Title: true,
@@ -71,7 +72,7 @@ class ChangePasswordScreen extends StatelessWidget {
                   child: Text(
                     "* Password must have more tham 8 characters including at least 1 number, 1 letter and 1 capital letter",
                     style: AppTextStyles.caption[TextWeights.regular]
-                        ?.copyWith(color: const Color(0xff0AC174)),
+                        ?.copyWith(color: AppColors.green),
                   ),
                 ),
                 SizedBox(
@@ -82,12 +83,12 @@ class ChangePasswordScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 12.5.h, horizontal: 12.w),
-                            side: const BorderSide(color: Colors.transparent)),
-                        onPressed: () => Navigator.of(context).pushNamed(Routes.resetPassword),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 12.5.h, horizontal: 12.w)
+                        ),
+                        onPressed: () => Navigator.of(context)
+                            .pushNamed(Routes.resetPassword),
                         child: Text(
                           'Forgot your password?',
                           style: AppTextStyles.subtitile[TextWeights.semibold]
@@ -100,7 +101,7 @@ class ChangePasswordScreen extends StatelessWidget {
                           isLarge: false,
                           text: 'Save',
                           isOpacity: true,
-                          color: const Color(0xff0ac174),
+                          color: AppColors.green,
                           onpressed: () {})
                     ],
                   ),

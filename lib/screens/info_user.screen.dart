@@ -79,7 +79,7 @@ class InfoUserScreen extends StatelessWidget {
                                 btnText: "Upload",
                                 svgIcon: SvgPicture.asset(AssetPaths.upload),
                               ),
-                              OutlinedButton(
+                              TextButton(
                                 style: OutlinedButton.styleFrom(
                                   side: const BorderSide(
                                     color: Colors.transparent,
@@ -130,34 +130,40 @@ class InfoUserScreen extends StatelessWidget {
                 controller: emailController,
                 hintText: userProvider.getCurrentUser.email!,
               ),
-              ColorButton(
-                text: 'Change my password',
-                color: const Color(0xff8278F8),
-                isOpacity: false,
-                onpressed: () =>
-                    Navigator.of(context).pushNamed(Routes.changePassword),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 48.h),
+                child: ColorButton(
+                  text: 'Change my password',
+                  color: const Color(0xff8278F8),
+                  isOpacity: false,
+                  onpressed: () =>
+                      Navigator.of(context).pushNamed(Routes.changePassword),
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ColorButton(
-                    text: "Delete my Account",
-                    color: const Color(0xffF44B3D),
-                    isOpacity: true,
-                    isLarge: false,
-                    onpressed: () =>
-                        Navigator.of(context).pushNamed(Routes.deleteAccount),
-                  ),
-                  ColorButton(
-                    text: "Save",
-                    color: const Color(0xff0AC174),
-                    isOpacity: true,
-                    isLarge: false,
-                    onpressed: () {
-                      debugPrint("Pressed");
-                    },
-                  ),
-                ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ColorButton(
+                      text: "Delete my Account",
+                      color: AppColors.red,
+                      isOpacity: true,
+                      isLarge: false,
+                      onpressed: () =>
+                          Navigator.of(context).pushNamed(Routes.deleteAccount),
+                    ),
+                    ColorButton(
+                      text: "Save",
+                      color: AppColors.green,
+                      isOpacity: true,
+                      isLarge: false,
+                      onpressed: () {
+                        debugPrint("Pressed");
+                      },
+                    ),
+                  ],
+                ),
               )
             ]),
           ),

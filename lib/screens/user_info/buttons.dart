@@ -23,27 +23,24 @@ class ColorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8.w),
-      child: ElevatedButton(
-        onPressed: onpressed,
-        style: ElevatedButton.styleFrom(
-            elevation: 0,
-            minimumSize:
-                isLarge ? const Size(double.infinity, 0) : Size(190.w, 0),
-            padding: EdgeInsets.symmetric(vertical: isLarge ? 8.h : 12.h),
-            shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(isRounded ? 20 : 10))),
-            backgroundColor: isOpacity ? color.withOpacity(0.2) : color),
-        child: Text(
-          text,
-          style: isLarge
-              ? AppTextStyles.h5[TextWeights.medium]
-                  ?.copyWith(color: isOpacity ? color : AppColors.gray[0])
-              : AppTextStyles.subtitile[TextWeights.semibold]
-                  ?.copyWith(color: isOpacity ? color : AppColors.gray[0]),
-        ),
+    return TextButton(
+      onPressed: onpressed,
+      style: TextButton.styleFrom(
+          elevation: 0,
+          minimumSize:
+              isLarge ? const Size(double.infinity, 0) : Size(190.w, 0),
+          padding: EdgeInsets.symmetric(vertical: isLarge ? 8.h : 12.h),
+          shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.all(Radius.circular(isRounded ? 20 : 10))),
+          backgroundColor: isOpacity ? color.withOpacity(0.2) : color),
+      child: Text(
+        text,
+        style: isLarge
+            ? AppTextStyles.h5[TextWeights.medium]
+                ?.copyWith(color: isOpacity ? color : AppColors.gray[0])
+            : AppTextStyles.subtitile[TextWeights.semibold]
+                ?.copyWith(color: isOpacity ? color : AppColors.gray[0]),
       ),
     );
   }
@@ -78,3 +75,13 @@ class SmallIconButton extends StatelessWidget {
         ));
   }
 }
+
+// class AppCheckBox extends StatelessWidget {
+//   final String text;
+//   const AppCheckBox({super.key, required this.text});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container();
+//   }
+// }
