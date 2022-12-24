@@ -17,9 +17,11 @@ import '../../../resources/colors/colors.dart';
 import '../../../resources/fonts/enum_text_styles.dart';
 import '../../../resources/fonts/text_styles.dart';
 import '../../../utils/routes/routes.dart';
+import '../../../utils/show_snack_bar.dart';
 import '../../../widgets/bar/app_bar.dart';
 import '../../../widgets/bar/bottom_bar.dart';
 import '../type.dart';
+import 'move_notes.screen.dart';
 
 class NotesScreen extends StatefulWidget {
   const NotesScreen({
@@ -140,6 +142,71 @@ class _NotesScreenState extends State<NotesScreen> {
   bool isSelectionAll() =>
       selectedItemsSet.length != noteProvider.getNotes.length;
 
+  void handleMoveNotes(Note note) async {
+    await Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => MoveNotes(
+          folderIdException: folderId!,
+        ),
+      ),
+    )
+        .then((value) async {
+      await noteProvider.createNewNoteForMove(
+          ownerFolderId: value.folderId, note: note);
+      deleteNote(note);
+      Future.delayed(Duration.zero, () {
+        showSnackBarSuccess(context, "Moved note");
+      });
+    });
+  }
+
+  void handleMoveNotesSelection() async {
+    await Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => MoveNotes(
+              folderIdException: folderId!,
+            ),
+          ),
+        )
+        .then((value) async {
+          for (var noteSelected in selectedItemsSet) {
+            noteProvider.createNewNoteForMove(
+                ownerFolderId: value.folderId, note: noteSelected);
+            noteProvider.deleteNote(folderId!, noteSelected.noteId);
+            log("move");
+          }
+        })
+        .then((value) => {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  selectedItemsSet.clear();
+                  isMultiSelectionEnabled = false;
+                  isReload = true;
+                });
+                showSnackBarSuccess(context, "Moved note");
+              })
+            })
+        .catchError((e) {
+          Future.delayed(Duration.zero, () {
+            setState(() {
+              selectedItemsSet.clear();
+              isMultiSelectionEnabled = false;
+              isReload = true;
+            });
+            showSnackBarError(context,
+                "Có lỗi trong quá trình moved, bạn hãy thực hiện lại!!");
+          });
+        });
+
+    setState(() {
+      selectedItemsSet.clear();
+      isMultiSelectionEnabled = false;
+      isReload = true;
+    });
+  }
+
   Widget noteChild(Note note, bool isDivider) {
     return isMultiSelectionEnabled
         ? Padding(
@@ -194,7 +261,9 @@ class _NotesScreenState extends State<NotesScreen> {
             ),
             endActionPane: ActionPane(motion: const BehindMotion(), children: [
               SlidableAction(
-                onPressed: (context) {},
+                onPressed: (context) {
+                  handleMoveNotes(note);
+                },
                 backgroundColor: Colors.green,
                 icon: Icons.folder,
                 label: "Move",
@@ -231,7 +300,9 @@ class _NotesScreenState extends State<NotesScreen> {
                 FocusedMenuItem(
                   title: const Text("Move"),
                   trailingIcon: const Icon(Icons.drive_folder_upload_rounded),
-                  onPressed: () {},
+                  onPressed: () {
+                    handleMoveNotes(note);
+                  },
                 ),
                 FocusedMenuItem(
                   title: const Text("Select Notes"),
@@ -351,7 +422,11 @@ class _NotesScreenState extends State<NotesScreen> {
                 ? "${selectedItemsSet.length} notes selected"
                 : "${noteProvider.getNotes.length} notes",
             isLeft: isMultiSelectionEnabled,
-            actionLeft: isMultiSelectionEnabled ? () {} : null,
+            actionLeft: isMultiSelectionEnabled
+                ? () {
+                    handleMoveNotesSelection();
+                  }
+                : null,
             textLeft: isMultiSelectionEnabled ? "Move" : null,
             textRight: isMultiSelectionEnabled ? "Delete" : "Add",
             actionRight: isMultiSelectionEnabled

@@ -60,6 +60,15 @@ class NoteProvider with ChangeNotifier {
     return note;
   }
 
+  Future<Note> createNewNoteForMove(
+      {required String ownerFolderId, required Note note}) async {
+    await getCollectionNote(ownerFolderId)
+        .doc(note.noteId)
+        .set(note.toDynamic());
+
+    return note;
+  }
+
   deleteNote(String ownerFolderId, String noteId) {
     getCollectionNote(ownerFolderId).doc(noteId).delete();
     notifyListeners();

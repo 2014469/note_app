@@ -13,12 +13,15 @@ class FolderWidget extends StatefulWidget {
   final Function()? onTap;
   final Function()? onTapSetting;
   final Color color;
-  const FolderWidget(
-      {super.key,
-      this.color = AppColors.primary,
-      required this.folder,
-      required this.onTap,
-      required this.onTapSetting});
+  bool isShowMore;
+  FolderWidget({
+    super.key,
+    this.color = AppColors.primary,
+    required this.folder,
+    required this.onTap,
+    required this.onTapSetting,
+    this.isShowMore = true,
+  });
 
   @override
   State<FolderWidget> createState() => _FolderWidgetState();
@@ -70,15 +73,17 @@ class _FolderWidgetState extends State<FolderWidget> {
                         decoration: const BoxDecoration(),
                         child: SvgPicture.asset(AssetPaths.folderUnlocked),
                       )),
-                  IconButton(
-                      alignment: Alignment.topRight,
-                      padding: const EdgeInsets.all(0),
-                      onPressed: widget.onTapSetting,
-                      icon: Center(
-                        child: Image.asset(
-                          AssetPaths.showMore,
-                        ),
-                      ))
+                  widget.isShowMore
+                      ? IconButton(
+                          alignment: Alignment.topRight,
+                          padding: const EdgeInsets.all(0),
+                          onPressed: widget.onTapSetting,
+                          icon: Center(
+                            child: Image.asset(
+                              AssetPaths.showMore,
+                            ),
+                          ))
+                      : Container(),
                 ],
               ),
               Text(
