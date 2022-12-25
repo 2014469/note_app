@@ -8,6 +8,7 @@ import '../../../../utils/routes/routes.dart';
 import '../../type.dart';
 import 'note_tile.widget.dart';
 
+// import 'note
 class BuildSearchNotesDelegate extends SearchDelegate<String> {
   String folderId;
   List<Note> notes;
@@ -103,5 +104,16 @@ class BuildSearchNotesDelegate extends SearchDelegate<String> {
         );
       },
     );
+
+    //   NoteProvider noteProvider = Provider.of(context);
+    //   return ListView(
+    //       children: List<Widget>.generate(suggestions.length, (index) {
+    //     bool isDivider = true;
+    //     Note note = suggestions[index];
+    //     if (index == noteProvider.getLengthAllNotes - 1) {
+    //       isDivider = false;
+    //     }
+    //     return noteChild(context, note, isDivider, folderId);
+    //   }));
   }
 }

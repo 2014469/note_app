@@ -10,7 +10,8 @@ import '../../type.dart';
 import 'multi_select_notes.widget.dart';
 import 'note.widget.dart';
 
-List<Widget> getChildren(BuildContext context, PinType type, String folderId) {
+List<Widget> getChildrenNote(
+    BuildContext context, PinType type, String folderId) {
   NoteProvider noteProviderValue = Provider.of<NoteProvider>(context);
   List<Widget> results = [];
   switch (type) {

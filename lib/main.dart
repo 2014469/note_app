@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:note_app/providers/folder.provider.dart';
 import 'package:note_app/providers/note.provider.dart';
 import 'package:note_app/providers/note_screen.provider.dart';
@@ -25,6 +26,7 @@ void main() async {
 
   // await Firebase.initializeApp();
   await AuthService.firebase().initialize();
+  await Hive.initFlutter();
 
 // todo: change color status bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -104,7 +106,8 @@ class AuthWrapper extends StatelessWidget {
     return Consumer<User?>(
       builder: (context, value, child) {
         if (value != null) {
-          bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
+          bool isCheck = context.read<AuthService>().authIsVerifiedEmail ||
+              FirebaseAuth.instance.currentUser == null;
           if (isCheck) {
             // return const Text("Home screen");
             return const HomeScreen();

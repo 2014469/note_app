@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,8 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
-    userProvider.fetchUser();
-    folderProvider.fetchAllFolders();
+    FirebaseAuth.instance.currentUser == null
+        ? () {
+            log('user null');
+          }
+        : () {
+            userProvider.fetchUser();
+            folderProvider.fetchAllFolders();
+          };
     super.initState();
   }
 

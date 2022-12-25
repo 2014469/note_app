@@ -21,7 +21,7 @@ class FolderProvider with ChangeNotifier {
   Future fetchAllFolders() async {
     folders.clear();
     log("fetch folders");
-    log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
+    // log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
 
     List<Folder> newFolders = [];
 

@@ -210,8 +210,8 @@ class _NotesScreenState extends State<NotesScreen> {
                         showSearch(
                           context: context,
                           delegate: BuildSearchNotesDelegate(
-                              notes: noteProvider.getNotes,
-                              folderId: folderId!),
+                              folderId: folderId!,
+                              notes: noteProvider.getNotes),
                           useRootNavigator: false,
                         );
                       },
@@ -246,19 +246,19 @@ class _NotesScreenState extends State<NotesScreen> {
                   children: noteProvider.getLengthPins > 0
                       ? [
                           ExpansionNoteWidget(
-                            childs:
-                                getChildren(context, PinType.pin, folderId!),
+                            childs: getChildrenNote(
+                                context, PinType.pin, folderId!),
                             title: "Pin",
                           ),
                           SizedBox(
                             height: 36.h,
                           ),
                           ExpansionNoteWidget(
-                              childs: getChildren(
+                              childs: getChildrenNote(
                                   context, PinType.unpin, folderId!),
                               title: "Notes")
                         ]
-                      : getChildren(context, PinType.all, folderId!)),
+                      : getChildrenNote(context, PinType.all, folderId!)),
             ),
           ),
         );
