@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/screens/notes/notes_list/pop_up_menu_sort.dart';
-import 'package:note_app/screens/notes/notes_list/widgets/button_app_bar.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/expansion_note.widget.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/get_notes.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/search_notes_delegate.dart';
@@ -19,6 +19,7 @@ import '../../../utils/routes/routes.dart';
 import '../../../utils/show_snack_bar.dart';
 import '../../../widgets/bar/app_bar.dart';
 import '../../../widgets/bar/bottom_bar.dart';
+import '../../../widgets/buttons/button_app_bar.dart';
 import '../type.dart';
 import 'move_notes.screen.dart';
 
@@ -88,7 +89,9 @@ class _NotesScreenState extends State<NotesScreen> {
             for (var noteSelected in noteScreenProvider.getSelectedItemSet) {
               noteProvider.createNewNoteForMove(
                   ownerFolderId: value.folderId, note: noteSelected);
-              noteProvider.deleteNote(folderId!, noteSelected.noteId);
+              if (FirebaseAuth.instance.currentUser != null) {
+                noteProvider.deleteNote(folderId!, noteSelected.noteId);
+              }
               log("move");
             }
             return true;

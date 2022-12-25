@@ -50,9 +50,18 @@ class BottomBarCustom extends StatelessWidget {
                             .copyWith(color: AppColors.primary)),
                   )
                 : Container(),
-            Text(title,
-                style: AppTextStyles.body2[TextWeights.regular]!
-                    .copyWith(color: AppColors.gray[50])),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: AppTextStyles.body2[TextWeights.regular]!.copyWith(
+                    color: AppColors.gray[50],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
             isRight
                 ? TextButton(
                     onPressed: actionRight!,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:note_app/providers/folder.provider.dart';
+import 'package:note_app/providers/home_screen.provider.dart';
 import 'package:note_app/providers/note.provider.dart';
 import 'package:note_app/providers/note_screen.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
@@ -16,9 +17,12 @@ import 'package:note_app/utils/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'models/folder.dart';
+import 'models/note.dart';
 import 'providers/auth.provider.dart';
 import 'screens/home.screen.dart';
 import 'screens/sign_in_up/verify_email.screen.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 // import 'package:provider/provider.dart'
 void main() async {
@@ -26,7 +30,11 @@ void main() async {
 
   // await Firebase.initializeApp();
   await AuthService.firebase().initialize();
-  await Hive.initFlutter();
+  final appDocumentDirectory =
+      await path_provider.getApplicationDocumentsDirectory();
+  await Hive.initFlutter(appDocumentDirectory.path);
+  Hive.registerAdapter(FolderAdapter());
+  Hive.registerAdapter(NoteAdapter());
 
 // todo: change color status bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -60,6 +68,9 @@ void main() async {
         ),
         ChangeNotifierProvider<NoteScreenProvider>(
           create: (context) => NoteScreenProvider(),
+        ),
+        ChangeNotifierProvider<HomeScreenProvider>(
+          create: (context) => HomeScreenProvider(),
         ),
       ],
       child: ScreenUtilInit(

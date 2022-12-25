@@ -4,16 +4,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 import '../models/note.dart';
 import '../resources/constants/str_folder_cloud.dart';
 import '../resources/constants/str_note_cloud.dart';
 import '../resources/constants/str_user.dart';
+import '../utils/customLog/debug_log.dart';
 import '../utils/sort/sort_note.dart';
 
 enum TypeSortNote { titleInc, titleDec, dateInc, dateDec, colorInc, colorDec }
 
 class NoteProvider with ChangeNotifier {
+  static const String _boxName = "note_notes";
+
   late Note note;
   int index = 0;
 
@@ -56,11 +60,17 @@ class NoteProvider with ChangeNotifier {
         noteId: noteId,
         body: bodyNote,
         ownerFolderId: ownerFolderId,
-        creationDate: Timestamp.now(),
+        creationDate: DateTime.now(),
         color: '#ffff5252',
         content: content,
         title: titleNote);
-    await getCollectionNote(ownerFolderId).doc(noteId).set(note.toDynamic());
+
+    if (FirebaseAuth.instance.currentUser != null) {
+      await getCollectionNote(ownerFolderId).doc(noteId).set(note.toDynamic());
+    } else {
+      var box = await Hive.openBox<Note>(_boxName);
+      await box.add(note);
+    }
 
     notes.insert(0, note);
     sortOnFetch();
@@ -70,20 +80,46 @@ class NoteProvider with ChangeNotifier {
 
   Future<Note> createNewNoteForMove(
       {required String ownerFolderId, required Note note}) async {
-    await getCollectionNote(ownerFolderId)
-        .doc(note.noteId)
-        .set(note.toDynamic());
+    if (FirebaseAuth.instance.currentUser != null) {
+      await getCollectionNote(ownerFolderId)
+          .doc(note.noteId)
+          .set(note.toDynamic());
+    } else {
+      var box = await Hive.openBox<Note>(_boxName);
+
+      int indexNote = box.values.toList().indexOf(note);
+      Note noteUpdate = note;
+      noteUpdate.ownerFolderId = ownerFolderId;
+
+      await box.putAt(indexNote, noteUpdate);
+    }
 
     return note;
   }
 
-  deleteNote(String ownerFolderId, String noteId) {
-    getCollectionNote(ownerFolderId).doc(noteId).delete();
+  deleteNote(String ownerFolderId, String noteId) async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      await getCollectionNote(ownerFolderId).doc(noteId).delete();
+    } else {
+      var box = await Hive.openBox<Note>(_boxName);
+
+      final Map<dynamic, Note> deliveriesMap = box.toMap();
+      dynamic desiredKey;
+      deliveriesMap.forEach((key, value) {
+        if (value.noteId == noteId && value.ownerFolderId == ownerFolderId) {
+          desiredKey = key;
+        }
+      });
+
+      await box.delete(desiredKey);
+
+      DebugLog.w("Deleted memeber with id $ownerFolderId && note id: $noteId");
+    }
     notifyListeners();
   }
 
   Future<void> fetchAllNotes(String ownerFolder) async {
-    log("$index: fetch notes");
+    DebugLog.i("$index: fetch notes");
     log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
 
     index++;
@@ -92,23 +128,41 @@ class NoteProvider with ChangeNotifier {
     List<Note> newPinNotes = [];
     List<Note> newUnPinNotes = [];
 
-    QuerySnapshot snapshot = await getCollectionNote(ownerFolder).get();
+    if (FirebaseAuth.instance.currentUser != null) {
+      DebugLog.w("note firebase");
+      QuerySnapshot snapshot = await getCollectionNote(ownerFolder).get();
 
-    if (snapshot.docs.isEmpty) {
-      newNotes = [];
-      newPinNotes = [];
-      newUnPinNotes = [];
-    } else {
-      for (var element in snapshot.docs) {
-        Note noteTmp = Note.fromJson(element.data() as Map<String, dynamic>);
-        if (noteTmp.isPin) {
-          newPinNotes.add(noteTmp);
-        } else {
-          newUnPinNotes.add(noteTmp);
+      if (snapshot.docs.isEmpty) {
+        newNotes = [];
+        newPinNotes = [];
+        newUnPinNotes = [];
+      } else {
+        for (var element in snapshot.docs) {
+          Note noteTmp = Note.fromJson(element.data() as Map<String, dynamic>);
+          if (noteTmp.isPin) {
+            newPinNotes.add(noteTmp);
+          } else {
+            newUnPinNotes.add(noteTmp);
+          }
+          newNotes.add(noteTmp);
         }
-        newNotes.add(noteTmp);
+      }
+    } else {
+      DebugLog.w("note hive");
+      var box = await Hive.openBox<Note>(_boxName);
+      newNotes = box.values
+          .toList()
+          .where((element) => element.ownerFolderId == ownerFolder)
+          .toList();
+      for (var element in newNotes) {
+        if (element.isPin) {
+          newPinNotes.add(element);
+        } else {
+          newUnPinNotes.add(element);
+        }
       }
     }
+
     notes = newNotes;
     pinNotes = newPinNotes;
     unPinNotes = newUnPinNotes;
@@ -180,9 +234,18 @@ class NoteProvider with ChangeNotifier {
   }
 
   void updateNote(String ownerFolderId, Note note) async {
-    await getCollectionNote(ownerFolderId).doc(note.noteId).set(
-          note.toDynamic(),
-        );
+    if (FirebaseAuth.instance.currentUser != null) {
+      await getCollectionNote(ownerFolderId).doc(note.noteId).set(
+            note.toDynamic(),
+          );
+    } else {
+      var box = await Hive.openBox<Note>(_boxName);
+
+      int indexNote = box.values.toList().indexOf(note);
+
+      await box.putAt(indexNote, note);
+    }
+
     notifyListeners();
   }
 }

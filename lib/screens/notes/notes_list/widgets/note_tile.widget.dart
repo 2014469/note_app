@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/models/note.dart';
@@ -20,18 +19,8 @@ class NoteListTileWidget extends StatelessWidget {
     this.isDivider = true,
   });
 
-  bool compareCreateDate(Timestamp createTimeStamp) {
-    DateTime createDateTime = convertDate(createTimeStamp);
-    DateTime now = DateTime.now();
-
-    return createDateTime.day == now.day &&
-        createDateTime.month == now.month &&
-        createDateTime.year == now.year;
-  }
-
   @override
   Widget build(BuildContext context) {
-    DateTime createDate = convertDate(note.creationDate!);
     return Column(
       children: [
         InkWell(
@@ -88,8 +77,8 @@ class NoteListTileWidget extends StatelessWidget {
                   ),
                   Text(
                     compareCreateDate(note.creationDate!)
-                        ? "${createDate.hour} : ${createDate.minute}"
-                        : "${note.creationDate!.toDate().day}/${note.creationDate!.toDate().month}/${note.creationDate!.toDate().year}",
+                        ? "${note.creationDate!.hour} : ${note.creationDate!.minute}"
+                        : "${note.creationDate!.day}/${note.creationDate!.month}/${note.creationDate!.year}",
                     style: AppTextStyles.caption[TextWeights.bold]!
                         .copyWith(color: AppColors.gray[60]),
                   ),

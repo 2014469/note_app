@@ -3,13 +3,28 @@ import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:note_app/resources/constants/str_user.dart';
 import 'package:note_app/utils/customLog/debug_log.dart';
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
+part 'auth_user.g.dart';
+
+@HiveType(typeId: 0)
 class AuthUser {
+  @HiveField(0)
   String? id;
+
+  @HiveField(1)
   String? uID;
+
+  @HiveField(2)
   String? displayName;
+
+  @HiveField(3)
   String? fullName;
+
+  @HiveField(4)
   String? email;
+
+  @HiveField(5)
   String? photoUrl;
 
   AuthUser({
@@ -24,11 +39,11 @@ class AuthUser {
   AuthUser.nullValue()
       : id = "",
         uID = "",
-        displayName = "User",
+        displayName = "User Name",
         fullName = "",
         email = "",
         photoUrl =
-            "https://images.unsplash.com/photo-1645680827507-9f392edae51c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80";
+            "https://firebasestorage.googleapis.com/v0/b/note-app-e936e.appspot.com/o/Logo.png?alt=media&token=090610fc-252a-4706-b128-b43fec21720b";
 
   factory AuthUser.fromFirebaseWithInformation(User user) => AuthUser(
         id: const Uuid().v1(),

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -10,6 +11,8 @@ import '../../../../models/note.dart';
 import '../../../../providers/note.provider.dart';
 import '../../../../providers/note_screen.provider.dart';
 import '../../../../resources/colors/colors.dart';
+import '../../../../resources/fonts/enum_text_styles.dart';
+import '../../../../resources/fonts/text_styles.dart';
 import '../../../../utils/routes/routes.dart';
 import '../../../../utils/show_snack_bar.dart';
 import '../../type.dart';
@@ -86,10 +89,18 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
           actions: [
             TextButton(
               onPressed: Navigator.of(context).pop,
-              child: const Text('CANCEL'),
+              child: Text(
+                'CANCEL',
+                style: AppTextStyles.h6[TextWeights.regular]!
+                    .copyWith(color: AppColors.primary),
+              ),
             ),
             TextButton(
-              child: const Text('SUBMIT'),
+              child: Text(
+                'SUBMIT',
+                style: AppTextStyles.h6[TextWeights.regular]!
+                    .copyWith(color: AppColors.primary),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
 
@@ -116,6 +127,12 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
       MaterialColorPicker(
         colors: fullMaterialColors,
         selectedColor: mainColor,
+        onColorChange: (color) {
+          noteScreenProvider.changeReload(false);
+          setState(() {
+            _tempMainColor = color;
+          });
+        },
         onMainColorChange: (color) {
           noteScreenProvider.changeReload(false);
           setState(() {
@@ -139,7 +156,10 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
         .then((value) async {
       await noteProvider.createNewNoteForMove(
           ownerFolderId: value.folderId, note: note);
-      noteProvider.deleteNote(widget.folderId, note.noteId);
+
+      if (FirebaseAuth.instance.currentUser != null) {
+        noteProvider.deleteNote(widget.folderId, note.noteId);
+      }
 
       noteScreenProvider.changeReload(true);
 

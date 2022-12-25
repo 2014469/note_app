@@ -1,11 +1,16 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth.provider.dart';
 import '../../resources/colors/colors.dart';
+import '../../resources/constants/asset_path.dart';
 import '../../resources/fonts/enum_text_styles.dart';
 import '../../resources/fonts/text_styles.dart';
 import '../../services/auth/auth_service.dart';
+import '../../utils/customLog/debug_log.dart';
+import '../../utils/routes/routes.dart';
 
 class DrawerSide extends StatelessWidget {
   const DrawerSide({super.key});
@@ -45,9 +50,12 @@ class DrawerSide extends StatelessWidget {
                       radius: 43,
                       child: CircleAvatar(
                         radius: 40,
-                        backgroundImage: NetworkImage(userProviderValue
-                            .getCurrentUser.photoUrl!
-                            .toString()),
+                        backgroundImage:
+                            FirebaseAuth.instance.currentUser != null
+                                ? NetworkImage(userProviderValue
+                                    .getCurrentUser.photoUrl!
+                                    .toString())
+                                : Image.asset(AssetPaths.logo).image,
                         backgroundColor: AppColors.primary,
                       ),
                     ),
@@ -57,11 +65,11 @@ class DrawerSide extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          true
+                        AutoSizeText(
+                          FirebaseAuth.instance.currentUser != null
                               ? userProviderValue.getCurrentUser.displayName!
                               : 'Welcome Guest',
-                          style: AppTextStyles.h5[TextWeights.semibold],
+                          style: AppTextStyles.h6[TextWeights.semibold],
                         ),
                         const SizedBox(
                           height: 7,
@@ -69,11 +77,16 @@ class DrawerSide extends StatelessWidget {
                         SizedBox(
                           height: 25,
                           child: OutlinedButton(
-                            onPressed: () {
-                              false
-                                  ? () {}
-                                  : context.read<AuthService>().logOUt();
-                            },
+                            onPressed: FirebaseAuth.instance.currentUser == null
+                                ? () {
+                                    DebugLog.i("Login page");
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            Routes.login, ((route) => false));
+                                  }
+                                : () {
+                                    context.read<AuthService>().logOUt();
+                                  },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all(
                                 RoundedRectangleBorder(
@@ -85,7 +98,7 @@ class DrawerSide extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              false
+                              FirebaseAuth.instance.currentUser == null
                                   ? 'Login'.toUpperCase()
                                   : 'Sign out'.toUpperCase(),
                               style: AppTextStyles.body1[TextWeights.medium]!

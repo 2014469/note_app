@@ -1,17 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:note_app/resources/constants/str_note_cloud.dart';
 import 'package:note_app/utils/customLog/debug_log.dart';
+import 'package:hive/hive.dart';
 
+part 'note.g.dart';
+
+@HiveType(typeId: 3)
 class Note {
+  @HiveField(0)
   String noteId;
+
+  @HiveField(1)
   String ownerFolderId;
+
+  @HiveField(2)
   bool isLock;
+
+  @HiveField(3)
   String? passLock;
-  Timestamp? creationDate;
+
+  @HiveField(4)
+  DateTime? creationDate;
+
+  @HiveField(5)
   String? color;
+
+  @HiveField(6)
   String title;
+
+  @HiveField(7)
   String? body;
+
+  @HiveField(8)
   String? content;
+
+  @HiveField(9)
   bool isPin;
 
   Note.fromId({
@@ -53,7 +76,7 @@ class Note {
       ownerFolderId: reponseData[NoteCloudConstant.ownerFolderId],
       isLock: reponseData[NoteCloudConstant.isLock],
       passLock: reponseData[NoteCloudConstant.passLock],
-      creationDate: reponseData[NoteCloudConstant.dateCreate],
+      creationDate: reponseData[NoteCloudConstant.dateCreate].toDate(),
       color: reponseData[NoteCloudConstant.color],
       title: reponseData[NoteCloudConstant.title],
       body: reponseData[NoteCloudConstant.body],
