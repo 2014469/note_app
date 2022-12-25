@@ -9,9 +9,15 @@ import '../models/note.dart';
 import '../resources/constants/str_folder_cloud.dart';
 import '../resources/constants/str_note_cloud.dart';
 import '../resources/constants/str_user.dart';
+import '../utils/sort/sort_note.dart';
+
+enum TypeSortNote { titleInc, titleDec, dateInc, dateDec, colorInc, colorDec }
 
 class NoteProvider with ChangeNotifier {
   late Note note;
+  int index = 0;
+
+  TypeSortNote typeSortCurrent = TypeSortNote.dateDec;
   List<Note> notes = [];
   List<Note> pinNotes = [];
   List<Note> unPinNotes = [];
@@ -23,6 +29,7 @@ class NoteProvider with ChangeNotifier {
     return notes;
   }
 
+  TypeSortNote get getTypeSortCurrent => typeSortCurrent;
   int get getLengthPins => pinNotes.length;
   int get getLengthUnPins => unPinNotes.length;
   int get getLengthAllNotes => notes.length;
@@ -38,24 +45,25 @@ class NoteProvider with ChangeNotifier {
         .collection(NoteCloudConstant.collection);
   }
 
-  Future<Note> createNewNote(
-      {required String ownerFolderId,
-      required String titleNote,
-      required String bodyNote,
-      required String content,
-      required String noteId}) async {
+  Future<Note> createNewNote({
+    required String ownerFolderId,
+    required String titleNote,
+    required String bodyNote,
+    required String content,
+    required String noteId,
+  }) async {
     note = Note(
         noteId: noteId,
         body: bodyNote,
         ownerFolderId: ownerFolderId,
         creationDate: Timestamp.now(),
-        color: "",
+        color: '#ffff5252',
         content: content,
         title: titleNote);
     await getCollectionNote(ownerFolderId).doc(noteId).set(note.toDynamic());
 
     notes.insert(0, note);
-    sortByDate();
+    sortOnFetch();
     notifyListeners();
     return note;
   }
@@ -75,9 +83,10 @@ class NoteProvider with ChangeNotifier {
   }
 
   Future<void> fetchAllNotes(String ownerFolder) async {
-    log("fetch notes");
+    log("$index: fetch notes");
     log(FirebaseAuth.instance.currentUser?.uid.toString() ?? "afdfdfdf");
 
+    index++;
     List<Note> newNotes = [];
 
     List<Note> newPinNotes = [];
@@ -103,7 +112,7 @@ class NoteProvider with ChangeNotifier {
     notes = newNotes;
     pinNotes = newPinNotes;
     unPinNotes = newUnPinNotes;
-    sortByDate();
+    sortOnFetch();
   }
 
   void uploadFileToStorage(
@@ -119,12 +128,55 @@ class NoteProvider with ChangeNotifier {
     log(taskSnapshot.snapshot.ref.getDownloadURL().toString());
   }
 
-  void sortByDate() {
-    notes.sort(
-      (b, a) {
-        return a.creationDate!.compareTo(b.creationDate!);
-      },
-    );
+  void sortOnFetch() {
+    typeSortCurrent = TypeSortNote.dateDec;
+    sortByDateDecrease(notes);
+    sortByDateDecrease(pinNotes);
+    sortByDateDecrease(unPinNotes);
+  }
+
+  void sort(TypeSortNote typeSort) {
+    typeSortCurrent = typeSort;
+    switch (typeSortCurrent) {
+      case TypeSortNote.titleInc:
+        sortByTitleIncrease(notes);
+        sortByTitleIncrease(pinNotes);
+        sortByTitleIncrease(unPinNotes);
+        break;
+      case TypeSortNote.titleDec:
+        sortByTitleDecrease(notes);
+        sortByTitleDecrease(pinNotes);
+        sortByTitleDecrease(unPinNotes);
+        break;
+      case TypeSortNote.dateInc:
+        sortByDateIncrease(notes);
+        sortByDateIncrease(pinNotes);
+        sortByDateIncrease(unPinNotes);
+        break;
+      case TypeSortNote.dateDec:
+        sortByDateDecrease(notes);
+        sortByDateDecrease(pinNotes);
+        sortByDateDecrease(unPinNotes);
+        break;
+      case TypeSortNote.colorInc:
+        sortByColorTagsIncrease(notes);
+        sortByColorTagsIncrease(pinNotes);
+        sortByColorTagsIncrease(unPinNotes);
+        break;
+      case TypeSortNote.colorDec:
+        sortByColorTagsDecrease(notes);
+        sortByColorTagsDecrease(pinNotes);
+        sortByColorTagsDecrease(unPinNotes);
+        break;
+    }
+    notifyListeners();
+  }
+
+  void setDefaultValue() {
+    notes = [];
+    pinNotes = [];
+    unPinNotes = [];
+    typeSortCurrent = TypeSortNote.dateDec;
   }
 
   void updateNote(String ownerFolderId, Note note) async {

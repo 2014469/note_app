@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note_app/providers/folder.provider.dart';
 import 'package:note_app/providers/note.provider.dart';
+import 'package:note_app/providers/note_screen.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -54,6 +55,9 @@ void main() async {
         ),
         ChangeNotifierProvider<NoteProvider>(
           create: (context) => NoteProvider(),
+        ),
+        ChangeNotifierProvider<NoteScreenProvider>(
+          create: (context) => NoteScreenProvider(),
         ),
       ],
       child: ScreenUtilInit(

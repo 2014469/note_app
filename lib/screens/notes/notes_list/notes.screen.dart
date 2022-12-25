@@ -1,19 +1,18 @@
-import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:focused_menu/modals.dart';
-import 'package:note_app/resources/constants/asset_path.dart';
-import 'package:note_app/screens/notes/notes_list/widgets/expansion_tile.dart';
-import 'package:note_app/screens/notes/notes_list/widgets/focus_menu.widget.dart';
-import 'package:note_app/screens/notes/notes_list/widgets/note.widget.dart';
+import 'package:note_app/screens/notes/notes_list/pop_up_menu_sort.dart';
+import 'package:note_app/screens/notes/notes_list/widgets/button_app_bar.dart';
+import 'package:note_app/screens/notes/notes_list/widgets/expansion_note.widget.dart';
+import 'package:note_app/screens/notes/notes_list/widgets/get_notes.dart';
+import 'package:note_app/screens/notes/notes_list/widgets/search_notes_delegate.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/note.dart';
 import '../../../providers/note.provider.dart';
+import '../../../providers/note_screen.provider.dart';
 import '../../../resources/colors/colors.dart';
+import '../../../resources/constants/asset_path.dart';
 import '../../../resources/fonts/enum_text_styles.dart';
 import '../../../resources/fonts/text_styles.dart';
 import '../../../utils/routes/routes.dart';
@@ -34,15 +33,17 @@ class NotesScreen extends StatefulWidget {
 
 class _NotesScreenState extends State<NotesScreen> {
   late NoteProvider noteProvider;
+  late NoteScreenProvider noteScreenProvider;
+  late NoteScreenProvider noteScreenProviderValue;
+
   String? folderId;
-  bool isExpanded = true;
   late Future<void>? _getItems;
-  bool isMultiSelectionEnabled = false;
-  bool isReload = true;
 
   @override
   void initState() {
     noteProvider = Provider.of<NoteProvider>(context, listen: false);
+    noteScreenProvider =
+        Provider.of<NoteScreenProvider>(context, listen: false);
 
     super.initState();
   }
@@ -52,358 +53,77 @@ class _NotesScreenState extends State<NotesScreen> {
     super.dispose();
   }
 
-  // Future<String?> _showTextInputDialog(BuildContext context) async {
-  //   return showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: const Text('New note'),
-  //           content: TextField(
-  //             controller: _textFieldController,
-  //             decoration: const InputDecoration(hintText: "Title note"),
-  //           ),
-  //           actions: <Widget>[
-  //             ElevatedButton(
-  //               child: const Text("Cancel"),
-  //               onPressed: () => Navigator.pop(context),
-  //             ),
-  //             ElevatedButton(
-  //               child: const Text('OK'),
-  //               onPressed: () =>
-  //                   Navigator.pop(context, _textFieldController.text),
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
-
-  HashSet<Note> selectedItemsSet = HashSet();
-  void doMultiSelection(Note note) {
-    if (isMultiSelectionEnabled) {
-      if (selectedItemsSet.contains(note)) {
-        selectedItemsSet.remove(note);
-      } else {
-        selectedItemsSet.add(note);
-      }
-      setState(() {
-        isReload = false;
-      });
-    } else {
-      //Other logic
-    }
-  }
-
   void doAllSelection() {
-    setState(() {
-      for (var note in noteProvider.getNotes) {
-        selectedItemsSet.add(note);
-      }
-      isReload = false;
-    });
-  }
-
-  void clearAllSelection() {
-    setState(() {
-      selectedItemsSet.clear();
-      isReload = false;
-    });
+    noteScreenProvider.changeReload(false);
+    for (var note in noteProvider.getNotes) {
+      noteScreenProvider.addSelection(note);
+    }
   }
 
   void deleteNotesSelection() {
-    for (var noteSelected in selectedItemsSet) {
+    for (var noteSelected in noteScreenProvider.getSelectedItemSet) {
       noteProvider.deleteNote(folderId!, noteSelected.noteId);
     }
 
-    setState(() {
-      selectedItemsSet.clear();
-      isMultiSelectionEnabled = false;
-      isReload = true;
-    });
-  }
+    noteScreenProvider.finishSelectionMode();
 
-  void pinNote(Note note) {
-    setState(() {
-      note.isPin = !note.isPin;
-      noteProvider.updateNote(folderId!, note);
-      isReload = true;
-    });
-  }
-
-  void deleteNote(Note note) {
-    noteProvider.deleteNote(folderId!, note.noteId);
-
-    setState(() {
-      selectedItemsSet.clear();
-      isMultiSelectionEnabled = false;
-      isReload = true;
-    });
+    showSnackBarSuccess(context, "Xóa thành công");
   }
 
   bool isSelectionAll() =>
-      selectedItemsSet.length != noteProvider.getNotes.length;
+      noteScreenProvider.getSelectedItemSet.length !=
+      noteProvider.getNotes.length;
 
-  void handleMoveNotes(Note note) async {
-    await Navigator.of(context)
-        .push(
-      MaterialPageRoute(
-        builder: (context) => MoveNotes(
-          folderIdException: folderId!,
-        ),
-      ),
-    )
-        .then((value) async {
-      await noteProvider.createNewNoteForMove(
-          ownerFolderId: value.folderId, note: note);
-      deleteNote(note);
-      Future.delayed(Duration.zero, () {
-        showSnackBarSuccess(context, "Moved note");
-      });
-    });
-  }
-
-  void handleMoveNotesSelection() async {
+  Future<void> handleMoveNotesSelection() async {
     await Navigator.of(context)
         .push(
           MaterialPageRoute(
-            builder: (context) => MoveNotes(
+            builder: (context) => SelectFolderToMoveNotes(
               folderIdException: folderId!,
             ),
           ),
         )
         .then((value) async {
-          for (var noteSelected in selectedItemsSet) {
-            noteProvider.createNewNoteForMove(
-                ownerFolderId: value.folderId, note: noteSelected);
-            noteProvider.deleteNote(folderId!, noteSelected.noteId);
-            log("move");
+          if (value != null) {
+            for (var noteSelected in noteScreenProvider.getSelectedItemSet) {
+              noteProvider.createNewNoteForMove(
+                  ownerFolderId: value.folderId, note: noteSelected);
+              noteProvider.deleteNote(folderId!, noteSelected.noteId);
+              log("move");
+            }
+            return true;
+          } else {
+            return false;
           }
         })
         .then((value) => {
-              Future.delayed(Duration.zero, () {
-                setState(() {
-                  selectedItemsSet.clear();
-                  isMultiSelectionEnabled = false;
-                  isReload = true;
-                });
-                showSnackBarSuccess(context, "Moved note");
-              })
+              if (value)
+                {
+                  Future.delayed(Duration.zero, () {
+                    noteScreenProvider.finishSelectionMode();
+                    showSnackBarSuccess(context, "Moved note");
+                  })
+                }
+              else
+                {
+                  Future.delayed(Duration.zero, () {
+                    noteScreenProvider.clearAndCancelSelectionMode();
+                    showSnackBarInfo(context, "Bạn đã hủy");
+                  })
+                }
             })
         .catchError((e) {
           Future.delayed(Duration.zero, () {
-            setState(() {
-              selectedItemsSet.clear();
-              isMultiSelectionEnabled = false;
-              isReload = true;
-            });
-            showSnackBarError(context,
-                "Có lỗi trong quá trình moved, bạn hãy thực hiện lại!!");
+            noteScreenProvider.clearAndCancelSelectionMode();
+            showSnackBarError(context, "Đã có lỗi xảy ra");
           });
         });
-
-    setState(() {
-      selectedItemsSet.clear();
-      isMultiSelectionEnabled = false;
-      isReload = true;
-    });
   }
-
-  Widget noteChild(Note note, bool isDivider) {
-    return isMultiSelectionEnabled
-        ? Padding(
-            padding: EdgeInsets.only(left: 16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Visibility(
-                  child: Icon(
-                    selectedItemsSet.contains(note)
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    size: 30.w,
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width - 50.w,
-                  child: NoteListTileWidget(
-                    isDivider: isDivider,
-                    note: note,
-                    onTap: () {
-                      doMultiSelection(note);
-                      // Navigator.of(context).pushNamed(
-                      //   Routes.editNote,
-                      //   arguments: {
-                      //     "type": NoteType.editNote,
-                      //     "folderId": folderId,
-                      //     "note": note,
-                      //   },
-                      // );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          )
-        : Slidable(
-            startActionPane: ActionPane(
-              motion: const StretchMotion(),
-              children: [
-                SlidableAction(
-                  onPressed: (context) {
-                    pinNote(note);
-                  },
-                  backgroundColor: AppColors.yellowGold,
-                  icon: note.isPin
-                      ? Icons.usb_off_rounded
-                      : Icons.push_pin_outlined,
-                  label: note.isPin ? "Unpin" : "Pin",
-                )
-              ],
-            ),
-            endActionPane: ActionPane(motion: const BehindMotion(), children: [
-              SlidableAction(
-                onPressed: (context) {
-                  handleMoveNotes(note);
-                },
-                backgroundColor: Colors.green,
-                icon: Icons.folder,
-                label: "Move",
-              ),
-              SlidableAction(
-                onPressed: (context) {
-                  deleteNote(note);
-                },
-                backgroundColor: Colors.red,
-                icon: Icons.delete,
-                label: "Delete",
-              )
-            ]),
-            child: FocusedMenuHolder(
-              blurBackgroundColor: Colors.black54,
-              menuOffset: 10,
-              blurSize: 5.0,
-              duration: const Duration(milliseconds: 100),
-              menuItems: [
-                FocusedMenuItem(
-                    title: note.isPin ? const Text("Unpin") : const Text("Pin"),
-                    trailingIcon: note.isPin
-                        ? const Icon(Icons.usb_off_rounded)
-                        : const Icon(Icons.push_pin_outlined),
-                    onPressed: () {
-                      pinNote(note);
-                    }),
-                FocusedMenuItem(
-                    title: const Text("Lock"),
-                    trailingIcon: const Icon(Icons.lock),
-                    onPressed: () {
-                      log("share");
-                    }),
-                FocusedMenuItem(
-                  title: const Text("Move"),
-                  trailingIcon: const Icon(Icons.drive_folder_upload_rounded),
-                  onPressed: () {
-                    handleMoveNotes(note);
-                  },
-                ),
-                FocusedMenuItem(
-                  title: const Text("Select Notes"),
-                  trailingIcon: const Icon(Icons.check_circle),
-                  onPressed: () {
-                    setState(() {
-                      isMultiSelectionEnabled = true;
-                      isReload = false;
-                    });
-                  },
-                ),
-                // FocusedMenuItem(
-                //   title: const Text("Share"),
-                //   trailingIcon: const Icon(Icons.share),
-                //   onPressed: () {},
-                // ),
-                FocusedMenuItem(
-                  title: const Text(
-                    "Delete",
-                    style: TextStyle(color: Colors.redAccent),
-                  ),
-                  trailingIcon: const Icon(
-                    Icons.delete,
-                    color: Colors.redAccent,
-                  ),
-                  onPressed: () {
-                    deleteNote(note);
-                  },
-                ),
-              ],
-              onPressed: () {},
-              child: NoteListTileWidget(
-                isDivider: isDivider,
-                note: note,
-                onTap: () {
-                  Navigator.of(context).pushNamed(
-                    Routes.editNote,
-                    arguments: {
-                      "type": NoteType.editNote,
-                      "folderId": folderId,
-                      "note": note,
-                    },
-                  );
-                },
-              ),
-            ),
-          );
-  }
-
-  List<Widget> _getChildren(PinType type) {
-    NoteProvider noteProviderValue = Provider.of<NoteProvider>(context);
-    List<Widget> results = [];
-    switch (type) {
-      case PinType.all:
-        {
-          results =
-              List<Widget>.generate(noteProviderValue.getNotes.length, (index) {
-            bool isDivider = true;
-            Note note = noteProvider.getNotes[index];
-            if (index == noteProvider.getNotes.length - 1) {
-              isDivider = false;
-            }
-            return noteChild(note, isDivider);
-          });
-          break;
-        }
-      case PinType.pin:
-        {
-          results = List<Widget>.generate(noteProvider.getLengthPins, (index) {
-            bool isDivider = true;
-            Note note = noteProvider.getPinNotes[index];
-            if (index == noteProvider.getLengthPins - 1) {
-              isDivider = false;
-            }
-            return noteChild(note, isDivider);
-          });
-          break;
-        }
-      case PinType.unpin:
-        {
-          results =
-              List<Widget>.generate(noteProvider.getLengthUnPins, (index) {
-            bool isDivider = true;
-            Note note = noteProvider.getUnPinNotes[index];
-            if (index == noteProvider.getLengthUnPins - 1) {
-              isDivider = false;
-            }
-            return noteChild(note, isDivider);
-          });
-          break;
-        }
-    }
-    return results;
-  }
-
-  Widget iconExpansionTile() => isExpanded
-      ? const Icon(Icons.keyboard_arrow_down)
-      : const Icon(Icons.keyboard_arrow_right);
 
   @override
   Widget build(BuildContext context) {
+    noteScreenProviderValue = Provider.of(context);
+
     if (folderId == null) {
       final argruments = (ModalRoute.of(context)!.settings.arguments ??
           <String, dynamic>{}) as Map;
@@ -411,25 +131,29 @@ class _NotesScreenState extends State<NotesScreen> {
       folderId = argruments["folderId"];
     }
 
-    _getItems = isReload ? noteProvider.fetchAllNotes(folderId!) : null;
+    _getItems = noteScreenProviderValue.getReload
+        ? noteProvider.fetchAllNotes(folderId!)
+        : null;
 
     return FutureBuilder(
       future: _getItems,
       builder: ((context, snapshot) {
         return Scaffold(
           bottomNavigationBar: BottomBarCustom(
-            title: isMultiSelectionEnabled
-                ? "${selectedItemsSet.length} notes selected"
+            title: noteScreenProvider.getIsMultiSelectionMode
+                ? "${noteScreenProvider.getSelectedItemSet.length} notes selected"
                 : "${noteProvider.getNotes.length} notes",
-            isLeft: isMultiSelectionEnabled,
-            actionLeft: isMultiSelectionEnabled
+            isLeft: noteScreenProvider.getIsMultiSelectionMode,
+            actionLeft: noteScreenProvider.getIsMultiSelectionMode
                 ? () {
                     handleMoveNotesSelection();
                   }
                 : null,
-            textLeft: isMultiSelectionEnabled ? "Move" : null,
-            textRight: isMultiSelectionEnabled ? "Delete" : "Add",
-            actionRight: isMultiSelectionEnabled
+            textLeft:
+                noteScreenProvider.getIsMultiSelectionMode ? "Move" : null,
+            textRight:
+                noteScreenProvider.getIsMultiSelectionMode ? "Delete" : "Add",
+            actionRight: noteScreenProvider.getIsMultiSelectionMode
                 ? () {
                     deleteNotesSelection();
                   }
@@ -443,73 +167,53 @@ class _NotesScreenState extends State<NotesScreen> {
           ),
           appBar: CustomAppbar(
             title: "All notes",
-            handleBackBtn: () => Navigator.of(context).pop(),
-            isBackBtn: !isMultiSelectionEnabled,
-            isSelectionMode: isMultiSelectionEnabled,
-            isTitle: !isMultiSelectionEnabled,
-            leadingButton: Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-              child: ElevatedButton(
-                onPressed: () {
-                  isSelectionAll() ? doAllSelection() : clearAllSelection();
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: AppColors.brightRed,
-                  foregroundColor: AppColors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.r), // <-- Radius
-                  ),
-                ),
-                child: Text(
-                  isSelectionAll() ? 'Select All' : 'Deselect All',
-                  style: isSelectionAll()
-                      ? AppTextStyles.subtitile[TextWeights.semibold]!
-                          .copyWith(color: AppColors.red)
-                      : AppTextStyles.body2[TextWeights.bold]!
-                          .copyWith(color: AppColors.red),
-                ),
-              ),
+            handleBackBtn: () {
+              noteScreenProvider.changeReload(true);
+              noteProvider.setDefaultValue();
+              Future.delayed(Duration.zero, () {
+                Navigator.of(context).pop();
+              });
+            },
+            isBackBtn: !noteScreenProvider.getIsMultiSelectionMode,
+            isSelectionMode: noteScreenProvider.getIsMultiSelectionMode,
+            isTitle: !noteScreenProvider.getIsMultiSelectionMode,
+            leadingButton: ButtonAppbar(
+              backgroundColor: AppColors.brightRed,
+              foregroundColor: AppColors.red,
+              nameBtn: isSelectionAll() ? "Select All" : "Deselect All",
+              styleBtnText: isSelectionAll()
+                  ? AppTextStyles.subtitile[TextWeights.semibold]!
+                      .copyWith(color: AppColors.red)
+                  : AppTextStyles.body2[TextWeights.bold]!
+                      .copyWith(color: AppColors.red),
+              onPress: () {
+                isSelectionAll()
+                    ? doAllSelection()
+                    : noteScreenProvider.clearMultiSelection();
+              },
             ),
-            // leadingButton: const SmallButton(
-            //   isOutlined: false,
-            //   textBtn: "Select All",
-
-            // ),
-            extraActions: isMultiSelectionEnabled
+            extraActions: noteScreenProvider.getIsMultiSelectionMode
                 ? [
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isMultiSelectionEnabled = false;
-                            clearAllSelection();
-                            isReload = false;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: AppColors.brightGreen,
-                          foregroundColor: AppColors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(20.r), // <-- Radius
-                          ),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: AppTextStyles.subtitile[TextWeights.semibold]!
-                              .copyWith(color: AppColors.green),
-                        ),
-                      ),
+                    ButtonAppbar(
+                      backgroundColor: AppColors.brightGreen,
+                      foregroundColor: AppColors.green,
+                      nameBtn: "Cancel",
+                      onPress: () {
+                        noteScreenProvider.clearAndCancelSelectionMode();
+                        showSnackBarInfo(context, "Bạn đã hủy");
+                      },
                     )
                   ]
                 : [
                     InkWell(
                       onTap: () {
-                        log("chua xu ly");
+                        showSearch(
+                          context: context,
+                          delegate: BuildSearchNotesDelegate(
+                              notes: noteProvider.getNotes,
+                              folderId: folderId!),
+                          useRootNavigator: false,
+                        );
                       },
                       child: const Icon(
                         Icons.search,
@@ -518,9 +222,9 @@ class _NotesScreenState extends State<NotesScreen> {
                     SizedBox(
                       width: 16.w,
                     ),
-                    InkWell(
-                      onTap: () {
-                        log("chua xu ly");
+                    GestureDetector(
+                      onTapDown: (TapDownDetails details) {
+                        showPopupMenuSort(context, details.globalPosition);
                       },
                       child: Image.asset(
                         AssetPaths.sortIcon,
@@ -541,51 +245,22 @@ class _NotesScreenState extends State<NotesScreen> {
               child: ListView(
                   children: noteProvider.getLengthPins > 0
                       ? [
-                          ExpansionTileCustom(
-                            initiallyExpanded: true,
-                            iconColor: AppColors.gray[80],
-                            collapsedIconColor: AppColors.gray[80],
-                            collapsedTextColor: AppColors.gray[80],
-                            textColor: AppColors.gray[80],
-                            title: Text(
-                              "Pin",
-                              style: AppTextStyles.h5[TextWeights.extrabold],
-                            ),
-                            onExpansionChanged: ((value) {}),
-                            children: _getChildren(PinType.pin),
+                          ExpansionNoteWidget(
+                            childs:
+                                getChildren(context, PinType.pin, folderId!),
+                            title: "Pin",
                           ),
                           SizedBox(
                             height: 36.h,
                           ),
-                          ExpansionTileCustom(
-                            initiallyExpanded: true,
-                            iconColor: AppColors.gray[80],
-                            collapsedIconColor: AppColors.gray[80],
-                            collapsedTextColor: AppColors.gray[80],
-                            textColor: AppColors.gray[80],
-                            title: Text(
-                              "Notes",
-                              style: AppTextStyles.h5[TextWeights.extrabold],
-                            ),
-                            onExpansionChanged: ((value) {}),
-                            children: _getChildren(PinType.unpin),
-                          )
+                          ExpansionNoteWidget(
+                              childs: getChildren(
+                                  context, PinType.unpin, folderId!),
+                              title: "Notes")
                         ]
-                      : _getChildren(PinType.all)),
+                      : getChildren(context, PinType.all, folderId!)),
             ),
           ),
-          // floatingActionButton: Padding(
-          //   padding: EdgeInsets.only(bottom: 104.h, right: 20.w),
-          //   child: FloatingActionButton(
-          //     onPressed: () {
-          //       Navigator.of(context).pushNamed(Routes.editNote, arguments: {
-          //         "type": NoteType.newNote,
-          //         "folderId": folderId
-          //       });
-          //     },
-          //     child: Image.asset(AssetPaths.addFolder),
-          //   ),
-          // ),
         );
       }),
     );

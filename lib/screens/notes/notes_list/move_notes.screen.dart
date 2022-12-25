@@ -4,21 +4,36 @@ import 'package:provider/provider.dart';
 
 import '../../../models/folder.dart';
 import '../../../providers/folder.provider.dart';
+import '../../../providers/note_screen.provider.dart';
 import '../../../resources/colors/colors.dart';
 import '../../../resources/fonts/enum_text_styles.dart';
 import '../../../resources/fonts/text_styles.dart';
 import '../../../widgets/bar/app_bar.dart';
 import '../../folders/folder.widget.dart';
 
-class MoveNotes extends StatefulWidget {
-  String folderIdException;
-  MoveNotes({super.key, required this.folderIdException});
+class SelectFolderToMoveNotes extends StatefulWidget {
+  final String folderIdException;
+  const SelectFolderToMoveNotes({super.key, required this.folderIdException});
 
   @override
-  State<MoveNotes> createState() => _MoveNotesState();
+  State<SelectFolderToMoveNotes> createState() =>
+      _SelectFolderToMoveNotesState();
 }
 
-class _MoveNotesState extends State<MoveNotes> {
+class _SelectFolderToMoveNotesState extends State<SelectFolderToMoveNotes> {
+  late NoteScreenProvider noteScreenProvider;
+
+  @override
+  void initState() {
+    noteScreenProvider = Provider.of(context, listen: false);
+    super.initState();
+  }
+
+  void backToScreen() {
+    noteScreenProvider.changeReload(false);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     FolderProvider folderProviderValue = Provider.of<FolderProvider>(context);
@@ -28,7 +43,7 @@ class _MoveNotesState extends State<MoveNotes> {
         .toList();
     return WillPopScope(
       onWillPop: () {
-        Navigator.of(context).pop();
+        backToScreen();
         return Future.value(false);
       },
       child: Scaffold(
@@ -42,7 +57,7 @@ class _MoveNotesState extends State<MoveNotes> {
               padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  backToScreen();
                 },
                 style: ElevatedButton.styleFrom(
                   elevation: 0,

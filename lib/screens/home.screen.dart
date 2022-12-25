@@ -171,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildColorPicker() => ColorPicker(
       pickerColor: folderColor,
       onColorChanged: (color) => setState(() {
+            log(colorToHex(color));
             folderColor = color;
           }));
 

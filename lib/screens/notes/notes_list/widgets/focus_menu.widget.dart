@@ -16,26 +16,28 @@ class FocusedMenuHolder extends StatefulWidget {
   final Color? blurBackgroundColor;
   final double? bottomOffsetHeight;
   final double? menuOffset;
+  final bool isPaddingChildMain;
 
   /// Open with tap insted of long press.
   final bool openWithTap;
 
-  const FocusedMenuHolder(
-      {Key? key,
-      required this.child,
-      required this.onPressed,
-      required this.menuItems,
-      this.duration,
-      this.menuBoxDecoration,
-      this.menuItemExtent,
-      this.animateMenuItems,
-      this.blurSize,
-      this.blurBackgroundColor,
-      this.menuWidth,
-      this.bottomOffsetHeight,
-      this.menuOffset,
-      this.openWithTap = false})
-      : super(key: key);
+  const FocusedMenuHolder({
+    Key? key,
+    required this.child,
+    required this.onPressed,
+    required this.menuItems,
+    this.duration,
+    this.menuBoxDecoration,
+    this.menuItemExtent,
+    this.animateMenuItems,
+    this.blurSize,
+    this.blurBackgroundColor,
+    this.menuWidth,
+    this.bottomOffsetHeight,
+    this.menuOffset,
+    this.openWithTap = false,
+    this.isPaddingChildMain = true,
+  }) : super(key: key);
 
   @override
   _FocusedMenuHolderState createState() => _FocusedMenuHolderState();
@@ -94,6 +96,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
                     menuItems: widget.menuItems,
                     blurSize: widget.blurSize,
                     menuWidth: widget.menuWidth,
+                    isPaddingMainParent: widget.isPaddingChildMain,
                     blurBackgroundColor: widget.blurBackgroundColor,
                     animateMenu: widget.animateMenuItems ?? true,
                     bottomOffsetHeight: widget.bottomOffsetHeight ?? 0,
@@ -119,8 +122,9 @@ class FocusedMenuDetails extends StatelessWidget {
   final Color? blurBackgroundColor;
   final double? bottomOffsetHeight;
   final double? menuOffset;
+  bool isPaddingMainParent;
 
-  const FocusedMenuDetails(
+  FocusedMenuDetails(
       {Key? key,
       required this.menuItems,
       required this.child,
@@ -132,6 +136,7 @@ class FocusedMenuDetails extends StatelessWidget {
       required this.blurSize,
       required this.blurBackgroundColor,
       required this.menuWidth,
+      required this.isPaddingMainParent,
       this.bottomOffsetHeight,
       this.menuOffset})
       : super(key: key);
@@ -214,8 +219,9 @@ class FocusedMenuDetails extends StatelessWidget {
                               color: item.backgroundColor ?? Colors.white,
                               height: itemExtent ?? 50.0,
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 14),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: isPaddingMainParent ? 8.0 : 0,
+                                    horizontal: isPaddingMainParent ? 14 : 0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
