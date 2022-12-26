@@ -67,7 +67,11 @@ class DrawerSide extends StatelessWidget {
                       children: [
                         AutoSizeText(
                           FirebaseAuth.instance.currentUser != null
-                              ? userProviderValue.getCurrentUser.displayName!
+                              ? (userProviderValue.getCurrentUser.displayName ==
+                                      ""
+                                  ? "User"
+                                  : userProviderValue
+                                      .getCurrentUser.displayName!)
                               : 'Welcome Guest',
                           style: AppTextStyles.h6[TextWeights.semibold],
                         ),
@@ -111,7 +115,12 @@ class DrawerSide extends StatelessWidget {
                   ],
                 ),
               ),
-              listTile(icon: Icons.person, title: "Your profile"),
+              listTile(
+                  onTap: (() {
+                    Navigator.of(context).pushNamed(Routes.infoUser);
+                  }),
+                  icon: Icons.person,
+                  title: "Your profile"),
               listTile(icon: Icons.settings, title: "Settings"),
             ],
           ),

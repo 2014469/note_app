@@ -6,6 +6,7 @@ import '../../models/folder.dart';
 import '../../providers/home_screen.provider.dart';
 import 'folder.widget.dart';
 
+// ignore: must_be_immutable
 class MultiSelectFolders extends StatelessWidget {
   final Folder folder;
   MultiSelectFolders({

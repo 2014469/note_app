@@ -39,9 +39,7 @@ class BuildSearchFoldersDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      child: const Center(child: Text("Hello world")),
-    );
+    return const Center(child: Text("Hello world"));
   }
 
   @override

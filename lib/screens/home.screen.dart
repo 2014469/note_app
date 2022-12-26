@@ -8,6 +8,7 @@ import 'package:note_app/utils/routes/routes.dart';
 import 'package:provider/provider.dart';
 
 import '../models/folder.dart';
+import '../providers/auth.provider.dart';
 import '../providers/folder.provider.dart';
 import '../providers/home_screen.provider.dart';
 import '../resources/fonts/enum_text_styles.dart';
@@ -16,7 +17,7 @@ import '../utils/show_snack_bar.dart';
 import '../widgets/bar/app_bar.dart';
 import '../widgets/bar/bottom_bar.dart';
 import '../widgets/buttons/button_app_bar.dart';
-import '../widgets/drawer/drawer_side.dart';
+import 'extend_screens/drawer_side.dart';
 import 'folders/modal_bottom.widget.dart';
 import 'folders/multi_select_folder.dart';
 import 'folders/popup_folder_sort.dart';
@@ -35,12 +36,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late FolderProvider folderProvider;
   late HomeScreenProvider homeScreenProvider;
+
+  late UserProvider userProvider;
   late Future<void>? _getItems;
 
   @override
   void initState() {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
     homeScreenProvider = Provider.of(context, listen: false);
+    userProvider = Provider.of(context, listen: false);
+    userProvider.fetchUser();
     super.initState();
   }
 

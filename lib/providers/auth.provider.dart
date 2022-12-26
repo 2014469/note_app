@@ -27,6 +27,15 @@ class UserProvider extends ChangeNotifier {
         .set(user.toDynamic());
   }
 
+  void updateUser({required AuthUser user}) async {
+    await FirebaseFirestore.instance
+        .collection(UserString.userTBL)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update(user.toDynamic());
+    user = user;
+    notifyListeners();
+  }
+
   Future<void> fetchUser() async {
     log("Fetch user");
     DocumentSnapshot snapshot = await FirebaseFirestore.instance

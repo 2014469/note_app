@@ -6,6 +6,7 @@ import '../../../../models/note.dart';
 import '../../../../providers/note_screen.provider.dart';
 import 'note_tile.widget.dart';
 
+// ignore: must_be_immutable
 class MultiSelectNotes extends StatelessWidget {
   final Note note;
   final bool isDivider;

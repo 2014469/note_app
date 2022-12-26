@@ -26,4 +26,8 @@ abstract class AuthProvider {
   Future<void> logOUt();
   Future<void> sendEmailVerification();
   Future<void> deleteAccount();
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  });
 }

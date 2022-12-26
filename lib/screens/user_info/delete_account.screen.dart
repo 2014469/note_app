@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/screens/user_info/buttons.dart';
+import 'package:note_app/screens/user_info/widgets/buttons.dart';
 
-import '../widgets/bar/app_bar.dart';
+import '../../../widgets/bar/app_bar.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
   const DeleteAccountScreen({super.key});

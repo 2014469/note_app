@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/screens/notes/notes_list/pop_up_menu_sort.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/expansion_note.widget.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/get_notes.dart';
+import 'package:note_app/screens/notes/notes_list/widgets/pop_up_menu_sort.dart';
 import 'package:note_app/screens/notes/notes_list/widgets/search_notes_delegate.dart';
 import 'package:provider/provider.dart';
 

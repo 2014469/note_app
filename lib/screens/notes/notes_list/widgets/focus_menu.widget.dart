@@ -40,6 +40,7 @@ class FocusedMenuHolder extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _FocusedMenuHolderState createState() => _FocusedMenuHolderState();
 }
 
@@ -109,6 +110,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   }
 }
 
+// ignore: must_be_immutable
 class FocusedMenuDetails extends StatelessWidget {
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;

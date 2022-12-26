@@ -64,6 +64,7 @@ class NoteListTileWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   false
+                      // ignore: dead_code
                       ? Icon(
                           Icons.lock,
                           size: 16.w,

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-import '../../../providers/note.provider.dart';
-import '../../../providers/note_screen.provider.dart';
+import '../../../../providers/note.provider.dart';
+import '../../../../providers/note_screen.provider.dart';
 
 void showPopupMenuSort(BuildContext context, Offset offset) async {
   NoteProvider noteProvider = Provider.of(context, listen: false);

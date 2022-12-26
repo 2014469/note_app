@@ -5,6 +5,7 @@ import '../../resources/colors/colors.dart';
 import '../../resources/fonts/enum_text_styles.dart';
 import '../../resources/fonts/text_styles.dart';
 
+// ignore: must_be_immutable
 class BottomBarCustom extends StatelessWidget {
   String title;
   String? textLeft;
