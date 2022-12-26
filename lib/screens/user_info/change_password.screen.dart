@@ -26,12 +26,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   TextEditingController newPassword = TextEditingController();
   TextEditingController retypePassword = TextEditingController();
   bool isButtonActive = false;
-  void _buttonActivateChange() {
-    isButtonActive = oldPassword.text.isNotEmpty &&
-        newPassword.text.isNotEmpty &&
-        retypePassword.text.isNotEmpty &&
-        newPassword.text == retypePassword.text;
-  }
 
   @override
   void initState() {
