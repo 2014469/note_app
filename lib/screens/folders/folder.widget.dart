@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 
 import '../../models/folder.dart';
+import '../../utils/convert_date/convert_date.dart';
 
 class FolderWidget extends StatefulWidget {
   final Folder folder;
   final Function()? onTap;
   final Function()? onTapSetting;
-  final Color color;
-  const FolderWidget(
-      {super.key,
-      this.color = AppColors.primary,
-      required this.folder,
-      required this.onTap,
-      required this.onTapSetting});
+  final bool isShowMore;
+  const FolderWidget({
+    super.key,
+    required this.folder,
+    required this.onTap,
+    required this.onTapSetting,
+    this.isShowMore = true,
+  });
 
   @override
   State<FolderWidget> createState() => _FolderWidgetState();
@@ -41,19 +44,17 @@ class _FolderWidgetState extends State<FolderWidget> {
             ),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              color: widget.color,
+              color: HexColor.fromHex(widget.folder.color ?? "#F88379"),
             ),
           ),
         ),
         Padding(
           padding: EdgeInsets.only(
-            left: 24.w,
-            top: 32.h,
-            right: 12.w,
-            bottom: 32.h,
+            left: 28.w,
+            right: 20.w,
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -65,34 +66,48 @@ class _FolderWidgetState extends State<FolderWidget> {
                   //     : AssetPaths.folderUnlocked),
                   ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                          widget.color.withOpacity(0.8), BlendMode.modulate),
+                          HexColor.fromHex(widget.folder.color ?? "#F88379")
+                              .withOpacity(0.8),
+                          BlendMode.modulate),
                       child: Container(
                         decoration: const BoxDecoration(),
                         child: SvgPicture.asset(AssetPaths.folderUnlocked),
                       )),
-                  IconButton(
-                      alignment: Alignment.topRight,
-                      padding: const EdgeInsets.all(0),
-                      onPressed: widget.onTapSetting,
-                      icon: Center(
-                        child: Image.asset(
-                          AssetPaths.showMore,
-                        ),
-                      ))
+                  widget.isShowMore
+                      ? IconButton(
+                          alignment: Alignment.topRight,
+                          padding: const EdgeInsets.all(0),
+                          onPressed: widget.onTapSetting,
+                          icon: Center(
+                            child: Image.asset(
+                              AssetPaths.showMore,
+                            ),
+                          ))
+                      : Container(),
                 ],
               ),
-              Text(
-                widget.folder.name,
-                style: AppTextStyles.h6[TextWeights.semibold]
-                    ?.copyWith(color: AppColors.gray[80]),
-              ),
-              // Text(
-              //   widget.numberOfNote < 2
-              //       ? "${widget.numberOfNote} note"
-              //       : "${widget.numberOfNote} notes",
-              //   style: AppTextStyles.caption[TextWeights.regular]
-              //       ?.copyWith(color: AppColors.gray[60]),
-              // )
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.folder.name,
+                    style: AppTextStyles.h6[TextWeights.semibold]
+                        ?.copyWith(color: AppColors.gray[80]),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(
+                    height: 4.h,
+                  ),
+                  Text(
+                    compareCreateDate(widget.folder.creationDate)
+                        ? DateFormat.Hm().format(widget.folder.creationDate)
+                        : DateFormat('dd/MM/yyyy').format(widget.folder.creationDate),
+                    style: AppTextStyles.caption[TextWeights.bold]!
+                        .copyWith(color: AppColors.gray[60]),
+                  ),
+                ],
+              )
             ],
           ),
         )

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:note_app/resources/colors/colors.dart';
-import 'package:note_app/resources/fonts/enum_text_styles.dart';
-import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/screens/user_info/buttons.dart';
-import 'package:note_app/screens/user_info/checkbox.dart';
-import 'package:note_app/widgets/app_bar.dart';
+import 'package:note_app/screens/user_info/widgets/buttons.dart';
+
+import '../../../widgets/bar/app_bar.dart';
+import '../../resources/colors/colors.dart';
+import '../../resources/fonts/enum_text_styles.dart';
+import '../../resources/fonts/text_styles.dart';
+import 'checkbox.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
   const DeleteAccountScreen({super.key});

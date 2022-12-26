@@ -19,3 +19,9 @@ class UserNotLoggedInAuthException implements Exception {}
 // google signin
 
 class GoogleSignInAccountException implements Exception {}
+
+// change password
+
+class WrongOldPassWord implements Exception {}
+
+class ErrorChangePassword implements Exception {}

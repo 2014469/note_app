@@ -14,6 +14,8 @@ import 'package:note_app/widgets/buttons/buttons.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/auth.provider.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -29,6 +31,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
+  late UserProvider userProvider;
+
   final _textUser = '';
   final _textEmail = '';
   final _textPassword = '';
@@ -37,6 +41,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 // ignore touch butoon, screen
   bool _ignoreTouch = false;
   bool _isDisabledSignupBtn = true;
+
+  @override
+  void initState() {
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -58,6 +68,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             email: _emailController.text,
             password: _passwordController.text,
           );
+
+      userProvider.setInfoUser();
+      userProvider.addUser(user: userProvider.getCurrentUser);
 
       await Future.delayed(
         const Duration(seconds: 1),
@@ -203,13 +216,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     text: "Next",
                   ),
                 ),
-          
+
                 BottomNavigator(
                   content: 'Had an account?',
                   nameScreenNavigator: SignInUpString.signin,
                   handleNavigator: naviageToSignInPage,
                 ),
-          
+
                 // todo:  padding keyboard autoscroll
                 Padding(
                   padding: EdgeInsets.only(

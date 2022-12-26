@@ -26,6 +26,9 @@ class ColorButton extends StatelessWidget {
     return TextButton(
       onPressed: onpressed,
       style: TextButton.styleFrom(
+          disabledBackgroundColor: AppColors.gray[10],
+          disabledForegroundColor: AppColors.gray[50],
+          foregroundColor: isOpacity ? color : AppColors.gray[0],
           elevation: 0,
           minimumSize:
               isLarge ? const Size(double.infinity, 0) : Size(190.w, 0),
@@ -38,9 +41,7 @@ class ColorButton extends StatelessWidget {
         text,
         style: isLarge
             ? AppTextStyles.h5[TextWeights.medium]
-                ?.copyWith(color: isOpacity ? color : AppColors.gray[0])
             : AppTextStyles.subtitile[TextWeights.semibold]
-                ?.copyWith(color: isOpacity ? color : AppColors.gray[0]),
       ),
     );
   }
@@ -75,13 +76,3 @@ class SmallIconButton extends StatelessWidget {
         ));
   }
 }
-
-// class AppCheckBox extends StatelessWidget {
-//   final String text;
-//   const AppCheckBox({super.key, required this.text});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }

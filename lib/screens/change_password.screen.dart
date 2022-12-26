@@ -3,14 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/screens/user_info/buttons.dart';
+import 'package:note_app/screens/user_info/widgets/buttons.dart';
 import 'package:note_app/utils/routes/routes.dart';
-import 'package:note_app/widgets/app_bar.dart';
+import 'package:note_app/widgets/bar/app_bar.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 
-class ChangePasswordScreen extends StatelessWidget {
+class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
+  @override
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController oldPassword = TextEditingController();
@@ -85,8 +90,8 @@ class ChangePasswordScreen extends StatelessWidget {
                     children: [
                       TextButton(
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.5.h, horizontal: 12.w)
-                        ),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 12.5.h, horizontal: 12.w)),
                         onPressed: () => Navigator.of(context)
                             .pushNamed(Routes.resetPassword),
                         child: Text(
@@ -97,12 +102,12 @@ class ChangePasswordScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      ColorButton(
+                      const ColorButton(
                           isLarge: false,
                           text: 'Save',
                           isOpacity: true,
                           color: AppColors.green,
-                          onpressed: () {})
+                          onpressed: null)
                     ],
                   ),
                 )

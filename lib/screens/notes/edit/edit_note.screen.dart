@@ -3,23 +3,27 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // ignore: depend_on_referenced_packages
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 // ignore: depend_on_referenced_packages
 import 'package:tuple/tuple.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../models/note.dart';
 import '../../../providers/note.provider.dart';
 import '../../../resources/colors/colors.dart';
 import '../../../utils/devices/device_utils.dart';
-import '../../../widgets/app_bar.dart';
+import '../../../widgets/bar/app_bar.dart';
 import '../type.dart';
 
 enum _SelectionType {
@@ -48,6 +52,8 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   Note? note;
 
   late NoteProvider noteProvider;
+
+  UploadTask? uploadTask;
 
   @override
   void initState() {
@@ -90,6 +96,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
               _controller = QuillController(
                   document: doc,
                   selection: const TextSelection.collapsed(offset: 0));
+
+              note = Note.fromId(
+                  noteId: const Uuid().v1(), ownerFolderId: folderId);
             });
             break;
           }
@@ -108,7 +117,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
           }
       }
     } catch (error) {
-      debugPrint(error.toString());
+      log(error.toString());
     }
   }
 
@@ -156,7 +165,8 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                   if (_controller.document.toPlainText().isNotEmpty) {
                     var json =
                         jsonEncode(_controller.document.toDelta().toJson());
-                    Note note = await noteProvider.createNewNote(
+                    Note newNote = await noteProvider.createNewNote(
+                      noteId: note!.noteId,
                       ownerFolderId: folderId,
                       titleNote: _controller.document
                           .toPlainText()
@@ -171,13 +181,11 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                       content: json,
                     );
 
-                    note.printInfo();
+                    setState(() {
+                      note = newNote;
+                    });
+                    note!.printInfo();
 
-                    // final prefs = await SharedPreferences.getInstance();
-
-                    // await prefs.setString('jsonData', json);
-                    // log("upload");
-                    // noteProvider.uploadFileToStorage(folderId, note.noteId, json);
                     log("Uploaded");
                   }
                   Future.delayed(const Duration(seconds: 0), () {
@@ -312,11 +320,15 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
       ],
     );
     return SafeArea(
-      child: Container(
-        color: Colors.white,
-        padding: EdgeInsets.only(
-            left: 16.w, right: 16.w, bottom: kDefaultIconSize * 3),
-        child: quillEditor,
+      child: Stack(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.only(
+                left: 16.w, right: 16.w, bottom: kDefaultIconSize * 3),
+            child: quillEditor,
+          ),
+        ],
       ),
     );
   }
@@ -337,9 +349,43 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Copies the picked file from temporary cache to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final copiedFile =
-        await file.copy('${appDocDir.path}/${Path.basename(file.path)}');
-    return copiedFile.path.toString();
+        await file.copy('${appDocDir.path}/${path.basename(file.path)}');
+
+    // await file.copy('${appDocDir.path}/${path.basename(file.path)}');
+    log(note!.noteId);
+    String copiedPath =
+        "${FirebaseAuth.instance.currentUser!.uid}/$folderId / ${note!.noteId}/${copiedFile.path.split("/").last}";
+    log(copiedPath);
+
+    final ref = FirebaseStorage.instance.ref().child(copiedPath);
+
+    setState(() {
+      uploadTask = ref.putFile(copiedFile);
+    });
+
+    AlertDialog alert = AlertDialog(
+      content: buildProgress(),
+    );
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return alert;
+      },
+    );
+    final snapshot = await uploadTask!.whenComplete(() => {});
+    final urlDownload = await snapshot.ref.getDownloadURL().whenComplete(
+          () => Navigator.of(context).pop(),
+        );
+    log(urlDownload);
+    setState(() {
+      uploadTask = null;
+    });
+    return urlDownload;
   }
+
+  Future uploadFile(PlatformFile pickedFile) async {}
 
   // Renders the video picked by imagePicker from local file storage
   // You can also upload the picked video to any server (eg : AWS s3
@@ -348,7 +394,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Copies the picked file from temporary cache to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final copiedFile =
-        await file.copy('${appDocDir.path}/${Path.basename(file.path)}');
+        await file.copy('${appDocDir.path}/${path.basename(file.path)}');
     return copiedFile.path.toString();
   }
 
@@ -429,8 +475,35 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     // Saves the image to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final file = await File(
-            '${appDocDir.path}/${Path.basename('${DateTime.now().millisecondsSinceEpoch}.png')}')
+            '${appDocDir.path}/${path.basename('${DateTime.now().millisecondsSinceEpoch}.png')}')
         .writeAsBytes(imageBytes, flush: true);
     return file.path.toString();
+  }
+
+  Widget buildProgress() {
+    return StreamBuilder<TaskSnapshot>(
+      stream: uploadTask!.snapshotEvents,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final data = snapshot.data;
+          double progress = data!.bytesTransferred / data.totalBytes;
+          return SizedBox(
+            height: 50,
+            child: Stack(fit: StackFit.expand, children: [
+              CircularProgressIndicator(
+                value: progress,
+                backgroundColor: Colors.grey,
+                color: Colors.green,
+              ),
+              Center(
+                child: Text('${(100 * progress).roundToDouble()}%'),
+              )
+            ]),
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
   }
 }

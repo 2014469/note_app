@@ -11,9 +11,11 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool isRightBtn;
   final bool isTitle;
   final bool isBorderBottom;
+  final bool isSelectionMode;
   final bool isH5Title;
   final bool isH6Title;
   final List<Widget>? extraActions;
+  final Widget? leadingButton;
   final VoidCallback handleBackBtn;
   const CustomAppbar({
     super.key,
@@ -24,6 +26,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
     this.title = "",
     this.backgroundColor = AppColors.background,
     this.extraActions,
+    this.leadingButton,
+    this.isSelectionMode = false,
     this.isH5Title = false,
     this.isH6Title = false,
     required this.handleBackBtn,
@@ -34,12 +38,25 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    double leadingWidth;
+    if (isBackBtn && !isSelectionMode) {
+      leadingWidth = 92.w;
+    } else if (isSelectionMode) {
+      leadingWidth = double.infinity;
+    } else {
+      leadingWidth = 64.w;
+    }
+
     return AppBar(
       backgroundColor: backgroundColor,
-      centerTitle: isBackBtn,
+      centerTitle: true,
+      iconTheme: IconThemeData(
+        color: AppColors.primary,
+        size: 28.w,
+      ),
       elevation: 0.5,
       titleSpacing: 0,
-      leadingWidth: 92.w,
+      leadingWidth: leadingWidth,
       bottom: isBorderBottom
           ? PreferredSize(
               preferredSize: Size.fromHeight(0.2.w),
@@ -51,7 +68,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           : null,
       leading: isBackBtn
           ? InkWell(
-              onTap: handleBackBtn,
+              onTap: isBackBtn ? handleBackBtn : () {},
               child: Padding(
                 padding: EdgeInsets.only(left: 8.w, right: 0),
                 child: Row(children: [
@@ -69,19 +86,23 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                 ]),
               ),
             )
-          : null,
+          : leadingButton,
       title: isTitle
           ? Padding(
               padding: isBackBtn ? EdgeInsets.zero : EdgeInsets.all(16.w),
               child: Text(
                 title,
-                style: isH5Title? AppTextStyles.h5[TextWeights.semibold]?.copyWith(
-                  color: AppColors.gray[70],
-                ): isH6Title? AppTextStyles.h6[TextWeights.semibold]?.copyWith(
-                  color: AppColors.gray[70],
-                ):AppTextStyles.h4[TextWeights.semibold]?.copyWith(
-                  color: AppColors.gray[70],
-                ),
+                style: isH5Title
+                    ? AppTextStyles.h5[TextWeights.semibold]?.copyWith(
+                        color: AppColors.gray[70],
+                      )
+                    : isH6Title
+                        ? AppTextStyles.h6[TextWeights.semibold]?.copyWith(
+                            color: AppColors.gray[70],
+                          )
+                        : AppTextStyles.h4[TextWeights.semibold]?.copyWith(
+                            color: AppColors.gray[70],
+                          ),
               ),
             )
           : null,

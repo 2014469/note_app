@@ -8,6 +8,10 @@ class AppColors {
   static const background = Color(0xFFF5F5F5);
   static const red = Color(0xffF44B3D);
   static const green= Color(0xff0AC174);
+  static const brightRed = Color(0xfff5d3d0);
+  static const brightGreen = Color(0xffC6EBDB);
+  // static const green = Color(0xff0AC174);
+  // static const red = Color(0xffF20000);
 
   static const Map<int, Color> gray = <int, Color>{
     0: Color(0xFFFFFFFF),

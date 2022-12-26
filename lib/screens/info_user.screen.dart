@@ -6,10 +6,12 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
-import 'package:note_app/screens/user_info/buttons.dart';
+
+import 'package:note_app/screens/user_info/widgets/buttons.dart';
 import 'package:note_app/utils/routes/routes.dart';
-import 'package:note_app/widgets/app_bar.dart';
+
 import 'package:note_app/widgets/avatar/avatar_appbar.dart';
+import 'package:note_app/widgets/bar/app_bar.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth.provider.dart';

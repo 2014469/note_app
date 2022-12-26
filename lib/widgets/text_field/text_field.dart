@@ -10,6 +10,8 @@ class InputField extends StatelessWidget {
   final String? hintText;
   final String? helperText;
   final Function(String)? onChanged;
+  final bool isEditing;
+  final Color fillColor;
   const InputField({
     super.key,
     this.defaultText,
@@ -18,6 +20,8 @@ class InputField extends StatelessWidget {
     this.hintText,
     required this.controller,
     this.helperText = " ",
+    this.isEditing = true,
+    this.fillColor = Colors.white,
   });
 
   @override
@@ -28,6 +32,7 @@ class InputField extends StatelessWidget {
         vertical: 4.h,
       ),
       child: TextField(
+        enabled: isEditing,
         onChanged: onChanged,
         controller: controller,
         decoration: InputDecoration(
@@ -36,7 +41,7 @@ class InputField extends StatelessWidget {
           errorText: errorText,
           helperText: helperText,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: fillColor,
           contentPadding: EdgeInsets.symmetric(
             vertical: 16.h,
             horizontal: 16.w,

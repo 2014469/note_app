@@ -267,6 +267,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   text: SignInUpString.signInWithGoogle,
                 ),
 
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                  child: Center(
+                    child: Text(
+                      'Or',
+                      style: AppTextStyles.h5[TextWeights.semibold]
+                          ?.copyWith(color: AppColors.gray[50]),
+                    ),
+                  ),
+                ),
+
+                LargeButton(
+                  isOutlined: true,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(Routes.home);
+                  },
+                  text: "Without signin",
+                ),
                 // link to sign up
                 BottomNavigator(
                   content: 'New to our app?',

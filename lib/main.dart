@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:note_app/providers/folder.provider.dart';
+import 'package:note_app/providers/home_screen.provider.dart';
 import 'package:note_app/providers/note.provider.dart';
+import 'package:note_app/providers/note_screen.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -14,9 +17,12 @@ import 'package:note_app/utils/routes/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import 'models/folder.dart';
+import 'models/note.dart';
 import 'providers/auth.provider.dart';
 import 'screens/home.screen.dart';
 import 'screens/sign_in_up/verify_email.screen.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 // import 'package:provider/provider.dart'
 void main() async {
@@ -24,6 +30,11 @@ void main() async {
 
   // await Firebase.initializeApp();
   await AuthService.firebase().initialize();
+  final appDocumentDirectory =
+      await path_provider.getApplicationDocumentsDirectory();
+  await Hive.initFlutter(appDocumentDirectory.path);
+  Hive.registerAdapter(FolderAdapter());
+  Hive.registerAdapter(NoteAdapter());
 
 // todo: change color status bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -55,10 +66,16 @@ void main() async {
         ChangeNotifierProvider<NoteProvider>(
           create: (context) => NoteProvider(),
         ),
+        ChangeNotifierProvider<NoteScreenProvider>(
+          create: (context) => NoteScreenProvider(),
+        ),
+        ChangeNotifierProvider<HomeScreenProvider>(
+          create: (context) => HomeScreenProvider(),
+        ),
       ],
       child: ScreenUtilInit(
         builder: ((context, child) => MaterialApp(
-              debugShowCheckedModeBanner: false,
+              // debugShowCheckedModeBanner: false,
               title: AppString.instance.nameApp,
               theme: ThemeData(
                 fontFamily: 'Lato',
@@ -100,7 +117,8 @@ class AuthWrapper extends StatelessWidget {
     return Consumer<User?>(
       builder: (context, value, child) {
         if (value != null) {
-          bool isCheck = context.read<AuthService>().authIsVerifiedEmail;
+          bool isCheck = context.read<AuthService>().authIsVerifiedEmail ||
+              FirebaseAuth.instance.currentUser == null;
           if (isCheck) {
             // return const Text("Home screen");
             return const HomeScreen();
