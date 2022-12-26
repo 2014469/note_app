@@ -221,12 +221,12 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
                   onPressed: () {
                     pinNote(widget.note);
                   }),
-              FocusedMenuItem(
-                  title: const Text("Lock"),
-                  trailingIcon: const Icon(Icons.lock),
-                  onPressed: () {
-                    log("share");
-                  }),
+              // FocusedMenuItem(
+              //     title: const Text("Lock"),
+              //     trailingIcon: const Icon(Icons.lock),
+              //     onPressed: () {
+              //       log("share");
+              //     }),
               FocusedMenuItem(
                   title: const Text("Change color tag"),
                   trailingIcon: const Icon(Icons.color_lens),
