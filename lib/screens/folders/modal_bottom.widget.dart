@@ -256,7 +256,7 @@ class _ModalBottomFolderSheetState extends State<ModalBottomFolderSheet> {
               onTap: () {
                 Navigator.of(context).pop();
                 folderProvider.deleteFolder(widget.folder.folderId);
-                homeScreenProvider.changeReload(true);
+                homeScreenProvider.changeReload(false);
                 showSnackBarSuccess(context, "Xóa thành công");
               },
             ),

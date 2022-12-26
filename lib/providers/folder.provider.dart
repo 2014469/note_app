@@ -73,6 +73,7 @@ class FolderProvider with ChangeNotifier {
     // FolderCloudConstant.color: '#fff',
     folder = Folder(
         folderId: idFolder,
+        color: "#F88379",
         ownerUserId: FirebaseAuth.instance.currentUser != null
             ? FirebaseAuth.instance.currentUser!.uid
             : "local",
@@ -136,6 +137,8 @@ class FolderProvider with ChangeNotifier {
 
       DebugLog.w("Deleted memeber with id $idFolder");
     }
+
+    folders.removeWhere((element) => element.folderId == idFolder);
     notifyListeners();
   }
 

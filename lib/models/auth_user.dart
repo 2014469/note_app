@@ -30,7 +30,7 @@ class AuthUser {
   AuthUser({
     this.id,
     this.uID,
-    this.displayName,
+    this.displayName = "User",
     this.fullName,
     this.email,
     this.photoUrl,
@@ -48,11 +48,11 @@ class AuthUser {
   factory AuthUser.fromFirebaseWithInformation(User user) => AuthUser(
         id: const Uuid().v1(),
         uID: user.uid,
-        displayName: user.displayName ?? "",
+        displayName: user.displayName ?? "User",
         fullName: "",
         email: user.email,
         photoUrl: user.photoURL ??
-            "https://images.unsplash.com/photo-1645680827507-9f392edae51c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80",
+            "https://firebasestorage.googleapis.com/v0/b/note-app-e936e.appspot.com/o/Logo.png?alt=media&token=090610fc-252a-4706-b128-b43fec21720b",
       );
 
   factory AuthUser.fromSnapshot(DocumentSnapshot snapshot) {

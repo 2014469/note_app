@@ -19,6 +19,8 @@ import '../widgets/buttons/button_app_bar.dart';
 import '../widgets/drawer/drawer_side.dart';
 import 'folders/modal_bottom.widget.dart';
 import 'folders/multi_select_folder.dart';
+import 'folders/popup_folder_sort.dart';
+import 'folders/search_folder_delegate.dart';
 import 'folders/show_text_input_name.dart';
 
 enum TypeFolderName { create, edit }
@@ -49,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void handleCreateNewFolder(String nameFolder) async {
     folderProvider.addFolders(nameFolder: nameFolder);
+    homeScreenProvider.changeReload(false);
   }
 
   bool isSelectionAll() =>
@@ -67,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       folderProvider.deleteFolder(noteSelected.folderId);
     }
 
-    homeScreenProvider.finishSelectionMode();
+    homeScreenProvider.clearAndCancelSelectionMode();
 
     showSnackBarSuccess(context, "Xóa thành công");
   }
@@ -140,13 +143,12 @@ class _HomeScreenState extends State<HomeScreen> {
             : [
                 InkWell(
                   onTap: () {
-                    // showSearch(
-                    //   context: context,
-                    //   delegate: BuildSearchNotesDelegate(
-                    //       folderId: folderId!,
-                    //       notes: noteProvider.getNotes),
-                    //   useRootNavigator: false,
-                    // );
+                    showSearch(
+                      context: context,
+                      delegate: BuildSearchFoldersDelegate(
+                          folders: folderProviderValue.getFolders),
+                      useRootNavigator: false,
+                    );
                   },
                   child: const Icon(
                     Icons.search,
@@ -157,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 GestureDetector(
                   onTapDown: (TapDownDetails details) {
-                    // showPopupMenuSort(context, details.globalPosition);
+                    showPopupMenuSortFolders(context, details.globalPosition);
                   },
                   child: Image.asset(
                     AssetPaths.sortIcon,
@@ -223,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               handleCreateNewFolder(a);
             } else {
               Future.delayed(Duration.zero, () {
-                showSnackBarError(context, "Có lỗi xảy ra");
+                showSnackBarInfo(context, "Hủy tạo");
               });
             }
           },
