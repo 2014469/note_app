@@ -23,13 +23,13 @@ import '../../../models/note.dart';
 import '../../../providers/note.provider.dart';
 import '../../../resources/colors/colors.dart';
 import '../../../utils/customLog/debug_log.dart';
+import '../../../utils/show_snack_bar.dart';
 import '../../../widgets/bar/app_bar.dart';
 import '../type.dart';
 
 enum _SelectionType {
   none,
   word,
-  image,
   // line,
 }
 
@@ -51,6 +51,8 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   late final String folderId;
   late final NoteType type;
   Note? note;
+
+  List<String> oldLinkImages = [];
 
   late NoteProvider noteProvider;
 
@@ -93,6 +95,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
         case NoteType.newNote:
           {
             final doc = Document()..insert(0, '');
+
             setState(() {
               _controller = QuillController(
                   document: doc,
@@ -107,13 +110,15 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
           {
             //  : 'assets/sample_data.json');
             final doc = Document.fromJson(jsonDecode(note!.content!));
-            // final doc = jsonDecode(note!.content!);
             setState(() {
               log(doc.toDelta().toString());
               _controller = QuillController(
                   document: doc,
                   selection: const TextSelection.collapsed(offset: 0));
             });
+
+            oldLinkImages = getLinkImages(_controller);
+
             break;
           }
       }
@@ -271,56 +276,76 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
   void saveToLocal(File file) {}
 
   Future<String> _onImagePickCallback(File file) async {
-    // Copies the picked file from temporary cache to applicafinaltions directory
-    String urlDownload = "";
     final appDocDir = await getApplicationDocumentsDirectory();
     final File copiedFile =
         await file.copy('${appDocDir.path}/${path.basename(file.path)}');
 
+    return copiedFile.path;
+  }
+
+  File getFileFromPath(String path) {
+    return File(path);
+  }
+
+  List<String> getLinkImages(QuillController controller) {
+    List<String> results = [];
+    var json = jsonEncode(controller.document.toDelta());
+    List<dynamic> delta = jsonDecode(json);
+    for (Map<String, dynamic> line in delta) {
+      // Each line represents a Map -> line to insert
+      for (var key in line.keys) {
+        var value = line[key];
+        // Check if the key is insert
+        if (key == "insert") {
+          if (value is Map<String, dynamic>) {
+            for (var newKey in value.keys) {
+              var valueNewKey = value[newKey];
+              if (newKey == "image") {
+                results.add(valueNewKey);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return results;
+  }
+
+  void deleteImageInFirebase(String url) {
+    FirebaseStorage.instance.refFromURL(url).delete();
+  }
+
+  Future<String> getAndUploadImageToFirebase(File file) async {
     // await file.copy('${appDocDir.path}/${path.basename(file.path)}');
+    String urlDownload = "";
     log(note!.noteId);
     if (FirebaseAuth.instance.currentUser != null) {
       String copiedPath =
-          "${FirebaseAuth.instance.currentUser!.uid}/$folderId / ${note!.noteId}/${copiedFile.path.split("/").last}";
+          "${FirebaseAuth.instance.currentUser!.uid}/$folderId / ${note!.noteId}/${file.path.split("/").last}";
       log(copiedPath);
 
       final ref = FirebaseStorage.instance.ref().child(copiedPath);
 
-      setState(() {
-        uploadTask = ref.putFile(copiedFile);
-      });
+      try {
+        urlDownload = await ref.getDownloadURL();
+      } catch (e) {
+        setState(() {
+          uploadTask = ref.putFile(file);
+        });
+        final snapshot = await uploadTask!.whenComplete(() => {});
+        urlDownload = await snapshot.ref.getDownloadURL();
+      }
 
-      final snapshot = await uploadTask!.whenComplete(() => {});
-      urlDownload = await snapshot.ref.getDownloadURL().whenComplete(
-            () => Navigator.of(context).pop(),
-          );
       log(urlDownload);
       setState(() {
         uploadTask = null;
       });
-    } else {
-      final String duplicateFilePath = appDocDir.path;
-      String copiedPath =
-          "$folderId / ${note!.noteId}/${copiedFile.path.split("/").last}";
     }
     return urlDownload;
   }
 
-  void saveFile(String fildePath) async {
-    File file = File(fildePath); // 1
-    file.writeAsString(
-        "This is my demo text that will be saved to : demoTextFile.txt"); // 2
-  }
-
-  void readFile(String filePath) async {
-    File file = File(filePath); // 1
-    String fileContent = await file.readAsString(); // 2
-
-    print('File Content: $fileContent');
-  }
-
-  void replacesLinkFromController(
-      QuillController controller, String imageName) {
+  Future<void> replacesLinkFromController(QuillController controller) async {
     var json = jsonEncode(controller.document.toDelta());
     List<dynamic> delta = jsonDecode(json);
 
@@ -334,16 +359,18 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
         if (key == "insert") {
           // Check if the value is a map
           if (value is Map<String, dynamic>) {
-            // If it is a map then check if there is a image -> link pair
             for (var newKey in value.keys) {
+              var valueNewKey = value[newKey];
               if (newKey == "image") {
-                // value == local storage
-                // Replaces the value
-                // Get the new value from the url map
+                File imageFile = getFileFromPath(valueNewKey);
+                String localUrl = valueNewKey;
                 String storageUrl = "";
-                // getUrlFromImageName(imageName);
-                String localUrl = "";
-                //  getLocalUrlFromImageName(imageName);
+                if (localUrl.split('/')[0] == "https:") {
+                  storageUrl = localUrl;
+                } else {
+                  storageUrl = await getAndUploadImageToFirebase(imageFile);
+                }
+
                 if (storageUrl != "") {
                   value[newKey] = storageUrl;
 
@@ -398,6 +425,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
               case NoteType.newNote:
                 {
                   if (_controller.document.toPlainText().isNotEmpty) {
+                    await replacesLinkFromController(_controller);
                     var json =
                         jsonEncode(_controller.document.toDelta().toJson());
                     Note newNote = await noteProvider.createNewNote(
@@ -430,8 +458,34 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                 }
               case NoteType.editNote:
                 {
-                  log("eidt note");
+                  await replacesLinkFromController(_controller);
+
+                  List<String> newUrlImages = getLinkImages(_controller);
+
+                  for (var element in oldLinkImages) {
+                    if (!newUrlImages.contains(element)) {
+                      deleteImageInFirebase(element);
+                    }
+                  }
+                  var json =
+                      jsonEncode(_controller.document.toDelta().toJson());
+
+                  note!.title = _controller.document
+                      .toPlainText()
+                      .trim()
+                      .split("\n")[0]
+                      .toString();
+                  note!.body = _controller.document
+                      .toPlainText()
+                      .trim()
+                      .split("\n")[1]
+                      .toString();
+                  note!.content = json;
+
+                  noteProvider.updateNote(note!.ownerFolderId, note!);
+
                   Future.delayed(const Duration(seconds: 0), () {
+                    showSnackBarSuccess(context, "Edit note success");
                     Navigator.of(context).pop();
                   });
                 }
