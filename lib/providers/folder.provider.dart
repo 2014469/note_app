@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
 import '../models/folder.dart';
+import '../models/note.dart';
 import '../resources/constants/str_folder_cloud.dart';
 import '../resources/constants/str_user.dart';
 import '../utils/customLog/debug_log.dart';
@@ -64,13 +65,6 @@ class FolderProvider with ChangeNotifier {
   }) async {
     final idFolder = const Uuid().v1();
 
-    // FolderCloudConstant.ownerUserId: FirebaseAuth.instance.currentUser!.uid,
-    // FolderCloudConstant.folderId: idFolder,
-    // FolderCloudConstant.name: nameFolder,
-    // FolderCloudConstant.dateCreate: Timestamp.now(),
-    // FolderCloudConstant.isLock: false,
-    // FolderCloudConstant.passLock: null,
-    // FolderCloudConstant.color: '#fff',
     folder = Folder(
         folderId: idFolder,
         color: "#F88379",
@@ -123,17 +117,29 @@ class FolderProvider with ChangeNotifier {
           .doc(idFolder)
           .delete();
     } else {
-      var box = await Hive.openBox<Folder>(_boxName);
+      var boxFolder = await Hive.openBox<Folder>(_boxName);
 
-      final Map<dynamic, Folder> deliveriesMap = box.toMap();
-      dynamic desiredKey;
-      deliveriesMap.forEach((key, value) {
-        if (value.folderId == idFolder) {
-          desiredKey = key;
+      var boxNotes = await Hive.openBox<Note>("note_notes");
+
+      final Map<dynamic, Note> deliveriesMapNote = boxNotes.toMap();
+      dynamic desiredKeyNote;
+      deliveriesMapNote.forEach((key, value) {
+        if (value.ownerFolderId == idFolder) {
+          desiredKeyNote = key;
         }
       });
 
-      await box.delete(desiredKey);
+      await boxNotes.delete(desiredKeyNote);
+
+      final Map<dynamic, Folder> deliveriesMapFolder = boxFolder.toMap();
+      dynamic desiredKeyFolder;
+      deliveriesMapFolder.forEach((key, value) {
+        if (value.folderId == idFolder) {
+          desiredKeyFolder = key;
+        }
+      });
+
+      await boxFolder.delete(desiredKeyFolder);
 
       DebugLog.w("Deleted memeber with id $idFolder");
     }
@@ -170,5 +176,9 @@ class FolderProvider with ChangeNotifier {
         break;
     }
     notifyListeners();
+  }
+
+  void clearFolders() {
+    folders.clear();
   }
 }

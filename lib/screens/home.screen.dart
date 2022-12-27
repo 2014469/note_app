@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -46,11 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
 
     homeScreenProvider = Provider.of(context, listen: false);
+
+    if (FirebaseAuth.instance.currentUser != null) {
+      userProvider = Provider.of(context, listen: false);
+      userProvider.fetchUser();
+    }
+    homeScreenProvider.changeReload(true);
     super.initState();
   }
 
   @override
   void dispose() {
+    folderProvider.clearFolders();
     super.dispose();
   }
 

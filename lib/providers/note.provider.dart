@@ -72,6 +72,11 @@ class NoteProvider with ChangeNotifier {
       await box.add(note);
     }
 
+    if (note.isPin) {
+      pinNotes.insert(0, note);
+    } else {
+      unPinNotes.insert(0, note);
+    }
     notes.insert(0, note);
     sortOnFetch();
     notifyListeners();
@@ -96,6 +101,8 @@ class NoteProvider with ChangeNotifier {
 
     return note;
   }
+
+  deleteNoteLocalByFolderId(String ownerFolderId) async {}
 
   deleteNote(String ownerFolderId, String noteId) async {
     if (FirebaseAuth.instance.currentUser != null) {

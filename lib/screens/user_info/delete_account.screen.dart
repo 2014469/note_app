@@ -1,11 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:note_app/screens/user_info/widgets/buttons.dart';
+import 'package:provider/provider.dart';
 
 import '../../../widgets/bar/app_bar.dart';
+import '../../providers/auth.provider.dart';
 import '../../resources/colors/colors.dart';
 import '../../resources/fonts/enum_text_styles.dart';
 import '../../resources/fonts/text_styles.dart';
+import '../../services/auth/auth_service.dart';
+import '../../utils/routes/routes.dart';
+import '../../utils/show_snack_bar.dart';
 import 'checkbox.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
@@ -20,6 +26,13 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   bool _haveAnotherAccount = false;
   bool _haveProblem = false;
   final TextEditingController _addition = TextEditingController();
+  late UserProvider userProvider;
+  @override
+  void initState() {
+    userProvider = Provider.of(context, listen: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +139,17 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                   isOpacity: false,
                   text: "Delete my Account Now",
                   color: AppColors.red,
-                  onpressed: () {})
+                  onpressed: () async {
+                    userProvider.deleteUser(
+                        uId: FirebaseAuth.instance.currentUser!.uid);
+                    await context.read<AuthService>().deleteAccount();
+
+                    Future.delayed(Duration.zero, () {
+                      showSnackBarSuccess(context, "Deleted Successfully");
+                      Navigator.of(context)
+                          .pushReplacementNamed(Routes.authWrapper);
+                    });
+                  })
             ],
           ),
         ),

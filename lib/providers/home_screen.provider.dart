@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/folder.dart';
 
 class HomeScreenProvider with ChangeNotifier {
-  bool isReload = false;
+  bool isReload = true;
   bool isMultiSelectionMode = false;
   HashSet<Folder> selectedItemsSet = HashSet();
 

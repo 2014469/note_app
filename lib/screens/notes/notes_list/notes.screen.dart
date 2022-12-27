@@ -51,6 +51,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
   @override
   void dispose() {
+    noteScreenProvider.changeReloadNotNotify(true);
     super.dispose();
   }
 
@@ -171,7 +172,6 @@ class _NotesScreenState extends State<NotesScreen> {
           appBar: CustomAppbar(
             title: "All notes",
             handleBackBtn: () {
-              noteScreenProvider.changeReload(true);
               noteProvider.setDefaultValue();
               Future.delayed(Duration.zero, () {
                 Navigator.of(context).pop();

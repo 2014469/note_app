@@ -283,7 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     Navigator.of(context).pushNamed(Routes.home);
                   },
-                  text: "Without signin",
+                  text: "Without Sign In",
                 ),
                 // link to sign up
                 BottomNavigator(

@@ -41,9 +41,11 @@ class EditNoteScreen extends StatefulWidget {
 }
 
 class _EditNoteScreenState extends State<EditNoteScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late QuillController _controller;
   String title = "";
   late final FocusNode _focusNode = FocusNode();
+  bool isLoading = false;
   Timer? _selectAllTimer;
   bool isShowKeyboard = true;
   _SelectionType _selectionType = _SelectionType.none;
@@ -419,12 +421,16 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
             const BottomSheetThemeData(backgroundColor: Colors.transparent),
       ),
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: CustomAppbar(
           handleBackBtn: () async {
             switch (type) {
               case NoteType.newNote:
                 {
                   if (_controller.document.toPlainText().isNotEmpty) {
+                    setState(() {
+                      isLoading = true;
+                    });
                     await replacesLinkFromController(_controller);
                     var json =
                         jsonEncode(_controller.document.toDelta().toJson());
@@ -451,6 +457,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
                     log("Uploaded");
                   }
+                  setState(() {
+                    isLoading = false;
+                  });
                   Future.delayed(const Duration(seconds: 0), () {
                     Navigator.of(context).pop();
                   });
@@ -458,6 +467,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                 }
               case NoteType.editNote:
                 {
+                  setState(() {
+                    isLoading = true;
+                  });
                   await replacesLinkFromController(_controller);
 
                   List<String> newUrlImages = getLinkImages(_controller);
@@ -484,6 +496,9 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
                   noteProvider.updateNote(note!.ownerFolderId, note!);
 
+                  setState(() {
+                    isLoading = false;
+                  });
                   Future.delayed(const Duration(seconds: 0), () {
                     showSnackBarSuccess(context, "Edit note success");
                     Navigator.of(context).pop();
@@ -498,7 +513,19 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
             //       .toString());
           },
         ),
-        body: _buildWelcomeEditor(context),
+        body: Stack(children: [
+          isLoading
+              ? Container(
+                  color: Colors.grey[300],
+                  width: 70.0,
+                  height: 70.0,
+                  child: const Padding(
+                      padding: EdgeInsets.all(5.0),
+                      child: Center(child: CircularProgressIndicator())),
+                )
+              : Container(),
+          _buildWelcomeEditor(context)
+        ]),
         bottomSheet: SingleChildScrollView(
           child: quillToolbar(_controller),
         ),

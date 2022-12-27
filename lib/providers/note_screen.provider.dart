@@ -14,6 +14,10 @@ class NoteScreenProvider with ChangeNotifier {
 
   HashSet<Note> get getSelectedItemSet => selectedItemsSet;
 
+  void changeReloadNotNotify(bool value) {
+    isReload = value;
+  }
+
   void changeReload(bool value) {
     isReload = value;
     notifyListeners();

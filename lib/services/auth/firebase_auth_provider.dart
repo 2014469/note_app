@@ -52,8 +52,6 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<void> deleteAccount() async {
     try {
-      await UserAction()
-          .deleteUser(uId: FirebaseAuth.instance.currentUser!.uid);
       await FirebaseAuth.instance.currentUser!.delete();
     } on FirebaseAuthException {
       throw UserNotLoggedInAuthException();

@@ -5,6 +5,7 @@ import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth.provider.dart';
+import '../../providers/folder.provider.dart';
 import '../../resources/colors/colors.dart';
 import '../../resources/constants/asset_path.dart';
 import '../../resources/fonts/enum_text_styles.dart';
@@ -85,11 +86,13 @@ class DrawerSide extends StatelessWidget {
                             onPressed: FirebaseAuth.instance.currentUser == null
                                 ? () {
                                     DebugLog.i("Login page");
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                            Routes.login, ((route) => false));
+                                    Navigator.of(context).pushReplacementNamed(
+                                        Routes.authWrapper);
                                   }
                                 : () {
+                                    FolderProvider folderProvider =
+                                        Provider.of(context, listen: false);
+                                    folderProvider.clearFolders();
                                     context.read<AuthService>().logOUt();
                                   },
                             style: ButtonStyle(
