@@ -158,10 +158,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     DebugLog.w(success);
                                   } on WrongOldPassWord {
                                     showSnackBarError(
-                                        context, "Sai password cũ");
+                                        context, "Wrong password");
                                   } on ErrorChangePassword {
                                     showSnackBarError(
-                                        context, "Có lỗi đã xảy ra");
+                                        context, "Something went wrong!");
                                   }
                                 }
                               : null,

@@ -68,7 +68,7 @@ class _NotesScreenState extends State<NotesScreen> {
 
     noteScreenProvider.finishSelectionMode();
 
-    showSnackBarSuccess(context, "Xóa thành công");
+    showSnackBarSuccess(context, "Deleted successfully");
   }
 
   bool isSelectionAll() =>
@@ -104,21 +104,21 @@ class _NotesScreenState extends State<NotesScreen> {
                 {
                   Future.delayed(Duration.zero, () {
                     noteScreenProvider.finishSelectionMode();
-                    showSnackBarSuccess(context, "Moved note");
+                    showSnackBarSuccess(context, "Moved");
                   })
                 }
               else
                 {
                   Future.delayed(Duration.zero, () {
                     noteScreenProvider.clearAndCancelSelectionMode();
-                    showSnackBarInfo(context, "Bạn đã hủy");
+                    showSnackBarInfo(context, "Canceled");
                   })
                 }
             })
         .catchError((e) {
           Future.delayed(Duration.zero, () {
             noteScreenProvider.clearAndCancelSelectionMode();
-            showSnackBarError(context, "Đã có lỗi xảy ra");
+            showSnackBarError(context, "Something went wrong");
           });
         });
   }
@@ -203,7 +203,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       nameBtn: "Cancel",
                       onPress: () {
                         noteScreenProvider.clearAndCancelSelectionMode();
-                        showSnackBarInfo(context, "Bạn đã hủy");
+                        showSnackBarInfo(context, "Canceled");
                       },
                     )
                   ]
