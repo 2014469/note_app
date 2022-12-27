@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/models/note.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -78,8 +79,8 @@ class NoteListTileWidget extends StatelessWidget {
                   ),
                   Text(
                     compareCreateDate(note.creationDate!)
-                        ? "${note.creationDate!.hour} : ${note.creationDate!.minute}"
-                        : "${note.creationDate!.day}/${note.creationDate!.month}/${note.creationDate!.year}",
+                        ? DateFormat.Hm().format(note.creationDate!)
+                        : DateFormat('dd/MM/yyyy').format(note.creationDate!),
                     style: AppTextStyles.caption[TextWeights.bold]!
                         .copyWith(color: AppColors.gray[60]),
                   ),

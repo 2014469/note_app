@@ -4,24 +4,60 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
 import 'package:note_app/screens/user_info/widgets/buttons.dart';
+import 'package:note_app/services/auth/auth_exceptions.dart';
+import 'package:note_app/services/auth/auth_service.dart';
+import 'package:note_app/utils/customLog/debug_log.dart';
 import 'package:note_app/utils/routes/routes.dart';
+import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:note_app/widgets/text_field/text_field.dart';
 import 'package:provider/provider.dart';
 
-import '../../services/auth/auth_exceptions.dart';
-import '../../services/auth/auth_service.dart';
-import '../../utils/customLog/debug_log.dart';
-import '../../utils/show_snack_bar.dart';
 import '../../widgets/bar/app_bar.dart';
 
-class ChangePasswordScreen extends StatelessWidget {
+class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
   @override
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController retypePassword = TextEditingController();
+  bool isButtonActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    oldPassword.addListener(() {
+      setState(() {
+        isButtonActive = oldPassword.text.isNotEmpty &&
+            newPassword.text.isNotEmpty &&
+            retypePassword.text.isNotEmpty &&
+            newPassword.text == retypePassword.text;
+      });
+      newPassword.addListener(() {
+        setState(() {
+          isButtonActive = oldPassword.text.isNotEmpty &&
+              newPassword.text.isNotEmpty &&
+              retypePassword.text.isNotEmpty &&
+              newPassword.text == retypePassword.text;
+        });
+      });
+      retypePassword.addListener(() {
+        setState(() {
+          isButtonActive = oldPassword.text.isNotEmpty &&
+              newPassword.text.isNotEmpty &&
+              retypePassword.text.isNotEmpty &&
+              newPassword.text == retypePassword.text;
+        });
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController oldPassword = TextEditingController();
-    TextEditingController newPassword = TextEditingController();
-    TextEditingController retypePassword = TextEditingController();
     return Scaffold(
         appBar: CustomAppbar(
           title: "Change your password",
@@ -106,25 +142,31 @@ class ChangePasswordScreen extends StatelessWidget {
                           ),
                         ),
                         ColorButton(
-                            isLarge: false,
-                            text: 'Save',
-                            isOpacity: true,
-                            color: const Color(0xff0ac174),
-                            onpressed: () async {
-                              try {
-                                bool success = await context
-                                    .read<AuthService>()
-                                    .changePassword(
-                                        currentPassword: oldPassword.text,
-                                        newPassword: newPassword.text);
+                          isLarge: false,
+                          text: 'Save',
+                          isOpacity: true,
+                          color: const Color(0xff0ac174),
+                          onpressed: isButtonActive
+                              ? () async {
+                                  try {
+                                    bool success = await context
+                                        .read<AuthService>()
+                                        .changePassword(
+                                            currentPassword: oldPassword.text,
+                                            newPassword: newPassword.text);
 
-                                DebugLog.w(success);
-                              } on WrongOldPassWord {
-                                showSnackBarError(context, "Sai password cũ");
-                              } on ErrorChangePassword {
-                                showSnackBarError(context, "Có lỗi đã xảy ra");
-                              }
-                            })
+                                    DebugLog.w(success);
+                                  } on WrongOldPassWord {
+                                    showSnackBarError(
+                                        context, "Sai password cũ");
+                                  } on ErrorChangePassword {
+                                    showSnackBarError(
+                                        context, "Có lỗi đã xảy ra");
+                                  }
+                                }
+                              : null,
+                          // onpressed: null,
+                        )
                       ],
                     ),
                   )

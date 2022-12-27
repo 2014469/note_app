@@ -168,13 +168,16 @@ class _InfoUserScreenState extends State<InfoUserScreen> {
                                 .providerId
                                 .toString() ==
                             "password"
-                        ? ColorButton(
-                            text: 'Change my password',
-                            color: const Color(0xff8278F8),
-                            isOpacity: false,
-                            onpressed: () => Navigator.of(context)
-                                .pushNamed(Routes.changePassword),
-                          )
+                        ? Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 48.h),
+                          child: ColorButton(
+                              text: 'Change my password',
+                              color: const Color(0xff8278F8),
+                              isOpacity: false,
+                              onpressed: () => Navigator.of(context)
+                                  .pushNamed(Routes.changePassword),
+                            ),
+                        )
                         : Container(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

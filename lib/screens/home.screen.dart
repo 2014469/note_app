@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/screens/folders/folder.widget.dart';
@@ -227,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             String? a =
                 await showTextInputDialog(context, TypeFolderName.create);
             if (a != null && a != "") {
-              handleCreateNewFolder(a);
+              handleCreateNewFolder(toBeginningOfSentenceCase(a)!);
             } else {
               Future.delayed(Duration.zero, () {
                 showSnackBarInfo(context, "Hủy tạo");

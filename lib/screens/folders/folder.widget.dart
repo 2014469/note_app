@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/asset_path.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -100,8 +101,8 @@ class _FolderWidgetState extends State<FolderWidget> {
                   ),
                   Text(
                     compareCreateDate(widget.folder.creationDate)
-                        ? "${widget.folder.creationDate.hour} : ${widget.folder.creationDate.minute}"
-                        : "${widget.folder.creationDate.day}/${widget.folder.creationDate.month}/${widget.folder.creationDate.year}",
+                        ? DateFormat.Hm().format(widget.folder.creationDate)
+                        : DateFormat('dd/MM/yyyy').format(widget.folder.creationDate),
                     style: AppTextStyles.caption[TextWeights.bold]!
                         .copyWith(color: AppColors.gray[60]),
                   ),
