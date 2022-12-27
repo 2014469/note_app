@@ -62,7 +62,7 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
 
     noteScreenProvider.changeReload(true);
 
-    showSnackBarSuccess(context, "Xóa thành công");
+    showSnackBarSuccess(context, "Deleted Successfully");
   }
 
   void changeColorNote(Note note) async {
@@ -123,7 +123,7 @@ class _NoteSlideWidgetState extends State<NoteSlideWidget> {
 
   void _openFullMaterialColorPicker(Note note) async {
     _openDialog(
-      "Chọn màu",
+      "Pick your favorite color",
       MaterialColorPicker(
         colors: fullMaterialColors,
         selectedColor: mainColor,

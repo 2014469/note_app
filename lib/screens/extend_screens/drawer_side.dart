@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:note_app/utils/show_snack_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth.provider.dart';
@@ -116,9 +117,12 @@ class DrawerSide extends StatelessWidget {
                 ),
               ),
               listTile(
-                  onTap: (() {
-                    Navigator.of(context).pushNamed(Routes.infoUser);
-                  }),
+                  onTap: (FirebaseAuth.instance.currentUser == null
+                      ? () =>
+                          showSnackBarInfo(context, "Please login to continue")
+                      : () {
+                          Navigator.of(context).pushNamed(Routes.infoUser);
+                        }),
                   icon: Icons.person,
                   title: "Your profile"),
               listTile(icon: Icons.settings, title: "Settings"),

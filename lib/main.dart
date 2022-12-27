@@ -6,6 +6,7 @@ import 'package:note_app/providers/folder.provider.dart';
 import 'package:note_app/providers/home_screen.provider.dart';
 import 'package:note_app/providers/note.provider.dart';
 import 'package:note_app/providers/note_screen.provider.dart';
+import 'package:note_app/providers/theme.provider.dart';
 import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
@@ -72,38 +73,67 @@ void main() async {
         ChangeNotifierProvider<HomeScreenProvider>(
           create: (context) => HomeScreenProvider(),
         ),
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (context) => ThemeProvider(),
+        )
       ],
-      child: ScreenUtilInit(
-        builder: ((context, child) => MaterialApp(
-              // debugShowCheckedModeBanner: false,
-              title: AppString.instance.nameApp,
-              theme: ThemeData(
-                fontFamily: 'Lato',
-                inputDecorationTheme: InputDecorationTheme(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32.r)),
-                      borderSide:
-                          BorderSide(color: AppColors.gray[30]!, width: 0.5)),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(32.r),
+      child: Consumer<ThemeProvider>(
+        builder:(context, themeObject, _)=> ScreenUtilInit(
+          builder: ((context, child) => MaterialApp(
+                // debugShowCheckedModeBanner: false,
+                title: AppString.instance.nameApp,
+                darkTheme: ThemeData(
+                  fontFamily: 'Lato',
+                  inputDecorationTheme: InputDecorationTheme(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                        borderSide:
+                            BorderSide(color: AppColors.gray[30]!, width: 0.5)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(32.r),
+                      ),
+                      borderSide: BorderSide(
+                        color: AppColors.yellowGold,
+                        width: 2.w,
+                      ),
                     ),
-                    borderSide: BorderSide(
-                      color: AppColors.yellowGold,
-                      width: 2.w,
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
+                      color: AppColors.gray[40],
                     ),
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
-                    color: AppColors.gray[40],
                   ),
                 ),
-              ),
-              routes: Routes.routes,
-              home: const AuthWrapper(),
-            )),
-        designSize: const Size(428, 926),
+                theme: ThemeData(
+
+                  fontFamily: 'Lato',
+                  inputDecorationTheme: InputDecorationTheme(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32.r)),
+                        borderSide:
+                            BorderSide(color: AppColors.gray[30]!, width: 0.5)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(32.r),
+                      ),
+                      borderSide: BorderSide(
+                        color: AppColors.yellowGold,
+                        width: 2.w,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintStyle: AppTextStyles.h5[TextWeights.regular]!.copyWith(
+                      color: AppColors.gray[40],
+                    ),
+                  ),
+                ),
+                routes: Routes.routes,
+                home: const AuthWrapper(),
+              )),
+          designSize: const Size(428, 926),
+        ),
       ),
     ),
   );

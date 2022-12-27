@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     homeScreenProvider.clearAndCancelSelectionMode();
 
-    showSnackBarSuccess(context, "Xóa thành công");
+    showSnackBarSuccess(context, "Deleted sucessfully");
   }
 
   @override
@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
               handleCreateNewFolder(toBeginningOfSentenceCase(a)!);
             } else {
               Future.delayed(Duration.zero, () {
-                showSnackBarInfo(context, "Hủy tạo");
+                showSnackBarInfo(context, "Canceled");
               });
             }
           },
