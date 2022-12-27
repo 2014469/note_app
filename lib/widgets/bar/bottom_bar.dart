@@ -43,34 +43,44 @@ class BottomBarCustom extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            isLeft
-                ? TextButton(
-                    onPressed: actionLeft!,
-                    child: Text(textLeft!,
-                        style: AppTextStyles.h6[TextWeights.semibold]!
-                            .copyWith(color: AppColors.primary)),
-                  )
-                : Container(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
+            Flexible(
+              flex: 1,
+              child: isLeft
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: actionLeft!,
+                        child: Text(textLeft!,
+                            style: AppTextStyles.h6[TextWeights.semibold]!
+                                .copyWith(color: AppColors.primary)),
+                      ),
+                    )
+                  : Container(),
+            ),
+            Flexible(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
                   title,
                   style: AppTextStyles.body2[TextWeights.regular]!.copyWith(
                     color: AppColors.gray[50],
                   ),
                   textAlign: TextAlign.center,
                 ),
-              ],
+              ),
             ),
-            isRight
-                ? TextButton(
-                    onPressed: actionRight!,
-                    child: Text(textRight!,
-                        style: AppTextStyles.h6[TextWeights.semibold]!
-                            .copyWith(color: AppColors.primary)),
-                  )
-                : Container(),
+            Flexible(
+              flex: 1,
+              child: isRight
+                  ? TextButton(
+                      onPressed: actionRight!,
+                      child: Text(textRight!,
+                          style: AppTextStyles.h6[TextWeights.semibold]!
+                              .copyWith(color: AppColors.primary)),
+                    )
+                  : Container(),
+            ),
           ],
         ),
       ),

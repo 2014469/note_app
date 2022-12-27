@@ -231,17 +231,6 @@ class _ModalBottomFolderSheetState extends State<ModalBottomFolderSheet> {
               height: 1.h,
               thickness: 1.h,
             ),
-            ListTile(
-              leading: SvgPicture.asset(AssetPaths.duplicate),
-              title: Text(
-                "Duplicate",
-                style: AppTextStyles.h6[TextWeights.medium]
-                    ?.copyWith(color: AppColors.gray[70]),
-              ),
-              onTap: () {
-                DebugLog.myLog("Duplicate");
-              },
-            ),
             Divider(
               height: 1.h,
               thickness: 1.h,
