@@ -10,6 +10,7 @@ import 'package:note_app/resources/colors/colors.dart';
 import 'package:note_app/resources/constants/string_constant.dart';
 import 'package:note_app/resources/fonts/enum_text_styles.dart';
 import 'package:note_app/resources/fonts/text_styles.dart';
+import 'package:note_app/screens/extend_screens/splash.screen.dart';
 import 'package:note_app/screens/sign_in_up/login.screen.dart';
 import 'package:note_app/services/auth/auth_service.dart';
 import 'package:note_app/services/auth/firebase_auth_provider.dart';
@@ -101,7 +102,7 @@ void main() async {
                 ),
               ),
               routes: Routes.routes,
-              home: const AuthWrapper(),
+              home: const OurSplashScreen(),
             )),
         designSize: const Size(428, 926),
       ),
@@ -120,7 +121,6 @@ class AuthWrapper extends StatelessWidget {
           bool isCheck = context.read<AuthService>().authIsVerifiedEmail ||
               FirebaseAuth.instance.currentUser == null;
           if (isCheck) {
-            // return const Text("Home screen");
             return const HomeScreen();
           } else {
             return const VerifyEmailScreen();

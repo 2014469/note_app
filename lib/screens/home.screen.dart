@@ -44,9 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     folderProvider = Provider.of<FolderProvider>(context, listen: false);
+
     homeScreenProvider = Provider.of(context, listen: false);
-    userProvider = Provider.of(context, listen: false);
-    userProvider.fetchUser();
     super.initState();
   }
 
